@@ -5,12 +5,12 @@
 	id="WebApp_ID" version="2.5">
 	<display-name>Linked Data Fragments Server</display-name>
 	<servlet>
-		<display-name>FragmentServlet</display-name>
-		<servlet-name>FragmentServlet</servlet-name>
-		<servlet-class>org.linkeddatafragments.servlets.FragmentServlet</servlet-class>
+		<display-name>BasicLdfServlet</display-name>
+		<servlet-name>BasicLdfServlet</servlet-name>
+		<servlet-class>org.linkeddatafragments.servlets.BasicLdfServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>FragmentServlet</servlet-name>
+		<servlet-name>BasicLdfServlet</servlet-name>
 		<url-pattern>/*</url-pattern>
 	</servlet-mapping>
 </web-app>
