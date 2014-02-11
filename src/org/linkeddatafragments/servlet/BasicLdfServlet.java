@@ -16,7 +16,10 @@ import org.linkeddatafragments.datasource.BasicLinkedDataFragment;
 import org.linkeddatafragments.datasource.DataSource;
 import org.linkeddatafragments.datasource.HdtDataSource;
 
+import static org.linkeddatafragments.util.CommonResources.*;
+
 import com.hp.hpl.jena.datatypes.TypeMapper;
+import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
@@ -52,6 +55,7 @@ public class BasicLdfServlet extends HttpServlet {
 		try {
 			// find the data source
 			final String path = request.getRequestURI().substring(request.getContextPath().length());
+			final String query = request.getQueryString();
 			final String dataSourceName = path.substring(1);
 			final DataSource dataSource = dataSources.get(dataSourceName);
 			if (dataSource == null)
@@ -66,6 +70,13 @@ public class BasicLdfServlet extends HttpServlet {
 			// fill the output model
 			final Model output = fragment.getTriples();
 			output.setNsPrefixes(config.getPrefixes());
+			
+			// add metadata
+			final String datasetUrl = request.getScheme() + "://" + request.getServerName() + path;
+			final String fragmentUrl = query == null ? datasetUrl : (datasetUrl + "?" + query);
+			final Resource fragmentId = output.createResource(fragmentUrl);
+			output.add(fragmentId, VOID_TRIPLES,
+						output.createTypedLiteral(fragment.getTotalSize(), XSDDatatype.XSDinteger));
 			
 			// serialize the output as Turtle
 			response.setHeader("Server", "Linked Data Fragments Server");

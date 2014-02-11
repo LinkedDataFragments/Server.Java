@@ -14,8 +14,8 @@ public interface BasicLinkedDataFragment {
 	public Model getTriples();
 	
 	/**
-	 * Gets the total number of triples in the fragment.
+	 * Gets the total number of triples in the fragment (can be an estimate).
 	 * @return the total number of triples
 	 */
-	public int getTotalSize();
+	public long getTotalSize();
 }
