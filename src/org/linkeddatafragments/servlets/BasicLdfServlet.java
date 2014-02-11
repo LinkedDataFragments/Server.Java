@@ -1,5 +1,7 @@
 package org.linkeddatafragments.servlets;
 
+import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -9,6 +11,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.linkeddatafragments.config.ConfigReader;
 import org.rdfhdt.hdt.hdt.HDT;
 import org.rdfhdt.hdt.hdt.HDTManager;
 import org.rdfhdt.hdtjena.HDTGraph;
@@ -29,15 +32,18 @@ public class BasicLdfServlet extends HttpServlet {
 	private final static int TRIPLES_PER_PAGE = 100;
 	private final static Pattern STRINGPATTERN = Pattern.compile("^\"(.*)\"(?:\\^\\^<(.*)>|@(.*))?$");
 	
-	private Model model;
+	private ConfigReader config;
+	private HashMap<String, Model> dataSources = new HashMap<String, Model>();
 
 	@Override
-	public void init(ServletConfig config) throws ServletException {
+	public void init(ServletConfig servletConfig) throws ServletException {
 		try {
-			final String dataFile = config.getInitParameter("dataFile");
-			final HDT hdt = HDTManager.mapIndexedHDT(dataFile, null);
-			final HDTGraph graph = new HDTGraph(hdt);
-			model = ModelFactory.createModelForGraph(graph);
+			config = new ConfigReader(servletConfig.getInitParameter("configFile"));
+			for (Entry<String, String> dataSource : config.getDataSources().entrySet()) {
+				final HDT hdt = HDTManager.mapIndexedHDT(dataSource.getValue(), null);
+				final Model model = ModelFactory.createModelForGraph(new HDTGraph(hdt));
+				dataSources.put(dataSource.getKey(), model);
+			}
 		}
 		catch (Exception e) {
 			throw new ServletException(e);
@@ -47,16 +53,24 @@ public class BasicLdfServlet extends HttpServlet {
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException {
 		try {
+			// find the data source
 			final String path = request.getRequestURI().substring(request.getContextPath().length());
+			final String dataSourceName = path.substring(1);
+			final Model dataSource = dataSources.get(dataSourceName);
+			if (dataSource == null)
+				throw new Exception("data source not found");
+			
+			// create the output model
+			final Model output = ModelFactory.createDefaultModel();
+			output.setNsPrefixes(config.getPrefixes());
 			
 			// parse the subject, predicate, and object parameters
-			final Model output = ModelFactory.createDefaultModel();
 			final Resource subject = parseAsResource(request.getParameter("subject"), output);
 			final Property predicate = parseAsProperty(request.getParameter("predicate"), output);
 			final RDFNode object = parseAsNode(request.getParameter("object"), output);
 			
 			// add all statements with the given parameters to the output model
-			final StmtIterator statements = model.listStatements(subject, predicate, object);
+			final StmtIterator statements = dataSource.listStatements(subject, predicate, object);
 			for (int i = 0; i < TRIPLES_PER_PAGE && statements.hasNext(); i++)
 				output.add(statements.next());
 			
