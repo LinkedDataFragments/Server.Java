@@ -12,16 +12,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.linkeddatafragments.config.ConfigReader;
-import org.rdfhdt.hdt.hdt.HDT;
-import org.rdfhdt.hdt.hdt.HDTManager;
-import org.rdfhdt.hdtjena.HDTGraph;
+import org.linkeddatafragments.datasource.BasicLinkedDataFragment;
+import org.linkeddatafragments.datasource.DataSource;
+import org.linkeddatafragments.datasource.HdtDataSource;
 
+import com.hp.hpl.jena.datatypes.TypeMapper;
 import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.StmtIterator;
+import com.hp.hpl.jena.rdf.model.ResourceFactory;
 
 /**
  * Servlet that responds with a Basic Linked Data Fragment.
@@ -29,21 +29,18 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
  */
 public class BasicLdfServlet extends HttpServlet {
 	private final static long serialVersionUID = 1L;
-	private final static int TRIPLES_PER_PAGE = 100;
-	private final static Pattern STRINGPATTERN = Pattern.compile("^\"(.*)\"(?:\\^\\^<(.*)>|@(.*))?$");
+	private final static Pattern STRINGPATTERN = Pattern.compile("^\"(.*)\"(?:@(.*)|\\^\\^<(.*)>)?$");
+	private final static TypeMapper types = TypeMapper.getInstance();
 	
 	private ConfigReader config;
-	private HashMap<String, Model> dataSources = new HashMap<String, Model>();
+	private HashMap<String, DataSource> dataSources = new HashMap<String, DataSource>();
 
 	@Override
 	public void init(ServletConfig servletConfig) throws ServletException {
 		try {
 			config = new ConfigReader(servletConfig.getInitParameter("configFile"));
-			for (Entry<String, String> dataSource : config.getDataSources().entrySet()) {
-				final HDT hdt = HDTManager.mapIndexedHDT(dataSource.getValue(), null);
-				final Model model = ModelFactory.createModelForGraph(new HDTGraph(hdt));
-				dataSources.put(dataSource.getKey(), model);
-			}
+			for (Entry<String, String> dataSource : config.getDataSources().entrySet())
+				dataSources.put(dataSource.getKey(), new HdtDataSource(dataSource.getValue()));
 		}
 		catch (Exception e) {
 			throw new ServletException(e);
@@ -56,23 +53,19 @@ public class BasicLdfServlet extends HttpServlet {
 			// find the data source
 			final String path = request.getRequestURI().substring(request.getContextPath().length());
 			final String dataSourceName = path.substring(1);
-			final Model dataSource = dataSources.get(dataSourceName);
+			final DataSource dataSource = dataSources.get(dataSourceName);
 			if (dataSource == null)
 				throw new Exception("data source not found");
 			
-			// create the output model
-			final Model output = ModelFactory.createDefaultModel();
+			// query the fragment
+			final Resource subject = parseAsResource(request.getParameter("subject"));
+			final Property predicate = parseAsProperty(request.getParameter("predicate"));
+			final RDFNode object = parseAsNode(request.getParameter("object"));
+			final BasicLinkedDataFragment fragment = dataSource.getFragment(subject, predicate, object);
+			
+			// fill the output model
+			final Model output = fragment.getTriples();
 			output.setNsPrefixes(config.getPrefixes());
-			
-			// parse the subject, predicate, and object parameters
-			final Resource subject = parseAsResource(request.getParameter("subject"), output);
-			final Property predicate = parseAsProperty(request.getParameter("predicate"), output);
-			final RDFNode object = parseAsNode(request.getParameter("object"), output);
-			
-			// add all statements with the given parameters to the output model
-			final StmtIterator statements = dataSource.listStatements(subject, predicate, object);
-			for (int i = 0; i < TRIPLES_PER_PAGE && statements.hasNext(); i++)
-				output.add(statements.next());
 			
 			// serialize the output as Turtle
 			response.setHeader("Server", "Linked Data Fragments Server");
@@ -87,32 +80,29 @@ public class BasicLdfServlet extends HttpServlet {
 	/**
 	 * Parses the given value as an RDF resource.
 	 * @param value the value
-	 * @param model the model
 	 * @return the parsed value, or null if unspecified
 	 */
-	private Resource parseAsResource(String value, Model model) {
-		final RDFNode subject = parseAsNode(value, model);
+	private Resource parseAsResource(String value) {
+		final RDFNode subject = parseAsNode(value);
 		return subject instanceof Resource ? (Resource)subject : null;
 	}
 	
 	/**
 	 * Parses the given value as an RDF property.
 	 * @param value the value
-	 * @param model the model
 	 * @return the parsed value, or null if unspecified
 	 */
-	private Property parseAsProperty(String value, Model model) {
-		final RDFNode predicate = parseAsNode(value, model);
-		return predicate instanceof Resource ? model.createProperty(((Resource)predicate).getURI()) : null;
+	private Property parseAsProperty(String value) {
+		final RDFNode predicate = parseAsNode(value);
+		return predicate instanceof Resource ? ResourceFactory.createProperty(((Resource)predicate).getURI()) : null;
 	}
 	
 	/**
 	 * Parses the given value as an RDF node.
 	 * @param value the value
-	 * @param model the model
 	 * @return the parsed value, or null if unspecified
 	 */
-	private RDFNode parseAsNode(String value, Model model) {
+	private RDFNode parseAsNode(String value) {
 		// nothing or empty indicates an unknown
 		if (value == null || value.length() == 0)
 			return null;
@@ -125,24 +115,24 @@ public class BasicLdfServlet extends HttpServlet {
 			return null;
 		// angular brackets indicate a URI
 		case '<':
-			return model.createResource(value.substring(1, value.length() - 1));
+			return ResourceFactory.createResource(value.substring(1, value.length() - 1));
 		// quotes indicate a string
 		case '"':
 			final Matcher matcher = STRINGPATTERN.matcher(value);
 			if (matcher.matches()) {
 				final String body = matcher.group(1);
-				final String type = matcher.group(2);
-				final String lang = matcher.group(3);
-				if (type != null)
-					return model.createTypedLiteral(body, type);
+				final String lang = matcher.group(2);
+				final String type = matcher.group(3);
 				if (lang != null)
-					return model.createLiteral(body, lang);
-				return model.createLiteral(body);
+					return ResourceFactory.createLangLiteral(body, lang);
+				if (type != null)
+					return ResourceFactory.createTypedLiteral(body, types.getSafeTypeByName(type));
+				return ResourceFactory.createPlainLiteral(body);
 			}
 			return null;
 		// assume it's a URI without angular brackets
 		default:
-			return model.createResource(value);
+			return ResourceFactory.createResource(value);
 		}
 	}
 }
