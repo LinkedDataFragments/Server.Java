@@ -1,4 +1,4 @@
-package org.linkeddatafragments.servlets;
+package org.linkeddatafragments.servlet;
 
 import java.util.HashMap;
 import java.util.Map.Entry;
