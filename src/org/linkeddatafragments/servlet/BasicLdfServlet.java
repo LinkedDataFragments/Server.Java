@@ -1,5 +1,7 @@
 package org.linkeddatafragments.servlet;
 
+import java.io.File;
+import java.io.FileReader;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
@@ -41,7 +43,15 @@ public class BasicLdfServlet extends HttpServlet {
 	@Override
 	public void init(ServletConfig servletConfig) throws ServletException {
 		try {
-			config = new ConfigReader(servletConfig.getInitParameter("configFile"));
+			// find the configuration file
+			final File applicationPath = new File(servletConfig.getServletContext().getRealPath("/"));
+			final File serverHome = applicationPath.getParentFile().getParentFile();
+		    final File configFile = new File(serverHome, "conf/ldf-server.json");
+			if (!configFile.exists())
+				throw new Exception("Configuration file " + configFile + " not found.");
+			
+			// load the configuration
+			config = new ConfigReader(new FileReader(configFile));
 			for (Entry<String, String> dataSource : config.getDataSources().entrySet())
 				dataSources.put(dataSource.getKey(), new HdtDataSource(dataSource.getValue()));
 		}
@@ -59,7 +69,7 @@ public class BasicLdfServlet extends HttpServlet {
 			final String dataSourceName = path.substring(1);
 			final DataSource dataSource = dataSources.get(dataSourceName);
 			if (dataSource == null)
-				throw new Exception("data source not found");
+				throw new Exception("Data source not found.");
 			
 			// query the fragment
 			final Resource subject = parseAsResource(request.getParameter("subject"));
