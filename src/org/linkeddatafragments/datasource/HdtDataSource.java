@@ -41,6 +41,8 @@ public class HdtDataSource implements DataSource {
         final int subjectId = subject == null ? 0 : dictionary.getIntID(subject.asNode(), TripleComponentRole.SUBJECT);
         final int predicateId = predicate == null ? 0 : dictionary.getIntID(predicate.asNode(), TripleComponentRole.PREDICATE);
         final int objectId = object == null ? 0 : dictionary.getIntID(object.asNode(), TripleComponentRole.OBJECT);
+        if (subjectId < 0 || predicateId < 0 || objectId < 0)
+        	return new BasicLinkedDataFragmentBase();
 		final IteratorTripleID result = datasource.getTriples().search(new TripleID(subjectId, predicateId, objectId));
 		
 		// create the fragment
