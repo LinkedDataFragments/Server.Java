@@ -90,7 +90,8 @@ public class BasicLdfServlet extends HttpServlet {
 			
 			// serialize the output as Turtle
 			response.setHeader("Server", "Linked Data Fragments Server");
-			response.setHeader("Content-Type", "text/turtle");
+			response.setContentType("text/turtle");
+			response.setCharacterEncoding("UTF-8");
 			output.write(response.getWriter(), "Turtle");
 		}
 		catch (Exception e) {
