@@ -118,9 +118,10 @@ public class BasicLdfServlet extends HttpServlet {
 			output.add(objectMapping,    HYDRA_PROPERTY, RDF_OBJECT);
 			
 			// serialize the output as Turtle
+			response.setStatus(fragment.getTotalSize() == 0 ? 404 : 200);
 			response.setHeader("Server", "Linked Data Fragments Server");
 			response.setContentType("text/turtle");
-			response.setCharacterEncoding("UTF-8");
+			response.setCharacterEncoding("utf-8");
 			output.write(response.getWriter(), "Turtle");
 		}
 		catch (Exception e) {
