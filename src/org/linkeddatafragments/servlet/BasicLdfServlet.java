@@ -22,6 +22,7 @@ import static org.linkeddatafragments.util.CommonResources.*;
 
 import com.hp.hpl.jena.datatypes.TypeMapper;
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
+import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
@@ -81,12 +82,40 @@ public class BasicLdfServlet extends HttpServlet {
 			final Model output = fragment.getTriples();
 			output.setNsPrefixes(config.getPrefixes());
 			
-			// add metadata
-			final String datasetUrl = request.getScheme() + "://" + request.getServerName() + path;
+			// add dataset metadata
+			final String hostName = request.getHeader("Host");
+			final String datasetUrl = request.getScheme() + "://" +
+								      (hostName == null ? request.getServerName() : hostName) + request.getRequestURI();
 			final String fragmentUrl = query == null ? datasetUrl : (datasetUrl + "?" + query);
+			final Resource datasetId = output.createResource(datasetUrl);
 			final Resource fragmentId = output.createResource(fragmentUrl);
-			output.add(fragmentId, VOID_TRIPLES,
-						output.createTypedLiteral(fragment.getTotalSize(), XSDDatatype.XSDinteger));
+			output.add(datasetId, RDF_TYPE, VOID_DATASET);
+			output.add(datasetId, RDF_TYPE, HYDRA_COLLECTION);
+			output.add(datasetId, VOID_SUBSET, fragmentId);
+			
+			// add fragment metadata
+			output.add(fragmentId, RDF_TYPE, HYDRA_COLLECTION);
+			output.add(fragmentId, RDF_TYPE, HYDRA_PAGEDCOLLECTION);
+			final Literal total = output.createTypedLiteral(fragment.getTotalSize(), XSDDatatype.XSDinteger);
+			output.add(fragmentId, VOID_TRIPLES, total);
+			output.add(fragmentId, HYDRA_TOTALITEMS, total);
+			
+			// add controls
+			final Resource triplePattern    = output.createResource();
+			final Resource subjectMapping   = output.createResource();
+			final Resource predicateMapping = output.createResource();
+			final Resource objectMapping    = output.createResource();
+			output.add(datasetId,        HYDRA_SEARCH,   triplePattern);
+			output.add(triplePattern,    HYDRA_TEMPLATE, output.createLiteral(datasetUrl + "{?subject,predicate,object}"));
+			output.add(triplePattern,    HYDRA_MAPPING,  subjectMapping);
+			output.add(triplePattern,    HYDRA_MAPPING,  predicateMapping);
+			output.add(triplePattern,    HYDRA_MAPPING,  objectMapping);
+			output.add(subjectMapping,   HYDRA_VARIABLE, output.createLiteral("subject"));
+			output.add(subjectMapping,   HYDRA_PROPERTY, RDF_SUBJECT);
+			output.add(predicateMapping, HYDRA_VARIABLE, output.createLiteral("predicate"));
+			output.add(predicateMapping, HYDRA_PROPERTY, RDF_PREDICATE);
+			output.add(objectMapping,    HYDRA_VARIABLE, output.createLiteral("object"));
+			output.add(objectMapping,    HYDRA_PROPERTY, RDF_OBJECT);
 			
 			// serialize the output as Turtle
 			response.setHeader("Server", "Linked Data Fragments Server");
