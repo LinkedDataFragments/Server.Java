@@ -26,6 +26,10 @@ public class CommonResources {
 	public final static Property HYDRA_PROPERTY = createProperty(HYDRA + "property");
 	public final static Property HYDRA_COLLECTION = createProperty(HYDRA + "Collection");
 	public final static Property HYDRA_PAGEDCOLLECTION = createProperty(HYDRA + "PagedCollection");
+	public final static Property HYDRA_FIRSTPAGE = createProperty(HYDRA + "firstPage");
+	public final static Property HYDRA_LASTPAGE = createProperty(HYDRA + "lastPage");
+	public final static Property HYDRA_NEXTPAGE = createProperty(HYDRA + "nextPage");
+	public final static Property HYDRA_PREVIOUSPAGE = createProperty(HYDRA + "previousPage");
 	
 	private final static Property createProperty(String uri) {
 		return ResourceFactory.createProperty(uri);

@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.http.client.utils.URIBuilder;
 import org.linkeddatafragments.config.ConfigReader;
 import org.linkeddatafragments.datasource.BasicLinkedDataFragment;
 import org.linkeddatafragments.datasource.DataSource;
@@ -37,6 +38,7 @@ public class BasicLdfServlet extends HttpServlet {
 	private final static long serialVersionUID = 1L;
 	private final static Pattern STRINGPATTERN = Pattern.compile("^\"(.*)\"(?:@(.*)|\\^\\^<(.*)>)?$");
 	private final static TypeMapper types = TypeMapper.getInstance();
+	private final static long TRIPLESPERPAGE = 100;
 	
 	private ConfigReader config;
 	private HashMap<String, DataSource> dataSources = new HashMap<String, DataSource>();
@@ -76,10 +78,13 @@ public class BasicLdfServlet extends HttpServlet {
 			final Resource subject = parseAsResource(request.getParameter("subject"));
 			final Property predicate = parseAsProperty(request.getParameter("predicate"));
 			final RDFNode object = parseAsNode(request.getParameter("object"));
-			final BasicLinkedDataFragment fragment = dataSource.getFragment(subject, predicate, object);
+			final long page = Math.max(1, parseAsInteger(request.getParameter("page")));
+			final long limit = TRIPLESPERPAGE, offset = limit * (page - 1);
+			final BasicLinkedDataFragment fragment = dataSource.getFragment(subject, predicate, object, offset, limit);
 			
 			// fill the output model
 			final Model output = fragment.getTriples();
+			final boolean isEmpty = output.size() == 0;
 			output.setNsPrefixes(config.getPrefixes());
 			
 			// add dataset metadata
@@ -87,7 +92,7 @@ public class BasicLdfServlet extends HttpServlet {
 			final String datasetUrl = request.getScheme() + "://" +
 								      (hostName == null ? request.getServerName() : hostName) + request.getRequestURI();
 			final String fragmentUrl = query == null ? datasetUrl : (datasetUrl + "?" + query);
-			final Resource datasetId = output.createResource(datasetUrl);
+			final Resource datasetId = output.createResource(datasetUrl + "#dataset");
 			final Resource fragmentId = output.createResource(fragmentUrl);
 			output.add(datasetId, RDF_TYPE, VOID_DATASET);
 			output.add(datasetId, RDF_TYPE, HYDRA_COLLECTION);
@@ -99,6 +104,20 @@ public class BasicLdfServlet extends HttpServlet {
 			final Literal total = output.createTypedLiteral(fragment.getTotalSize(), XSDDatatype.XSDinteger);
 			output.add(fragmentId, VOID_TRIPLES, total);
 			output.add(fragmentId, HYDRA_TOTALITEMS, total);
+			output.add(fragmentId, HYDRA_ITEMSPERPAGE, output.createTypedLiteral(limit, XSDDatatype.XSDinteger));
+			
+			// add pages
+			final URIBuilder pagedUrl = new URIBuilder(fragmentUrl);
+			pagedUrl.setParameter("page", "1");
+			output.add(fragmentId, HYDRA_FIRSTPAGE, output.createResource(pagedUrl.toString()));
+			if (offset > 0) {
+				pagedUrl.setParameter("page", Long.toString(page - 1));
+				output.add(fragmentId, HYDRA_PREVIOUSPAGE, output.createResource(pagedUrl.toString()));
+			}
+			if (offset + limit < fragment.getTotalSize()) {
+				pagedUrl.setParameter("page", Long.toString(page + 1));
+				output.add(fragmentId, HYDRA_NEXTPAGE, output.createResource(pagedUrl.toString()));
+			}
 			
 			// add controls
 			final Resource triplePattern    = output.createResource();
@@ -118,15 +137,25 @@ public class BasicLdfServlet extends HttpServlet {
 			output.add(objectMapping,    HYDRA_PROPERTY, RDF_OBJECT);
 			
 			// serialize the output as Turtle
-			response.setStatus(fragment.getTotalSize() == 0 ? 404 : 200);
+			response.setStatus(isEmpty ? 404 : 200);
 			response.setHeader("Server", "Linked Data Fragments Server");
 			response.setContentType("text/turtle");
 			response.setCharacterEncoding("utf-8");
-			output.write(response.getWriter(), "Turtle");
+			output.write(response.getWriter(), "Turtle", fragmentUrl);
 		}
 		catch (Exception e) {
 			throw new ServletException(e);
 		}
+	}
+	
+	/**
+	 * Parses the given value as an integer.
+	 * @param value the value
+	 * @return the parsed value
+	 */
+	private int parseAsInteger(String value) {
+		try { return Integer.parseInt(value); }
+		catch (NumberFormatException ex) { return 0; }
 	}
 	
 	/**

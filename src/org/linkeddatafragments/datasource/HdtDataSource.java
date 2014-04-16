@@ -21,7 +21,6 @@ import com.hp.hpl.jena.rdf.model.Resource;
  * @author Ruben Verborgh
  */
 public class HdtDataSource implements DataSource {
-	private final static int TRIPLES_LIMIT = 100;
 	private final HDT datasource;
 	private final NodeDictionary dictionary;
 	
@@ -36,7 +35,10 @@ public class HdtDataSource implements DataSource {
 	}
 
 	@Override
-	public BasicLinkedDataFragment getFragment(Resource subject, Property predicate, RDFNode object) {
+	public BasicLinkedDataFragment getFragment(Resource subject, Property predicate, RDFNode object, final long offset, final long limit) {
+		if (offset < 0) throw new IndexOutOfBoundsException("offset");
+		if (limit  < 1) throw new IllegalArgumentException("limit");
+		
 		// look up the result from the HDT datasource
         final int subjectId = subject == null ? 0 : dictionary.getIntID(subject.asNode(), TripleComponentRole.SUBJECT);
         final int predicateId = predicate == null ? 0 : dictionary.getIntID(predicate.asNode(), TripleComponentRole.PREDICATE);
@@ -50,9 +52,29 @@ public class HdtDataSource implements DataSource {
 			@Override
 			public Model getTriples() {
 				final Model triples = ModelFactory.createDefaultModel();
-				result.goToStart();
-				for (int i = 0; i < TRIPLES_LIMIT && result.hasNext(); i++)
-					triples.add(triples.asStatement(toTriple(result.next())));
+				
+				// try to jump directly to the offset
+				boolean atOffset;
+				if (result.canGoTo()) {
+					try {
+						result.goTo(offset);
+						atOffset = true;
+					}
+					// if the offset is outside the bounds, this page has no matches
+					catch (IndexOutOfBoundsException exception) { atOffset = false; }
+				}
+				// if not possible, advance to the offset iteratively
+				else {
+					result.goToStart();
+					for (int i = 0; !(atOffset = i == offset) && result.hasNext(); i++)
+						result.next();
+				}
+				
+				// add `limit` triples to the result model
+				if (atOffset) {
+					for (int i = 0; i < limit && result.hasNext(); i++)
+						triples.add(triples.asStatement(toTriple(result.next())));
+				}
 				return triples;
 			}
 			
