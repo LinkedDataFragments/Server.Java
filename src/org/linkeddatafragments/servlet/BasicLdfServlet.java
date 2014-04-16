@@ -29,6 +29,7 @@ import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
+import com.hp.hpl.jena.shared.InvalidPropertyURIException;
 
 /**
  * Servlet that responds with a Basic Linked Data Fragment.
@@ -174,8 +175,14 @@ public class BasicLdfServlet extends HttpServlet {
 	 * @return the parsed value, or null if unspecified
 	 */
 	private Property parseAsProperty(String value) {
-		final RDFNode predicate = parseAsNode(value);
-		return predicate instanceof Resource ? ResourceFactory.createProperty(((Resource)predicate).getURI()) : null;
+		final RDFNode predicateNode = parseAsNode(value);
+		if (predicateNode instanceof Resource) {
+			try { return ResourceFactory.createProperty(((Resource)predicateNode).getURI()); }
+			catch (InvalidPropertyURIException ex) {
+				return ResourceFactory.createProperty("urn:invalid-predicate-uri");
+			}
+		}
+		return null;
 	}
 	
 	/**
