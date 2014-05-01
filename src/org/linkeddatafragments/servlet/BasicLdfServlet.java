@@ -166,7 +166,7 @@ public class BasicLdfServlet extends HttpServlet {
 	 */
 	private Resource parseAsResource(String value) {
 		final RDFNode subject = parseAsNode(value);
-		return subject instanceof Resource ? (Resource)subject : null;
+		return subject == null || subject instanceof Resource ? (Resource)subject : INVALID_URI;
 	}
 	
 	/**
@@ -178,11 +178,9 @@ public class BasicLdfServlet extends HttpServlet {
 		final RDFNode predicateNode = parseAsNode(value);
 		if (predicateNode instanceof Resource) {
 			try { return ResourceFactory.createProperty(((Resource)predicateNode).getURI()); }
-			catch (InvalidPropertyURIException ex) {
-				return ResourceFactory.createProperty("urn:invalid-predicate-uri");
-			}
+			catch (InvalidPropertyURIException ex) { return INVALID_URI; }
 		}
-		return null;
+		return predicateNode == null ? null : INVALID_URI;
 	}
 	
 	/**

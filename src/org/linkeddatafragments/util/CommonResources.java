@@ -31,6 +31,8 @@ public class CommonResources {
 	public final static Property HYDRA_NEXTPAGE = createProperty(HYDRA + "nextPage");
 	public final static Property HYDRA_PREVIOUSPAGE = createProperty(HYDRA + "previousPage");
 	
+	public final static Property INVALID_URI = createProperty("urn:invalid");
+	
 	private final static Property createProperty(String uri) {
 		return ResourceFactory.createProperty(uri);
 	}
