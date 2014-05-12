@@ -1,8 +1,8 @@
 {
   "datasources": {
     "dbpedia": {
-      "path": "/path/to/dataset.hdt",
-    },
+      "path": "/path/to/dataset.hdt"
+    }
   },
 
   "prefixes": {
