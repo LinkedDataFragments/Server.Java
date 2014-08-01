@@ -85,7 +85,6 @@ public class BasicLdfServlet extends HttpServlet {
 			
 			// fill the output model
 			final Model output = fragment.getTriples();
-			final boolean isEmpty = output.size() == 0;
 			output.setNsPrefixes(config.getPrefixes());
 			
 			// add dataset metadata
@@ -138,7 +137,6 @@ public class BasicLdfServlet extends HttpServlet {
 			output.add(objectMapping,    HYDRA_PROPERTY, RDF_OBJECT);
 			
 			// serialize the output as Turtle
-			response.setStatus(isEmpty ? 404 : 200);
 			response.setHeader("Server", "Linked Data Fragments Server");
 			response.setContentType("text/turtle");
 			response.setCharacterEncoding("utf-8");
