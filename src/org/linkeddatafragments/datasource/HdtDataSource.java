@@ -46,6 +46,8 @@ public class HdtDataSource implements DataSource {
         if (subjectId < 0 || predicateId < 0 || objectId < 0)
         	return new BasicLinkedDataFragmentBase();
 		final IteratorTripleID result = datasource.getTriples().search(new TripleID(subjectId, predicateId, objectId));
+		// estimates can be wrong; ensure 0 is returned if and only if there are no results
+		final long totalSize = result.hasNext() ? Math.max(result.estimatedNumResults(), 1) : 0;
 		
 		// create the fragment
 		return new BasicLinkedDataFragment() {
@@ -79,9 +81,7 @@ public class HdtDataSource implements DataSource {
 			}
 			
 			@Override
-			public long getTotalSize() {
-				return result.estimatedNumResults();
-			}
+			public long getTotalSize() { return totalSize; }
 		};
 	}
 
