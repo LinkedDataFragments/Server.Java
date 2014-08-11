@@ -37,7 +37,7 @@ import com.hp.hpl.jena.shared.InvalidPropertyURIException;
  */
 public class BasicLdfServlet extends HttpServlet {
 	private final static long serialVersionUID = 1L;
-	private final static Pattern STRINGPATTERN = Pattern.compile("^\"(.*)\"(?:@(.*)|\\^\\^<(.*)>)?$");
+	private final static Pattern STRINGPATTERN = Pattern.compile("^\"(.*)\"(?:@(.*)|\\^\\^<?([^<>]*)>?)?$");
 	private final static TypeMapper types = TypeMapper.getInstance();
 	private final static long TRIPLESPERPAGE = 100;
 	
@@ -213,7 +213,7 @@ public class BasicLdfServlet extends HttpServlet {
 					return ResourceFactory.createTypedLiteral(body, types.getSafeTypeByName(type));
 				return ResourceFactory.createPlainLiteral(body);
 			}
-			return null;
+			return INVALID_URI;
 		// assume it's a URI without angular brackets
 		default:
 			return ResourceFactory.createResource(value);
