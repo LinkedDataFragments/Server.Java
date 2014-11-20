@@ -42,13 +42,17 @@ public class BasicLdfServlet extends HttpServlet {
 	private final static long TRIPLESPERPAGE = 100;
 	
 	private ConfigReader config;
-	private HashMap<String, DataSource> dataSources = new HashMap<String, DataSource>();
+	private HashMap<String, DataSource> dataSources = new HashMap<>();
 
 	@Override
 	public void init(ServletConfig servletConfig) throws ServletException {
 		try {
 			// find the configuration file
-			final File applicationPath = new File(servletConfig.getServletContext().getRealPath("/"));
+			String applicationPathStr = servletConfig.getServletContext().getRealPath("/");
+			if (applicationPathStr == null) {	// this can happen when running standalone
+				applicationPathStr = System.getProperty("user.dir");
+			}
+			final File applicationPath = new File(applicationPathStr);
 			final File serverHome = applicationPath.getParentFile().getParentFile();
 		    final File configFile = new File(serverHome, "conf/ldf-server.json");
 			if (!configFile.exists())
@@ -68,7 +72,9 @@ public class BasicLdfServlet extends HttpServlet {
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException {
 		try {
 			// find the data source
-			final String path = request.getRequestURI().substring(request.getContextPath().length());
+			final String contextPath = request.getContextPath();
+			final String requestURI = request.getRequestURI();
+			final String path = contextPath == null ? requestURI : requestURI.substring(contextPath.length());
 			final String query = request.getQueryString();
 			final String dataSourceName = path.substring(1);
 			final DataSource dataSource = dataSources.get(dataSourceName);
