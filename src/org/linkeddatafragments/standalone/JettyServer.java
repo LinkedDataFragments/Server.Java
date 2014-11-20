@@ -53,6 +53,9 @@ public class JettyServer {
 			// The use of server.join() the will make the current thread join and wait until the server is done executing.
 			// See http://docs.oracle.com/javase/7/docs/api/java/lang/Thread.html#join()
 			server.join();
+		} catch (ParseException e) {
+			System.out.println(e.getMessage());
+			printHelp = true;
 
 		} finally {
 			if (printHelp) {
