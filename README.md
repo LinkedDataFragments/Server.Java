@@ -1,5 +1,5 @@
 # Linked Data Fragments Server <img src="http://linkeddatafragments.org/images/logo.svg" width="100" align="right" alt="" />
-Basic Linked Data Fragments server in Java.
+Triple Pattern Fragments server in Java.
 
 ## Build
 Execute the following command to create a WAR file:
