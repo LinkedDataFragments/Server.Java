@@ -29,7 +29,8 @@ $ mvn install
 ```
 ## Deploy stand alone
 The server can run with Jetty from a single jar as follows:
-  java -jar ldf-server.jar [config.json]
+
+    java -jar ldf-server.jar [config.json]
 
 The `config.json` parameters is optional and is default the `config-example.json` file in the same directory as `ldf-server.jar`.
 
@@ -37,10 +38,11 @@ The `config.json` parameters is optional and is default the `config-example.json
 Use an application server such as [Tomcat](http://tomcat.apache.org/) to deploy the WAR file.
 
 Create an `config.json` configuration file with the data sources (analogous to the example file) and add the following init parameter to `web.xml`:
-  <init-param>
-    <param-name>configFile</param-name>
-    <param-value>path/to/config/file</param-value>
-  </init-param>
+
+    <init-param>
+      <param-name>configFile</param-name>
+      <param-value>path/to/config/file</param-value>
+    </init-param>
   
 If no parameter is set, it looks for a default `config-example.json` in the folder of the deployed WAR file.
 
