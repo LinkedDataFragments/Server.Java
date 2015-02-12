@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>LDF-Server</groupId>
     <artifactId>LDF-Server</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <packaging>war</packaging>
 
     <properties>
@@ -88,6 +88,10 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <finalName>
+                        ldf-server
+                    </finalName>
+                    <appendAssemblyId>false</appendAssemblyId>
                     <archive>
                         <manifest>
                             <mainClass>org.linkeddatafragments.standalone.JettyServer</mainClass>
