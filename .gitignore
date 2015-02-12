@@ -1,3 +1,4 @@
 .settings
 target
 ldf-server.json
+/data/

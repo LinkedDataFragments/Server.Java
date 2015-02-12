@@ -7,14 +7,14 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
  * Base implementation of a Basic Linked Data Fragment.
  * @author Ruben Verborgh
  */
-public class BasicLinkedDataFragmentBase implements BasicLinkedDataFragment {
+public class TriplePatternFragmentBase implements TriplePatternFragment {
 	private final Model triples;
 	private final long totalSize;
 	
 	/**
 	 * Creates an empty Basic Linked Data Fragment.
 	 */
-	public BasicLinkedDataFragmentBase() {
+	public TriplePatternFragmentBase() {
 		this(null, 0);
 	}
 	
@@ -23,7 +23,7 @@ public class BasicLinkedDataFragmentBase implements BasicLinkedDataFragment {
 	 * @param triples the triples (possibly partial)
 	 * @param totalSize the total size
 	 */
-	public BasicLinkedDataFragmentBase(Model triples, long totalSize) {
+	public TriplePatternFragmentBase(Model triples, long totalSize) {
 		this.triples = triples == null ? ModelFactory.createDefaultModel() : triples;
 		this.totalSize = totalSize < 0 ? 0 : totalSize;
 	}

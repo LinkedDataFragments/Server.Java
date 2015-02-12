@@ -3,10 +3,10 @@ package org.linkeddatafragments.datasource;
 import com.hp.hpl.jena.rdf.model.Model;
 
 /**
- * A Basic Linked Data Fragment.
+ * A Triple Pattern Fragment.
  * @author Ruben Verborgh
  */
-public interface BasicLinkedDataFragment {
+public interface TriplePatternFragment {
 	/**
 	 * Gets the data of this fragment (possibly only partial).
 	 * @return the data as triples
