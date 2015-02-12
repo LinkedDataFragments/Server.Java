@@ -23,15 +23,28 @@ Each Triple Pattern Fragment offers:
 This is a **Java** implementation based on Jena. 
 
 ## Build
-Execute the following command to create a WAR file:
+Execute the following command to create a WAR and JAR file:
 ```
 $ mvn install
 ```
+## Deploy stand alone
+The server can run with Jetty from a single jar as follows:
 
-## Deploy
+    java -jar ldf-server.jar [config.json]
+
+The `config.json` parameters is optional and is default the `config-example.json` file in the same directory as `ldf-server.jar`.
+
+## Deploy on an application server
 Use an application server such as [Tomcat](http://tomcat.apache.org/) to deploy the WAR file.
 
-Place an `ldf-server.json` configuration file with the data sources (analogous to the example file) in the `../conf` folder relative to the deployed WAR file.
+Create an `config.json` configuration file with the data sources (analogous to the example file) and add the following init parameter to `web.xml`:
+
+    <init-param>
+      <param-name>configFile</param-name>
+      <param-value>path/to/config/file</param-value>
+    </init-param>
+  
+If no parameter is set, it looks for a default `config-example.json` in the folder of the deployed WAR file.
 
 ## Status
 This is software is still under development. It currently only supports:
