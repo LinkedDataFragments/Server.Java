@@ -56,48 +56,46 @@ public class HdtDataSource extends DataSource {
         if (subjectId < 0 || predicateId < 0 || objectId < 0) {
             return new TriplePatternFragmentBase();
         }
-        final IteratorTripleID result = datasource.getTriples().search(new TripleID(subjectId, predicateId, objectId));
-        // estimates can be wrong; ensure 0 is returned if and only if there are no results
-        final long totalSize = result.hasNext() ? Math.max(result.estimatedNumResults(), 1) : 0;
+        final Model triples = ModelFactory.createDefaultModel();
+		final IteratorTripleID matches = datasource.getTriples().search(new TripleID(subjectId, predicateId, objectId));
+		final boolean hasMatches = matches.hasNext();
+		
+		if (hasMatches) {
+			// try to jump directly to the offset
+			boolean atOffset;
+			if (matches.canGoTo()) {
+				try {
+					matches.goTo(offset);
+					atOffset = true;
+				}
+				// if the offset is outside the bounds, this page has no matches
+				catch (IndexOutOfBoundsException exception) { atOffset = false; }
+			}
+			// if not possible, advance to the offset iteratively
+			else {
+				matches.goToStart();
+				for (int i = 0; !(atOffset = i == offset) && matches.hasNext(); i++)
+					matches.next();
+			}
+			// try to add `limit` triples to the result model
+			if (atOffset) {
+				for (int i = 0; i < limit && matches.hasNext(); i++)
+					triples.add(triples.asStatement(toTriple(matches.next())));
+			}
+		}
+		
+		// estimates can be wrong; ensure 0 is returned if there are no results, and always more than actual results
+		final long estimatedTotal = triples.size() > 0 ? Math.max(offset + triples.size() + 1, matches.estimatedNumResults())
+													   : hasMatches ? Math.max(matches.estimatedNumResults(), 1) : 0;
 
         // create the fragment
         return new TriplePatternFragment() {
-            @Override
-            public Model getTriples() {
-                final Model triples = ModelFactory.createDefaultModel();
-
-                // try to jump directly to the offset
-                boolean atOffset;
-                if (result.canGoTo()) {
-                    try {
-                        result.goTo(offset);
-                        atOffset = true;
-                    } // if the offset is outside the bounds, this page has no matches
-                    catch (IndexOutOfBoundsException exception) {
-                        atOffset = false;
-                    }
-                } // if not possible, advance to the offset iteratively
-                else {
-                    result.goToStart();
-                    for (int i = 0; !(atOffset = i == offset) && result.hasNext(); i++) {
-                        result.next();
-                    }
-                }
-
-                // add `limit` triples to the result model
-                if (atOffset) {
-                    for (int i = 0; i < limit && result.hasNext(); i++) {
-                        triples.add(triples.asStatement(toTriple(result.next())));
-                    }
-                }
-                return triples;
-            }
-
-            @Override
-            public long getTotalSize() {
-                return totalSize;
-            }
-        };
+			@Override
+			public Model getTriples() { return triples; }
+			
+			@Override
+			public long getTotalSize() { return estimatedTotal; }
+		};
     }
 
     /**
