@@ -15,9 +15,8 @@ import com.google.gson.JsonParser;
  * @author Ruben Verborgh
  */
 public class ConfigReader {
-
-    private final Map<String, JsonObject> dataSources = new HashMap<String, JsonObject>();
-    private final Map<String, String> prefixes = new HashMap<String, String>();
+    private final Map<String, JsonObject> dataSources = new HashMap<>();
+    private final Map<String, String> prefixes = new HashMap<>();
 
     /**
      * Creates a new configuration reader.
@@ -25,12 +24,12 @@ public class ConfigReader {
      * @param configReader the configuration
      */
     public ConfigReader(Reader configReader) {
-        final JsonObject root = new JsonParser().parse(configReader).getAsJsonObject();
-        for (final Entry<String, JsonElement> entry : root.getAsJsonObject("datasources").entrySet()) {
-            final JsonObject dataSource = entry.getValue().getAsJsonObject();
+        JsonObject root = new JsonParser().parse(configReader).getAsJsonObject();
+        for (Entry<String, JsonElement> entry : root.getAsJsonObject("datasources").entrySet()) {
+            JsonObject dataSource = entry.getValue().getAsJsonObject();
             this.dataSources.put(entry.getKey(), dataSource);
         }
-        for (final Entry<String, JsonElement> entry : root.getAsJsonObject("prefixes").entrySet()) {
+        for (Entry<String, JsonElement> entry : root.getAsJsonObject("prefixes").entrySet()) {
             this.prefixes.put(entry.getKey(), entry.getValue().getAsString());
         }
     }
