@@ -18,7 +18,6 @@ import org.apache.http.client.utils.URIBuilder;
 import org.linkeddatafragments.config.ConfigReader;
 import org.linkeddatafragments.datasource.TriplePatternFragment;
 import org.linkeddatafragments.datasource.IDataSource;
-import org.linkeddatafragments.datasource.HdtDataSource;
 
 import static org.linkeddatafragments.util.CommonResources.*;
 
@@ -46,7 +45,7 @@ public class TriplePatternFragmentServlet extends HttpServlet {
     private final static long TRIPLESPERPAGE = 100;
 
     private ConfigReader config;
-    private HashMap<String, IDataSource> dataSources = new HashMap<>();
+    private final HashMap<String, IDataSource> dataSources = new HashMap<>();
 
     @Override
     public void init(ServletConfig servletConfig) throws ServletException {
@@ -85,35 +84,36 @@ public class TriplePatternFragmentServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException {
         try {
             // find the data source
-            final String contextPath = request.getContextPath();
-            final String requestURI = request.getRequestURI();
-            final String path = contextPath == null ? requestURI : requestURI.substring(contextPath.length());
-            final String query = request.getQueryString();
-            final String dataSourceName = path.substring(1);
-            final IDataSource dataSource = dataSources.get(dataSourceName);
+            String contextPath = request.getContextPath();
+            String requestURI = request.getRequestURI();
+            String path = contextPath == null ? requestURI : requestURI.substring(contextPath.length());
+            String query = request.getQueryString();
+            String dataSourceName = path.substring(1);
+            IDataSource dataSource = dataSources.get(dataSourceName);
             if (dataSource == null) {
                 throw new Exception("Data source not found.");
             }
 
             // query the fragment
-            final Resource subject = parseAsResource(request.getParameter("subject"));
-            final Property predicate = parseAsProperty(request.getParameter("predicate"));
-            final RDFNode object = parseAsNode(request.getParameter("object"));
-            final long page = Math.max(1, parseAsInteger(request.getParameter("page")));
-            final long limit = TRIPLESPERPAGE, offset = limit * (page - 1);
-            final TriplePatternFragment fragment = dataSource.getFragment(subject, predicate, object, offset, limit);
+            Resource subject = parseAsResource(request.getParameter("subject"));
+            Property predicate = parseAsProperty(request.getParameter("predicate"));
+            RDFNode object = parseAsNode(request.getParameter("object"));
+            long page = Math.max(1, parseAsInteger(request.getParameter("page")));
+            long limit = TRIPLESPERPAGE, offset = limit * (page - 1);
+            TriplePatternFragment fragment = dataSource.getFragment(subject, predicate, object, offset, limit);
 
             // fill the output model
-            final Model output = fragment.getTriples();
+            Model output = fragment.getTriples();
             output.setNsPrefixes(config.getPrefixes());
 
             // add dataset metadata
-            final String hostName = request.getHeader("Host");
-            final String datasetUrl = request.getScheme() + "://"
+            String hostName = request.getHeader("Host");
+            String datasetUrl = request.getScheme() + "://"
                     + (hostName == null ? request.getServerName() : hostName) + request.getRequestURI();
-            final String fragmentUrl = query == null ? datasetUrl : (datasetUrl + "?" + query);
-            final Resource datasetId = output.createResource(datasetUrl + "#dataset");
-            final Resource fragmentId = output.createResource(fragmentUrl);
+            String fragmentUrl = query == null ? datasetUrl : (datasetUrl + "?" + query);
+            Resource datasetId = output.createResource(datasetUrl + "#dataset");
+            Resource fragmentId = output.createResource(fragmentUrl);
+            
             output.add(datasetId, RDF_TYPE, VOID_DATASET);
             output.add(datasetId, RDF_TYPE, HYDRA_COLLECTION);
             output.add(datasetId, VOID_SUBSET, fragmentId);
@@ -121,7 +121,7 @@ public class TriplePatternFragmentServlet extends HttpServlet {
             // add fragment metadata
             output.add(fragmentId, RDF_TYPE, HYDRA_COLLECTION);
             output.add(fragmentId, RDF_TYPE, HYDRA_PAGEDCOLLECTION);
-            final Literal total = output.createTypedLiteral(fragment.getTotalSize(), XSDDatatype.XSDinteger);
+            Literal total = output.createTypedLiteral(fragment.getTotalSize(), XSDDatatype.XSDinteger);
             output.add(fragmentId, VOID_TRIPLES, total);
             output.add(fragmentId, HYDRA_TOTALITEMS, total);
             output.add(fragmentId, HYDRA_ITEMSPERPAGE, output.createTypedLiteral(limit, XSDDatatype.XSDinteger));
@@ -140,10 +140,11 @@ public class TriplePatternFragmentServlet extends HttpServlet {
             }
 
             // add controls
-            final Resource triplePattern = output.createResource();
-            final Resource subjectMapping = output.createResource();
-            final Resource predicateMapping = output.createResource();
-            final Resource objectMapping = output.createResource();
+            Resource triplePattern = output.createResource();
+            Resource subjectMapping = output.createResource();
+            Resource predicateMapping = output.createResource();
+            Resource objectMapping = output.createResource();
+            
             output.add(datasetId, HYDRA_SEARCH, triplePattern);
             output.add(triplePattern, HYDRA_TEMPLATE, output.createLiteral(datasetUrl + "{?subject,predicate,object}"));
             output.add(triplePattern, HYDRA_MAPPING, subjectMapping);
@@ -187,7 +188,7 @@ public class TriplePatternFragmentServlet extends HttpServlet {
      * @return the parsed value, or null if unspecified
      */
     private Resource parseAsResource(String value) {
-        final RDFNode subject = parseAsNode(value);
+        RDFNode subject = parseAsNode(value);
         return subject == null || subject instanceof Resource ? (Resource) subject : INVALID_URI;
     }
 
@@ -198,7 +199,7 @@ public class TriplePatternFragmentServlet extends HttpServlet {
      * @return the parsed value, or null if unspecified
      */
     private Property parseAsProperty(String value) {
-        final RDFNode predicateNode = parseAsNode(value);
+        RDFNode predicateNode = parseAsNode(value);
         if (predicateNode instanceof Resource) {
             try {
                 return ResourceFactory.createProperty(((Resource) predicateNode).getURI());
@@ -221,7 +222,7 @@ public class TriplePatternFragmentServlet extends HttpServlet {
             return null;
         }
         // find the kind of entity based on the first character
-        final char firstChar = value.charAt(0);
+        char firstChar = value.charAt(0);
         switch (firstChar) {
             // variable or blank node indicates an unknown
             case '?':
@@ -232,11 +233,11 @@ public class TriplePatternFragmentServlet extends HttpServlet {
                 return ResourceFactory.createResource(value.substring(1, value.length() - 1));
             // quotes indicate a string
             case '"':
-                final Matcher matcher = STRINGPATTERN.matcher(value);
+                Matcher matcher = STRINGPATTERN.matcher(value);
                 if (matcher.matches()) {
-                    final String body = matcher.group(1);
-                    final String lang = matcher.group(2);
-                    final String type = matcher.group(3);
+                    String body = matcher.group(1);
+                    String lang = matcher.group(2);
+                    String type = matcher.group(3);
                     if (lang != null) {
                         return ResourceFactory.createLangLiteral(body, lang);
                     }

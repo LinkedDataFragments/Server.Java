@@ -1,6 +1,11 @@
 package org.linkeddatafragments.standalone;
 
-import org.apache.commons.cli.*;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -16,7 +21,7 @@ import org.linkeddatafragments.servlet.TriplePatternFragmentServlet;
  * need for a separate servlet container such as Tomcat.</p>
  *
  * <p>
- * Copyright 2014 MMLab, UGent </p?
+ * Copyright 2014 MMLab, UGent </p>
  *
  * @author Gerald Haesendonck
  * @author Miel Vander Sande
@@ -28,7 +33,8 @@ public class JettyServer {
         options.addOption("h", "help", false, "Print this help message and then exit.");
         options.addOption("p", "port", true, "The port the server listents to. The default is 8080.");
         boolean printHelp = false;
-        CommandLineParser parser = new BasicParser();
+        
+        CommandLineParser parser = new DefaultParser();
         try {
             CommandLine commandLine = parser.parse(options, args);
 
