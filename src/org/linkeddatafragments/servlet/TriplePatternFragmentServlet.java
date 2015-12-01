@@ -1,27 +1,6 @@
 package org.linkeddatafragments.servlet;
 
 import com.google.gson.JsonObject;
-import java.io.File;
-import java.io.FileReader;
-import java.util.HashMap;
-import java.util.Map.Entry;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.http.client.utils.URIBuilder;
-import org.linkeddatafragments.config.ConfigReader;
-import org.linkeddatafragments.datasource.TriplePatternFragment;
-import org.linkeddatafragments.datasource.IDataSource;
-import org.linkeddatafragments.datasource.HdtDataSource;
-
-import static org.linkeddatafragments.util.CommonResources.*;
-
 import com.hp.hpl.jena.datatypes.TypeMapper;
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import com.hp.hpl.jena.rdf.model.Literal;
@@ -31,7 +10,31 @@ import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import com.hp.hpl.jena.shared.InvalidPropertyURIException;
+import java.io.File;
+import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.riot.RDFLanguages;
+import org.linkeddatafragments.config.ConfigReader;
 import org.linkeddatafragments.datasource.DataSourceFactory;
+import org.linkeddatafragments.datasource.IDataSource;
+import org.linkeddatafragments.datasource.TriplePatternFragment;
+
+import static org.linkeddatafragments.util.CommonResources.*;
+
+import org.linkeddatafragments.util.MIMEParse;
 
 /**
  * Servlet that responds with a Basic Linked Data Fragment.
@@ -46,7 +49,8 @@ public class TriplePatternFragmentServlet extends HttpServlet {
     private final static long TRIPLESPERPAGE = 100;
 
     private ConfigReader config;
-    private HashMap<String, IDataSource> dataSources = new HashMap<>();
+    private final HashMap<String, IDataSource> dataSources = new HashMap<>();
+    private final Collection<String> mimeTypes = new ArrayList<>();
 
     @Override
     public void init(ServletConfig servletConfig) throws ServletException {
@@ -76,6 +80,12 @@ public class TriplePatternFragmentServlet extends HttpServlet {
             for (Entry<String, JsonObject> dataSource : config.getDataSources().entrySet()) {
                 dataSources.put(dataSource.getKey(), DataSourceFactory.create(dataSource.getValue()));
             }
+            
+            // register content types
+            mimeTypes.add(Lang.TTL.getHeaderString());
+            mimeTypes.add(Lang.JSONLD.getHeaderString());
+            mimeTypes.add(Lang.NTRIPLES.getHeaderString()); 
+            mimeTypes.add(Lang.RDFXML.getHeaderString() );
         } catch (Exception e) {
             throw new ServletException(e);
         }
@@ -106,6 +116,16 @@ public class TriplePatternFragmentServlet extends HttpServlet {
             // fill the output model
             final Model output = fragment.getTriples();
             output.setNsPrefixes(config.getPrefixes());
+            
+            // do conneg
+            String bestMatch = MIMEParse.bestMatch(mimeTypes, request.getHeader("Accept"));
+            Lang contentType = RDFLanguages.contentTypeToLang(bestMatch);
+
+            // serialize the output
+            response.setHeader("Server", "Linked Data Fragments Server");
+            response.setContentType(bestMatch);
+            response.setCharacterEncoding("utf-8");
+            RDFDataMgr.write(response.getOutputStream(), output, contentType);
 
             // add dataset metadata
             final String hostName = request.getHeader("Host");
@@ -155,12 +175,6 @@ public class TriplePatternFragmentServlet extends HttpServlet {
             output.add(predicateMapping, HYDRA_PROPERTY, RDF_PREDICATE);
             output.add(objectMapping, HYDRA_VARIABLE, output.createLiteral("object"));
             output.add(objectMapping, HYDRA_PROPERTY, RDF_OBJECT);
-
-            // serialize the output as Turtle
-            response.setHeader("Server", "Linked Data Fragments Server");
-            response.setContentType("text/turtle");
-            response.setCharacterEncoding("utf-8");
-            output.write(response.getWriter(), "Turtle", fragmentUrl);
         } catch (Exception e) {
             throw new ServletException(e);
         }

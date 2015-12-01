@@ -3,6 +3,12 @@
 
   "datasources": {
     "dbpedia": {
+      "title": "DBPedia",
+      "type": "HdtDatasource",
+      "description": "DBPedia with an HDT back-end",
+      "settings": { "file": "data/dbpedia.hdt" }
+    },
+    "swdf": {
       "title": "Semantic Web Dog Food",
       "type": "HdtDatasource",
       "description": "Semantic Web Dog Food with an HDT back-end",

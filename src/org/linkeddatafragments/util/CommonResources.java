@@ -33,7 +33,7 @@ public class CommonResources {
 	
 	public final static Property INVALID_URI = createProperty("urn:invalid");
 	
-	private final static Property createProperty(String uri) {
+	private static Property createProperty(String uri) {
 		return ResourceFactory.createProperty(uri);
 	}
 }
