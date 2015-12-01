@@ -2,6 +2,7 @@ package org.linkeddatafragments.servlet;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -40,7 +41,6 @@ import org.linkeddatafragments.datasource.DataSourceFactory;
 import org.linkeddatafragments.datasource.IDataSource;
 import org.linkeddatafragments.exceptions.DataSourceException;
 import org.linkeddatafragments.util.CommonResources;
-
 import org.linkeddatafragments.util.MIMEParse;
 
 /**
