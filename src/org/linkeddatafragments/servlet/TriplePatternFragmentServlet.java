@@ -3,12 +3,16 @@ package org.linkeddatafragments.servlet;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+
+import java.net.URISyntaxException;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -39,6 +43,7 @@ import com.hp.hpl.jena.shared.InvalidPropertyURIException;
 import org.linkeddatafragments.config.ConfigReader;
 import org.linkeddatafragments.datasource.DataSourceFactory;
 import org.linkeddatafragments.datasource.IDataSource;
+import org.linkeddatafragments.datasource.TriplePatternFragment;
 import org.linkeddatafragments.exceptions.DataSourceException;
 import org.linkeddatafragments.util.CommonResources;
 import org.linkeddatafragments.util.MIMEParse;
