@@ -42,12 +42,7 @@ public class HdtDataSource extends DataSource {
 
     @Override
     public TriplePatternFragment getFragment(Resource subject, Property predicate, RDFNode object, final long offset, final long limit) {
-        if (offset < 0) {
-            throw new IndexOutOfBoundsException("offset");
-        }
-        if (limit < 1) {
-            throw new IllegalArgumentException("limit");
-        }
+        checkBoundaries(offset, limit);
 
         // look up the result from the HDT datasource)
         int subjectId = subject == null ? 0 : dictionary.getIntID(subject.asNode(), TripleComponentRole.SUBJECT);
@@ -88,9 +83,13 @@ public class HdtDataSource extends DataSource {
             }
         }
 
-        // estimates can be wrong; ensure 0 is returned if there are no results, and always more than actual results
-        final long estimatedTotal = triples.size() > 0 ? Math.max(offset + triples.size() + 1, matches.estimatedNumResults())
-                : hasMatches ? Math.max(matches.estimatedNumResults(), 1) : 0;
+        // estimates can be wrong; ensure 0 is returned if there are no results, 
+        // and always more than actual results
+        final long estimatedTotal = triples.size() > 0 
+                ? Math.max(offset + triples.size() + 1, matches.estimatedNumResults())
+                : hasMatches 
+                    ? Math.max(matches.estimatedNumResults(), 1) 
+                    : 0;
 
         // create the fragment
         return new TriplePatternFragment() {
