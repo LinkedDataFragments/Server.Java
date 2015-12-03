@@ -8,7 +8,6 @@ package test.java.org.linkeddatafragments.datasource;
 import com.google.gson.JsonObject;
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.tdb.TDBFactory;
@@ -32,6 +31,8 @@ public class JenaTDBDataSourceTest {
     private static Dataset dataset;
     private static File jena;
 
+    private final static String PREFIX = "http://test.ldf.org/";
+            
     @BeforeClass
     public static void setUpClass() throws Exception {
         String tmpdir = System.getProperty("java.io.tmpdir");
@@ -54,8 +55,13 @@ public class JenaTDBDataSourceTest {
 
     @AfterClass
     public static void tearDownClass() throws Exception {
-        dataset.end();
         TDBFactory.release(dataset);
+        File[] files = jena.listFiles();
+        for (File f : files) {
+            f.delete();
+        }
+        jena.delete();
+ 
     }
 
     @Before
@@ -68,16 +74,16 @@ public class JenaTDBDataSourceTest {
         int objs = 17;
         
         for (int s = 0; s < subjs; s++) {
-            Resource subj = model.createResource("http://test.ldf.org/s/" + s);
+            Resource subj = model.createResource(PREFIX + "s/" + s);
             for (int p = 0; p < preds ; p++) {
-                Property pred = model.createProperty("http://test.ldf.org/p/" + p);
+                Property pred = model.createProperty(PREFIX + "p/" + p);
                 for (int o = 0; o < objs ; o++) {
-                    Resource obj = model.createResource("http://test.ldf.org/o/" + o);
+                    Resource obj = model.createResource(PREFIX + "o/" + o);
                     model.add(subj, pred, obj);
                 }
             }
         }
-        model.commit();
+        model.close();
     }
 
     /**
@@ -88,21 +94,21 @@ public class JenaTDBDataSourceTest {
     public void testEstimate() {
         Model model = dataset.getDefaultModel();
         
-        Resource subj = model.createResource("http://test.ldf.org/s/1");
+        Resource subj = model.createResource(PREFIX + "s/1");
         Property pred = null;
         Resource obj = null;
 
         long offset = 0;
         long limit = 50;
+        
         TriplePatternFragment fragment = 
                 tdb.getFragment(subj, pred, obj, offset, limit);
         long totalSize = fragment.getTotalSize();
-
-        Assert.assertTrue("Estimate is fake", totalSize != 51);        
+        
+        Assert.assertTrue("Estimate is fake: " + totalSize, totalSize != 51);        
     }
     
     @After
     public void tearDown() throws Exception {
     }
-    
 }

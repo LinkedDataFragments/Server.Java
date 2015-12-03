@@ -1,5 +1,6 @@
 package org.linkeddatafragments.datasource;
 
+import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.GraphStatisticsHandler;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.query.Dataset;
@@ -8,7 +9,6 @@ import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.QuerySolutionMap;
-import com.hp.hpl.jena.query.ReadWrite;
 import com.hp.hpl.jena.query.Syntax;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
@@ -49,7 +49,6 @@ public class JenaTDBDataSource extends DataSource {
         
         query.setOffset(offset);
         query.setLimit(limit);
-
                 
         Model triples = ModelFactory.createDefaultModel();
         
@@ -65,6 +64,7 @@ public class JenaTDBDataSource extends DataSource {
         long size = triples.size();
         long estimate = -1;
 
+       
         GraphStatisticsHandler stats = model.getGraph().getStatisticsHandler();
         if (stats != null) {
             Node s = (subject != null) ? subject.asNode() : null;
