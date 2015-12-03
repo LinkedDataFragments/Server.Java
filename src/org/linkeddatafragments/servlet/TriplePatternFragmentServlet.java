@@ -143,11 +143,18 @@ public class TriplePatternFragmentServlet extends HttpServlet {
      * @return 
      */
     private String getDatasetUrl(HttpServletRequest request) {
-        String hostName = request.getHeader(HttpHeaders.SERVER);
-        if (hostName == null) {
-            hostName = request.getServerName();
+        if ((request.getServerPort() == 80)
+                || (request.getServerPort() == 443)) {
+            return request.getScheme() + "://"
+                    + request.getServerName()
+                    + request.getRequestURI();
+        } else {
+            return request.getScheme() + "://"
+                    + request.getServerName() + ":" + request.getServerPort()
+                    + request.getRequestURI();
         }
-        return request.getScheme() + "://" + hostName + request.getRequestURI();
+
+        //return request.getScheme() + "://" + hostName + request.getRequestURI();
     }
     
     /**
