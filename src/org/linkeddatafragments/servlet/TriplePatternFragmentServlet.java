@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -94,10 +95,6 @@ public class TriplePatternFragmentServlet extends HttpServlet {
             for (Entry<String, JsonObject> dataSource : config.getDataSources().entrySet()) {
                 dataSources.put(dataSource.getKey(), DataSourceFactory.create(dataSource.getValue()));
             }
-            
-            String baseURL = config.getBaseURL() != null ? config.getBaseURL() : "http://localhost:8080";
-            
-            IndexDataSource index = new IndexDataSource(baseURL, dataSources);
 
            // register content types
             mimeTypes.add(Lang.TTL.getHeaderString());
@@ -123,6 +120,11 @@ public class TriplePatternFragmentServlet extends HttpServlet {
         String path = contextPath == null
                                 ? requestURI
                                 : requestURI.substring(contextPath.length());
+        
+        if (path.equals("/") || path.isEmpty()) {
+            return new IndexDataSource(getBaseUrl(request), dataSources);
+        }
+
         String dataSourceName = path.substring(1);
         IDataSource dataSource = dataSources.get(dataSourceName);
         if (dataSource == null) {
@@ -138,18 +140,20 @@ public class TriplePatternFragmentServlet extends HttpServlet {
      * @return
      */
     private String getDatasetUrl(HttpServletRequest request) {
-        if ((request.getServerPort() == 80)
+        return getBaseUrl(request) + request.getRequestURI();
+    }
+    
+    private String getBaseUrl(HttpServletRequest request) {
+        if (config.getBaseURL() != null)
+            return config.getBaseURL();
+        else if ((request.getServerPort() == 80)
                 || (request.getServerPort() == 443)) {
             return request.getScheme() + "://"
-                    + request.getServerName()
-                    + request.getRequestURI();
+                    + request.getServerName();
         } else {
             return request.getScheme() + "://"
-                    + request.getServerName() + ":" + request.getServerPort()
-                    + request.getRequestURI();
+                    + request.getServerName() + ":" + request.getServerPort();
         }
-
-        //return request.getScheme() + "://" + hostName + request.getRequestURI();
     }
 
     /**
@@ -286,6 +290,7 @@ public class TriplePatternFragmentServlet extends HttpServlet {
             
             RDFDataMgr.write(response.getOutputStream(), output, contentType);
         } catch (IOException | URISyntaxException e) {
+            e.printStackTrace();
             throw new ServletException(e);
         }
     }
