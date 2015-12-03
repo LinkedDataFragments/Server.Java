@@ -267,7 +267,7 @@ public class TriplePatternFragmentServlet extends HttpServlet {
             Model output = fragment.getTriples();
             output.setNsPrefixes(config.getPrefixes());
             
-            // add dataset metadata
+			// add dataset metadata
             String datasetUrl = getDatasetUrl(request);
             Resource datasetId = output.createResource(datasetUrl + "#dataset");
             
@@ -289,8 +289,8 @@ public class TriplePatternFragmentServlet extends HttpServlet {
             response.setHeader("Server", "Linked Data Fragments Server");
             response.setContentType(bestMatch);
             response.setCharacterEncoding("utf-8");
+            
             RDFDataMgr.write(response.getOutputStream(), output, contentType);
-
         } catch (IOException | URISyntaxException e) {
             throw new ServletException(e);
         }
