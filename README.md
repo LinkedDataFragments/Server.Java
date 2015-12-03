@@ -49,6 +49,6 @@ If no parameter is set, it looks for a default `config-example.json` in the fold
 ## Status
 This is software is still under development. It currently only supports:
 - HDT data sources
-- Turtle output
+- Turtle, NTriples, JsonLD, RDF/XML output
 
 A [more complete server](https://github.com/LinkedDataFragments/Server.js/) has been implemented for the Node.js platform.
