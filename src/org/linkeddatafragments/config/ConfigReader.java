@@ -17,6 +17,7 @@ import com.google.gson.JsonParser;
 public class ConfigReader {
     private final Map<String, JsonObject> dataSources = new HashMap<>();
     private final Map<String, String> prefixes = new HashMap<>();
+    private final String baseURL;
 
     /**
      * Creates a new configuration reader.
@@ -25,6 +26,8 @@ public class ConfigReader {
      */
     public ConfigReader(Reader configReader) {
         JsonObject root = new JsonParser().parse(configReader).getAsJsonObject();
+        this.baseURL = root.has("baseURL") ? root.getAsJsonPrimitive("baseURL").getAsString() : null;
+        
         for (Entry<String, JsonElement> entry : root.getAsJsonObject("datasources").entrySet()) {
             JsonObject dataSource = entry.getValue().getAsJsonObject();
             this.dataSources.put(entry.getKey(), dataSource);
@@ -50,5 +53,9 @@ public class ConfigReader {
      */
     public Map<String, String> getPrefixes() {
         return prefixes;
+    }
+
+    public String getBaseURL() {
+        return baseURL;
     }
 }
