@@ -258,16 +258,6 @@ public class TriplePatternFragmentServlet extends HttpServlet {
             // fill the output model
             Model output = fragment.getTriples();
             output.setNsPrefixes(config.getPrefixes());
-            
-            // do conneg
-            String bestMatch = MIMEParse.bestMatch(mimeTypes, request.getHeader("Accept"));
-            Lang contentType = RDFLanguages.contentTypeToLang(bestMatch);
-
-            // serialize the output
-            response.setHeader("Server", "Linked Data Fragments Server");
-            response.setContentType(bestMatch);
-            response.setCharacterEncoding("utf-8");
-            RDFDataMgr.write(response.getOutputStream(), output, contentType);
 
             // add dataset metadata
             String datasetUrl = getDatasetUrl(request);
@@ -283,12 +273,16 @@ public class TriplePatternFragmentServlet extends HttpServlet {
             addPages(output, fragmentId, fragmentUrl, total, limit, offset, page);           
             addControls(output, datasetId, datasetUrl);
             
-            // serialize the output as Turtle
-            response.setHeader(HttpHeaders.SERVER, "Linked Data Fragments Server");
-            response.setContentType("text/turtle");
-            response.setCharacterEncoding(CharEncoding.UTF_8);
+            // do conneg
+            String bestMatch = MIMEParse.bestMatch(mimeTypes, request.getHeader("Accept"));
+            Lang contentType = RDFLanguages.contentTypeToLang(bestMatch);
+
+            // serialize the output
+            response.setHeader("Server", "Linked Data Fragments Server");
+            response.setContentType(bestMatch);
+            response.setCharacterEncoding("utf-8");
             
-            output.write(response.getWriter(), "Turtle", fragmentUrl);
+            RDFDataMgr.write(response.getOutputStream(), output, contentType);
         } catch (IOException | URISyntaxException e) {
             throw new ServletException(e);
         }
