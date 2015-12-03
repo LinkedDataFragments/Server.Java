@@ -1,5 +1,7 @@
 package org.linkeddatafragments.datasource;
 
+import com.hp.hpl.jena.graph.GraphStatisticsHandler;
+import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
@@ -23,8 +25,10 @@ import java.io.File;
  */
 public class JenaTDBDataSource extends DataSource {
     private final Dataset tdb;
-    private final String sparql = "CONSTRUCT ?s ?p ?o " +
-                                  "ORDER BY ?s ?p ?o";
+    private final String sparql = "CONSTRUCT { ?s ?p ?o } " +
+                                    "WHERE { ?s ?p ?o } " +
+                                    "ORDER BY ?s ?p ?o";
+    
     private final Query query = QueryFactory.create(sparql, Syntax.syntaxSPARQL_11);
     
     @Override
@@ -41,20 +45,25 @@ public class JenaTDBDataSource extends DataSource {
         
         query.setOffset(offset);
         query.setLimit(limit);
-        
-        QueryExecution qexec = QueryExecutionFactory.create(query, model);
-        final Model triples = ModelFactory.createDefaultModel();
+
+        QueryExecution qexec = QueryExecutionFactory.create(query, model, map);
+        Model triples = ModelFactory.createDefaultModel();
         qexec.execConstruct(triples);
+
+        // For now, fake the estimate
+        long size = triples.size();
+        long estimate = (size == limit) ? offset + limit + 1 : offset + size;
+        // Try to get a better estimate
+        GraphStatisticsHandler stats = model.getGraph().getStatisticsHandler();
+        if (stats != null) {
+            estimate = stats.getStatistic(subject.asNode(), predicate.asNode(), object.asNode());
+        }
         
         tdb.end();
 
         if (triples.isEmpty()) {
             return new TriplePatternFragmentBase();
         } else {
-            // For now, fake the estimate
-            long size = triples.size();
-            long estimate = (size == limit) ? offset + limit + 1 : offset + size;
-  
             return new TriplePatternFragmentBase(triples, estimate);
         }
     }
