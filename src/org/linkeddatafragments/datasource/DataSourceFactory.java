@@ -15,8 +15,15 @@ public class DataSourceFactory {
     public final static String HDT = "HdtDatasource";
     public final static String JENA_TDB = "JenaTDBDatasource";
 
+    /**
+     * Create a datasource using a JSON config
+     * 
+     * @param config
+     * @return datasource interface
+     * @throws DataSourceException 
+     */
     public static IDataSource create(JsonObject config) throws DataSourceException {
-        String title = config.getAsJsonPrimitive("type").getAsString();
+        String title = config.getAsJsonPrimitive("title").getAsString();
         String description = config.getAsJsonPrimitive("description").getAsString();
         String type = config.getAsJsonPrimitive("type").getAsString();
         

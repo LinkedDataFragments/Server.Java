@@ -25,8 +25,7 @@ import java.io.File;
  */
 public class JenaTDBDataSource extends DataSource {
     private final Dataset tdb;
-    private final String sparql = "CONSTRUCT { ?s ?p ?o } " +
-                                    "WHERE { ?s ?p ?o } " +
+    private final String sparql = "CONSTRUCT WHERE { ?s ?p ?o } " + 
                                     "ORDER BY ?s ?p ?o";
     
     private final Query query = QueryFactory.create(sparql, Syntax.syntaxSPARQL_11);
@@ -47,8 +46,10 @@ public class JenaTDBDataSource extends DataSource {
         query.setLimit(limit);
 
         QueryExecution qexec = QueryExecutionFactory.create(query, model, map);
+        
         Model triples = ModelFactory.createDefaultModel();
         qexec.execConstruct(triples);
+        qexec.close();
 
         // Try to get an estimate
         long size = triples.size();
