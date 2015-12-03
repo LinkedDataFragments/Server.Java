@@ -13,7 +13,7 @@ import org.linkeddatafragments.exceptions.UnknownDataSourceTypeException;
 public class DataSourceFactory {
 
     public static IDataSource create(JsonObject config) throws DataSourceException {
-        String title = config.getAsJsonPrimitive("type").getAsString();
+        String title = config.getAsJsonPrimitive("title").getAsString();
         String description = config.getAsJsonPrimitive("description").getAsString();
         String type = config.getAsJsonPrimitive("type").getAsString();
         
