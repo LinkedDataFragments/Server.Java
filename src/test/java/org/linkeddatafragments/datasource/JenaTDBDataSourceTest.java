@@ -47,7 +47,7 @@ public class JenaTDBDataSourceTest {
         config.addProperty("type", DataSourceFactory.JENA_TDB);
         
         JsonObject settings = new JsonObject();
-        settings.addProperty("directory", tmpdir);
+        settings.addProperty("directory", jena.getAbsolutePath());
         config.add("settings", settings);
 
         tdb = DataSourceFactory.create(config);
@@ -83,7 +83,7 @@ public class JenaTDBDataSourceTest {
                 }
             }
         }
-        model.close();
+        model.commit();
     }
 
     /**

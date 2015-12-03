@@ -49,7 +49,7 @@ public class JenaTDBDataSource extends DataSource {
         
         query.setOffset(offset);
         query.setLimit(limit);
-                
+        
         Model triples = ModelFactory.createDefaultModel();
         
         try (QueryExecution qexec = QueryExecutionFactory.create(query, model, map)) {
