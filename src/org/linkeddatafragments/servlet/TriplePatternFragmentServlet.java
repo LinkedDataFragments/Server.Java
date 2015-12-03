@@ -14,7 +14,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -46,6 +45,7 @@ import org.linkeddatafragments.util.MIMEParse;
  * @author Bart Hanssens
  */
 public class TriplePatternFragmentServlet extends HttpServlet {
+
     private final static long serialVersionUID = 1L;
 
     // Parameters
@@ -55,16 +55,14 @@ public class TriplePatternFragmentServlet extends HttpServlet {
     public final static String OBJ = "object";
     public final static String PAGE = "page";
 
-
-    private final static Pattern STRINGPATTERN =
-                    Pattern.compile("^\"(.*)\"(?:@(.*)|\\^\\^<?([^<>]*)>?)?$");
+    private final static Pattern STRINGPATTERN
+            = Pattern.compile("^\"(.*)\"(?:@(.*)|\\^\\^<?([^<>]*)>?)?$");
     private final static TypeMapper TYPES = TypeMapper.getInstance();
     private final static long TRIPLESPERPAGE = 100;
 
     private ConfigReader config;
     private final HashMap<String, IDataSource> dataSources = new HashMap<>();
     private final Collection<String> mimeTypes = new ArrayList<>();
-
 
     private File getConfigFile(ServletConfig config) throws IOException {
         String path = config.getServletContext().getRealPath("/");
@@ -96,11 +94,11 @@ public class TriplePatternFragmentServlet extends HttpServlet {
                 dataSources.put(dataSource.getKey(), DataSourceFactory.create(dataSource.getValue()));
             }
 
-           // register content types
+            // register content types
             mimeTypes.add(Lang.TTL.getHeaderString());
             mimeTypes.add(Lang.JSONLD.getHeaderString());
             mimeTypes.add(Lang.NTRIPLES.getHeaderString());
-            mimeTypes.add(Lang.RDFXML.getHeaderString() );
+            mimeTypes.add(Lang.RDFXML.getHeaderString());
         } catch (IOException | DataSourceException e) {
             throw new ServletException(e);
         }
@@ -118,9 +116,9 @@ public class TriplePatternFragmentServlet extends HttpServlet {
         String requestURI = request.getRequestURI();
 
         String path = contextPath == null
-                                ? requestURI
-                                : requestURI.substring(contextPath.length());
-        
+                ? requestURI
+                : requestURI.substring(contextPath.length());
+
         if (path.equals("/") || path.isEmpty()) {
             return new IndexDataSource(getBaseUrl(request), dataSources);
         }
@@ -142,11 +140,17 @@ public class TriplePatternFragmentServlet extends HttpServlet {
     private String getDatasetUrl(HttpServletRequest request) {
         return getBaseUrl(request) + request.getRequestURI();
     }
-    
+
+    /**
+     * Get Base url
+     *
+     * @param request
+     * @return
+     */
     private String getBaseUrl(HttpServletRequest request) {
-        if (config.getBaseURL() != null)
+        if (config.getBaseURL() != null) {
             return config.getBaseURL();
-        else if ((request.getServerPort() == 80)
+        } else if ((request.getServerPort() == 80)
                 || (request.getServerPort() == 443)) {
             return request.getScheme() + "://"
                     + request.getServerName();
@@ -165,7 +169,7 @@ public class TriplePatternFragmentServlet extends HttpServlet {
      * @param limit
      */
     private void addMeta(Model output, Resource datasetId, Resource fragmentId,
-                                                        long total, long limit) {
+            long total, long limit) {
         output.add(datasetId, CommonResources.RDF_TYPE, CommonResources.VOID_DATASET);
         output.add(datasetId, CommonResources.RDF_TYPE, CommonResources.HYDRA_COLLECTION);
         output.add(datasetId, CommonResources.VOID_SUBSET, fragmentId);
@@ -181,7 +185,6 @@ public class TriplePatternFragmentServlet extends HttpServlet {
         output.add(fragmentId, CommonResources.HYDRA_ITEMSPERPAGE, limitTyped);
     }
 
-
     /**
      * Add reference to first/previous/next page
      *
@@ -195,21 +198,21 @@ public class TriplePatternFragmentServlet extends HttpServlet {
      * @throws URISyntaxException
      */
     private void addPages(Model output, Resource fragmentId, String fragmentUrl,
-                long total, long limit, long offset, long page) throws URISyntaxException {
+            long total, long limit, long offset, long page) throws URISyntaxException {
         URIBuilder pagedUrl = new URIBuilder(fragmentUrl);
 
         pagedUrl.setParameter(PAGE, "1");
         output.add(fragmentId, CommonResources.HYDRA_FIRSTPAGE,
-                                    output.createResource(pagedUrl.toString()));
+                output.createResource(pagedUrl.toString()));
         if (offset > 0) {
             pagedUrl.setParameter(PAGE, Long.toString(page - 1));
             output.add(fragmentId, CommonResources.HYDRA_PREVIOUSPAGE,
-                                    output.createResource(pagedUrl.toString()));
+                    output.createResource(pagedUrl.toString()));
         }
         if (offset + limit < total) {
             pagedUrl.setParameter(PAGE, Long.toString(page + 1));
             output.add(fragmentId, CommonResources.HYDRA_NEXTPAGE,
-                                    output.createResource(pagedUrl.toString()));
+                    output.createResource(pagedUrl.toString()));
         }
     }
 
@@ -243,7 +246,6 @@ public class TriplePatternFragmentServlet extends HttpServlet {
         output.add(objectMapping, CommonResources.HYDRA_PROPERTY, CommonResources.RDF_OBJECT);
     }
 
-
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException {
         try {
@@ -258,8 +260,8 @@ public class TriplePatternFragmentServlet extends HttpServlet {
             long limit = TRIPLESPERPAGE;
             long offset = limit * (page - 1);
 
-            TriplePatternFragment fragment =
-                    dataSource.getFragment(subject, predicate, object, offset, limit);
+            TriplePatternFragment fragment
+                    = dataSource.getFragment(subject, predicate, object, offset, limit);
 
             // fill the output model
             Model output = fragment.getTriples();
@@ -278,7 +280,7 @@ public class TriplePatternFragmentServlet extends HttpServlet {
             addMeta(output, datasetId, fragmentId, total, limit);
             addPages(output, fragmentId, fragmentUrl, total, limit, offset, page);
             addControls(output, datasetId, datasetUrl);
-            
+
             // do conneg
             String bestMatch = MIMEParse.bestMatch(mimeTypes, request.getHeader("Accept"));
             Lang contentType = RDFLanguages.contentTypeToLang(bestMatch);
@@ -287,7 +289,7 @@ public class TriplePatternFragmentServlet extends HttpServlet {
             response.setHeader("Server", "Linked Data Fragments Server");
             response.setContentType(bestMatch);
             response.setCharacterEncoding("utf-8");
-            
+
             RDFDataMgr.write(response.getOutputStream(), output, contentType);
         } catch (IOException | URISyntaxException e) {
             e.printStackTrace();
