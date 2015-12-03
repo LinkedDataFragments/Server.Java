@@ -50,13 +50,17 @@ public class JenaTDBDataSource extends DataSource {
         Model triples = ModelFactory.createDefaultModel();
         qexec.execConstruct(triples);
 
-        // For now, fake the estimate
+        // Try to get an estimate
         long size = triples.size();
-        long estimate = (size == limit) ? offset + limit + 1 : offset + size;
-        // Try to get a better estimate
+        long estimate = -1;
+
         GraphStatisticsHandler stats = model.getGraph().getStatisticsHandler();
         if (stats != null) {
             estimate = stats.getStatistic(subject.asNode(), predicate.asNode(), object.asNode());
+        }
+        // No estimate or incorrect
+        if (estimate < offset + size) {
+            estimate = (size == limit) ? offset + size + 1 : offset + size;
         }
         
         tdb.end();
