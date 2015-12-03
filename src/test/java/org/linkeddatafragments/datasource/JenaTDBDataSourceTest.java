@@ -15,6 +15,7 @@ import com.hp.hpl.jena.tdb.TDBFactory;
 import java.io.File;
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -26,7 +27,7 @@ import org.linkeddatafragments.datasource.TriplePatternFragment;
  *
  * @author Bart Hanssens <bart.hanssens@fedict.be>
  */
-public class JenaTDBDataSource {
+public class JenaTDBDataSourceTest {
     private static IDataSource tdb;
     private static Dataset dataset;
     private static File jena;
@@ -38,7 +39,6 @@ public class JenaTDBDataSource {
         jena.mkdir();
         
         dataset = TDBFactory.createDataset(jena.getAbsolutePath());
-        Model model = ModelFactory.createDefaultModel();
         
         JsonObject config = new JsonObject();
         config.addProperty("title", "jena test");
@@ -48,7 +48,7 @@ public class JenaTDBDataSource {
         JsonObject settings = new JsonObject();
         settings.addProperty("directory", tmpdir);
         config.add("settings", settings);
-        
+
         tdb = DataSourceFactory.create(config);
     }
 
@@ -63,9 +63,9 @@ public class JenaTDBDataSource {
         Model model = dataset.getDefaultModel();
         
         // Generate a set of statements
-        int subjs = 150;
-        int preds = 20;
-        int objs = 10;
+        int subjs = 153;
+        int preds = 29;
+        int objs = 17;
         
         for (int s = 0; s < subjs; s++) {
             Resource subj = model.createResource("http://test.ldf.org/s/" + s);
@@ -80,6 +80,10 @@ public class JenaTDBDataSource {
         model.commit();
     }
 
+    /**
+     * Check if estimate is based on jena query plan, or just a fake one.
+     * 
+     */
     @Test
     public void testEstimate() {
         Model model = dataset.getDefaultModel();
@@ -93,8 +97,8 @@ public class JenaTDBDataSource {
         TriplePatternFragment fragment = 
                 tdb.getFragment(subj, pred, obj, offset, limit);
         long totalSize = fragment.getTotalSize();
-        System.out.println(totalSize);
-        
+
+        Assert.assertTrue("Estimate is fake", totalSize != 51);        
     }
     
     @After

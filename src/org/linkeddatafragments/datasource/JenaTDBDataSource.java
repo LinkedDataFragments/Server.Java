@@ -30,47 +30,54 @@ public class JenaTDBDataSource extends DataSource {
     
     private final Query query = QueryFactory.create(sparql, Syntax.syntaxSPARQL_11);
     
+
     @Override
     public TriplePatternFragment getFragment(Resource subject, Property predicate, RDFNode object, long offset, long limit) {
         checkBoundaries(offset, limit);
         
-        tdb.begin(ReadWrite.READ);
-        
         Model model = tdb.getDefaultModel();
         QuerySolutionMap map = new QuerySolutionMap();
-        map.add("s", subject);
-        map.add("p", predicate);
-        map.add("o", object);
+        if (subject != null) {
+            map.add("s", subject);
+        }
+        if (predicate != null) {
+            map.add("p", predicate);
+        }
+        if (object != null) {
+            map.add("o", object);
+        }
         
         query.setOffset(offset);
         query.setLimit(limit);
 
-        QueryExecution qexec = QueryExecutionFactory.create(query, model, map);
-        
+                
         Model triples = ModelFactory.createDefaultModel();
-        qexec.execConstruct(triples);
-        qexec.close();
+        
+        try (QueryExecution qexec = QueryExecutionFactory.create(query, model, map)) {
+            qexec.execConstruct(triples);
+        }
 
+        if (triples.isEmpty()) {
+            return new TriplePatternFragmentBase();
+        }
+        
         // Try to get an estimate
         long size = triples.size();
         long estimate = -1;
 
         GraphStatisticsHandler stats = model.getGraph().getStatisticsHandler();
         if (stats != null) {
-            estimate = stats.getStatistic(subject.asNode(), predicate.asNode(), object.asNode());
-        }
+            Node s = (subject != null) ? subject.asNode() : null;
+            Node p = (predicate != null) ? predicate.asNode() : null;
+            Node o = (object != null) ? object.asNode() : null;
+            estimate = stats.getStatistic(s, p, o);
+        } 
+        
         // No estimate or incorrect
         if (estimate < offset + size) {
             estimate = (size == limit) ? offset + size + 1 : offset + size;
         }
-        
-        tdb.end();
-
-        if (triples.isEmpty()) {
-            return new TriplePatternFragmentBase();
-        } else {
-            return new TriplePatternFragmentBase(triples, estimate);
-        }
+        return new TriplePatternFragmentBase(triples, estimate);
     }
     
     
