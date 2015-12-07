@@ -6,18 +6,27 @@
 package test.java.org.linkeddatafragments.datasource;
 
 import com.google.gson.JsonObject;
+
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.tdb.TDBFactory;
+
 import java.io.File;
+import java.io.InputStream;
+
+import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFDataMgr;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
 import org.linkeddatafragments.datasource.DataSourceFactory;
 import org.linkeddatafragments.datasource.IDataSource;
 import org.linkeddatafragments.datasource.TriplePatternFragment;
@@ -28,10 +37,8 @@ import org.linkeddatafragments.datasource.TriplePatternFragment;
  */
 public class JenaTDBDataSourceTest {
     private static IDataSource tdb;
-    private static Dataset dataset;
     private static File jena;
-
-    private final static String PREFIX = "http://test.ldf.org/";
+    private static Dataset dataset;
             
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -40,7 +47,14 @@ public class JenaTDBDataSourceTest {
         jena.mkdir();
         
         dataset = TDBFactory.createDataset(jena.getAbsolutePath());
+
+        Model model = dataset.getDefaultModel();
+        InputStream in = ClassLoader.getSystemResourceAsStream("demo.nt");
+        RDFDataMgr.read(model, in, Lang.NTRIPLES);
+        model.commit();
         
+        // Everything is in place, now create the LDF datasource
+                
         JsonObject config = new JsonObject();
         config.addProperty("title", "jena test");
         config.addProperty("description", "jena tdb test");
@@ -65,25 +79,7 @@ public class JenaTDBDataSourceTest {
     }
 
     @Before
-    public void setUp() throws Exception {
-        Model model = dataset.getDefaultModel();
-        
-        // Generate a set of statements
-        int subjs = 153;
-        int preds = 29;
-        int objs = 17;
-        
-        for (int s = 0; s < subjs; s++) {
-            Resource subj = model.createResource(PREFIX + "s/" + s);
-            for (int p = 0; p < preds ; p++) {
-                Property pred = model.createProperty(PREFIX + "p/" + p);
-                for (int o = 0; o < objs ; o++) {
-                    Resource obj = model.createResource(PREFIX + "o/" + o);
-                    model.add(subj, pred, obj);
-                }
-            }
-        }
-        model.commit();
+    public void setUp() throws Exception {                
     }
 
     /**
@@ -92,9 +88,9 @@ public class JenaTDBDataSourceTest {
      */
     @Test
     public void testEstimate() {
-        Model model = dataset.getDefaultModel();
+        Model model = ModelFactory.createDefaultModel();
         
-        Resource subj = model.createResource(PREFIX + "s/1");
+        Resource subj = model.createResource("http://data.gov.be/catalog/ckanvl");
         Property pred = null;
         Resource obj = null;
 
