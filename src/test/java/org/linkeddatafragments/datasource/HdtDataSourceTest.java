@@ -13,8 +13,10 @@ import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -36,37 +38,32 @@ import org.rdfhdt.hdt.options.HDTSpecification;
  *
  * @author Bart Hanssens <bart.hanssens@fedict.be>
  */
-public class HdtDataSourceTest {
-    private static IDataSource hdt;
+public class HdtDataSourceTest extends DataSourceTest {
+
     private static File hdtfile;
-            
+
+    
     @BeforeClass
     public static void setUpClass() throws Exception {
         // HDT does not seem to support an InputReader, so write to temp file
-        InputStream in = ClassLoader.getSystemResourceAsStream("demo.nt");
-        String tmpdir = System.getProperty("java.io.tmpdir");
-        File temp = new File(tmpdir, "ldf-jena-test-hdt.ttl");
-        Files.copy(in, temp.toPath());
-        
-        HDT mgr = HDTManager.generateHDT(temp.getAbsolutePath(), null, 
+        File temp = getResourceAsFile();
+
+        HDT mgr = HDTManager.generateHDT(temp.getAbsolutePath(),
+                        "http://linkeddatafragments.org",
                         RDFNotation.NTRIPLES, new HDTSpecification(), null);
-        hdtfile = new File(tmpdir, "ldf-hdt-test");
+        hdtfile = File.createTempFile("ldf-hdt-test", ".hdt");
         mgr.saveToHDT(hdtfile.getAbsolutePath(), null);
         
         temp.getAbsoluteFile().delete();
         
         // Everything is in place, now create the LDF datasource
         
-        JsonObject config = new JsonObject();
-        config.addProperty("title", "hdt test");
-        config.addProperty("description", "hdt test");
-        config.addProperty("type", DataSourceFactory.HDT);
-        
+        JsonObject config = createConfig("hdt test", "hdt test", DataSourceFactory.HDT);
         JsonObject settings = new JsonObject();
         settings.addProperty("file", hdtfile.getAbsolutePath());
         config.add("settings", settings);
         
-        hdt = DataSourceFactory.create(config);
+        setDatasource(DataSourceFactory.create(config));
     }
 
     @AfterClass
@@ -79,28 +76,6 @@ public class HdtDataSourceTest {
     @Before
     public void setUp() throws Exception {
 
-    }
-
-    /**
-     * Check if estimate makes sense
-     * 
-     */
-    @Test
-    public void testEstimate() {
-        Model model = ModelFactory.createDefaultModel();
-        
-        Resource subj = model.createResource("http://data.gov.be/catalog/ckanvl");
-        Property pred = null;
-        Resource obj = null;
-
-        long offset = 0;
-        long limit = 50;
-        
-        TriplePatternFragment fragment = 
-                hdt.getFragment(subj, pred, obj, offset, limit);
-        long totalSize = fragment.getTotalSize();
-        
-        Assert.assertTrue("Estimate is fake: " + totalSize, totalSize != 51);        
     }
     
     @After

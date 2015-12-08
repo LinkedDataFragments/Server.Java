@@ -22,21 +22,17 @@ import org.apache.jena.riot.RDFDataMgr;
 
 import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Assert;
+
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Test;
 
 import org.linkeddatafragments.datasource.DataSourceFactory;
-import org.linkeddatafragments.datasource.IDataSource;
-import org.linkeddatafragments.datasource.TriplePatternFragment;
 
 /**
  *
  * @author Bart Hanssens <bart.hanssens@fedict.be>
  */
-public class JenaTDBDataSourceTest {
-    private static IDataSource tdb;
+public class JenaTDBDataSourceTest extends DataSourceTest {
     private static File jena;
     private static Dataset dataset;
             
@@ -55,16 +51,14 @@ public class JenaTDBDataSourceTest {
         
         // Everything is in place, now create the LDF datasource
                 
-        JsonObject config = new JsonObject();
-        config.addProperty("title", "jena test");
-        config.addProperty("description", "jena tdb test");
-        config.addProperty("type", DataSourceFactory.JENA_TDB);
+        JsonObject config = createConfig("jena tdb test", "jena tdb test",
+                                                    DataSourceFactory.JENA_TDB);
         
         JsonObject settings = new JsonObject();
         settings.addProperty("directory", jena.getAbsolutePath());
         config.add("settings", settings);
 
-        tdb = DataSourceFactory.create(config);
+        setDatasource(DataSourceFactory.create(config));
     }
 
     @AfterClass
@@ -80,28 +74,6 @@ public class JenaTDBDataSourceTest {
 
     @Before
     public void setUp() throws Exception {                
-    }
-
-    /**
-     * Check if estimate is based on jena query plan, or just a fake one.
-     * 
-     */
-    @Test
-    public void testEstimate() {
-        Model model = ModelFactory.createDefaultModel();
-        
-        Resource subj = model.createResource("http://data.gov.be/catalog/ckanvl");
-        Property pred = null;
-        Resource obj = null;
-
-        long offset = 0;
-        long limit = 50;
-        
-        TriplePatternFragment fragment = 
-                tdb.getFragment(subj, pred, obj, offset, limit);
-        long totalSize = fragment.getTotalSize();
-        
-        Assert.assertTrue("Estimate is fake: " + totalSize, totalSize != 51);        
     }
     
     @After
