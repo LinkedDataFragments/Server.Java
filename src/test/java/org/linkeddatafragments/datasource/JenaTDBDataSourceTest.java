@@ -20,6 +20,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.linkeddatafragments.datasource.DataSourceFactory;
 import org.linkeddatafragments.datasource.IDataSource;
+import org.linkeddatafragments.datasource.JenaTDBDataSourceType;
 import org.linkeddatafragments.datasource.TriplePatternFragment;
 
 /**
@@ -35,6 +36,8 @@ public class JenaTDBDataSourceTest {
             
     @BeforeClass
     public static void setUpClass() throws Exception {
+        JenaTDBDataSourceType.register();
+
         String tmpdir = System.getProperty("java.io.tmpdir");
         jena = new File(tmpdir, "ldf-jena-test");
         jena.mkdir();
@@ -44,7 +47,7 @@ public class JenaTDBDataSourceTest {
         JsonObject config = new JsonObject();
         config.addProperty("title", "jena test");
         config.addProperty("description", "jena tdb test");
-        config.addProperty("type", DataSourceFactory.JENA_TDB);
+        config.addProperty("type", JenaTDBDataSourceType.TYPE_NAME);
         
         JsonObject settings = new JsonObject();
         settings.addProperty("directory", jena.getAbsolutePath());
