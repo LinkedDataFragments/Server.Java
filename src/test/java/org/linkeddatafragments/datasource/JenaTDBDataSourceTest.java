@@ -20,6 +20,8 @@ import org.junit.BeforeClass;
 
 import org.linkeddatafragments.datasource.DataSourceFactory;
 
+import org.linkeddatafragments.datasource.JenaTDBDataSourceType;
+
 /**
  *
  * @author Bart Hanssens <bart.hanssens@fedict.be>
@@ -30,6 +32,8 @@ public class JenaTDBDataSourceTest extends DataSourceTest {
             
     @BeforeClass
     public static void setUpClass() throws Exception {
+        JenaTDBDataSourceType.register();
+
         String tmpdir = System.getProperty("java.io.tmpdir");
         jena = new File(tmpdir, "ldf-jena-test");
         jena.mkdir();
@@ -40,11 +44,10 @@ public class JenaTDBDataSourceTest extends DataSourceTest {
         InputStream in = ClassLoader.getSystemResourceAsStream("demo.nt");
         RDFDataMgr.read(model, in, Lang.NTRIPLES);
         model.commit();
-        
-        // Everything is in place, now create the LDF datasource
-                
+
+        // Everything is in place, now create the LDF datasource                
         JsonObject config = createConfig("jena tdb test", "jena tdb test",
-                                                    DataSourceFactory.JENA_TDB);
+                                                    JenaTDBDataSourceType.TYPE_NAME);
         
         JsonObject settings = new JsonObject();
         settings.addProperty("directory", jena.getAbsolutePath());

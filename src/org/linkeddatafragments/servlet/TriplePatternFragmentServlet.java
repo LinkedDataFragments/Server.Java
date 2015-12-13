@@ -31,8 +31,10 @@ import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFLanguages;
 import org.linkeddatafragments.config.ConfigReader;
 import org.linkeddatafragments.datasource.DataSourceFactory;
+import org.linkeddatafragments.datasource.HdtDataSourceType;
 import org.linkeddatafragments.datasource.IDataSource;
 import org.linkeddatafragments.datasource.IndexDataSource;
+import org.linkeddatafragments.datasource.JenaTDBDataSourceType;
 import org.linkeddatafragments.datasource.TriplePatternFragment;
 import org.linkeddatafragments.exceptions.DataSourceException;
 import org.linkeddatafragments.util.CommonResources;
@@ -63,6 +65,11 @@ public class TriplePatternFragmentServlet extends HttpServlet {
     private ConfigReader config;
     private final HashMap<String, IDataSource> dataSources = new HashMap<>();
     private final Collection<String> mimeTypes = new ArrayList<>();
+
+    public TriplePatternFragmentServlet() {
+        HdtDataSourceType.register();
+        JenaTDBDataSourceType.register();
+    }
 
     private File getConfigFile(ServletConfig config) throws IOException {
         String path = config.getServletContext().getRealPath("/");
