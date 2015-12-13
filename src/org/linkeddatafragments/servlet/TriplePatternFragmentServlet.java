@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map.Entry;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.servlet.ServletConfig;
@@ -31,10 +33,13 @@ import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFLanguages;
 import org.linkeddatafragments.config.ConfigReader;
 import org.linkeddatafragments.datasource.DataSourceFactory;
+import org.linkeddatafragments.datasource.HdtDataSourceType;
 import org.linkeddatafragments.datasource.IDataSource;
 import org.linkeddatafragments.datasource.IndexDataSource;
+import org.linkeddatafragments.datasource.JenaTDBDataSourceType;
 import org.linkeddatafragments.datasource.TriplePatternFragment;
 import org.linkeddatafragments.exceptions.DataSourceException;
+import org.linkeddatafragments.exceptions.DataSourceNotFoundException;
 import org.linkeddatafragments.util.CommonResources;
 import org.linkeddatafragments.util.MIMEParse;
 
@@ -63,6 +68,11 @@ public class TriplePatternFragmentServlet extends HttpServlet {
     private ConfigReader config;
     private final HashMap<String, IDataSource> dataSources = new HashMap<>();
     private final Collection<String> mimeTypes = new ArrayList<>();
+
+    public TriplePatternFragmentServlet() {
+        HdtDataSourceType.register();
+        JenaTDBDataSourceType.register();
+    }
 
     private File getConfigFile(ServletConfig config) throws IOException {
         String path = config.getServletContext().getRealPath("/");
@@ -104,6 +114,19 @@ public class TriplePatternFragmentServlet extends HttpServlet {
         }
     }
 
+    @Override
+    public void destroy()
+    {
+        for ( IDataSource dataSource : dataSources.values() ) {
+            try {
+                dataSource.close();
+            }
+            catch( Exception e ) {
+                // ignore
+            }
+        }   
+    }
+
     /**
      * Get the datasource
      *
@@ -111,7 +134,7 @@ public class TriplePatternFragmentServlet extends HttpServlet {
      * @return
      * @throws IOException
      */
-    private IDataSource getDataSource(HttpServletRequest request) throws IOException {
+    private IDataSource getDataSource(HttpServletRequest request) throws DataSourceNotFoundException {
         String contextPath = request.getContextPath();
         String requestURI = request.getRequestURI();
 
@@ -126,7 +149,7 @@ public class TriplePatternFragmentServlet extends HttpServlet {
         String dataSourceName = path.substring(1);
         IDataSource dataSource = dataSources.get(dataSourceName);
         if (dataSource == null) {
-            throw new IOException("Data source not found.");
+            throw new DataSourceNotFoundException(dataSourceName);
         }
         return dataSource;
     }
@@ -292,8 +315,15 @@ public class TriplePatternFragmentServlet extends HttpServlet {
 
             RDFDataMgr.write(response.getOutputStream(), output, contentType);
         } catch (IOException | URISyntaxException e) {
-            e.printStackTrace();
             throw new ServletException(e);
+        } catch (DataSourceNotFoundException ex) {
+            try {
+                response.setStatus(404);
+                response.getOutputStream().println(ex.getMessage());
+                response.getOutputStream().close();
+            } catch (IOException ex1) {
+                throw new ServletException(ex1);
+            }
         }
     }
 
