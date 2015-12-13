@@ -114,6 +114,19 @@ public class TriplePatternFragmentServlet extends HttpServlet {
         }
     }
 
+    @Override
+    public void destroy()
+    {
+        for ( IDataSource dataSource : dataSources.values() ) {
+            try {
+                dataSource.close();
+            }
+            catch( Exception e ) {
+                // ignore
+            }
+        }   
+    }
+
     /**
      * Get the datasource
      *
