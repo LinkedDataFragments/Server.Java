@@ -1,8 +1,5 @@
 package org.linkeddatafragments.datasource;
 
-import com.hp.hpl.jena.graph.Graph;
-import com.hp.hpl.jena.graph.GraphStatisticsHandler;
-import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
