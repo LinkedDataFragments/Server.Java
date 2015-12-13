@@ -1,5 +1,7 @@
 package org.linkeddatafragments.datasource;
 
+import java.io.Closeable;
+
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
@@ -8,7 +10,7 @@ import com.hp.hpl.jena.rdf.model.Resource;
  * A data source of Basic Linked Data Fragments.
  * @author Ruben Verborgh
  */
-public interface IDataSource {
+public interface IDataSource extends Closeable {
     /**
      * Gets a page of the Basic Linked Data Fragment matching the specified triple pattern.
      * @param subject the subject (null to match any subject)
