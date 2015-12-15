@@ -7,7 +7,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.linkeddatafragments.datasource.DataSourceFactory;
-import org.linkeddatafragments.datasource.HdtDataSourceType;
+import org.linkeddatafragments.datasource.hdt.HdtDataSourceType;
 import org.rdfhdt.hdt.enums.RDFNotation;
 import org.rdfhdt.hdt.hdt.HDT;
 import org.rdfhdt.hdt.hdt.HDTManager;

@@ -1,7 +1,13 @@
-package org.linkeddatafragments.datasource;
+package org.linkeddatafragments.datasource.hdt;
 
 import java.io.IOException;
 
+import org.linkeddatafragments.datasource.AbstractRequestProcessorForTriplePatterns;
+import org.linkeddatafragments.datasource.DataSource;
+import org.linkeddatafragments.datasource.IFragmentRequestProcessor;
+import org.linkeddatafragments.fragments.LinkedDataFragment;
+import org.linkeddatafragments.fragments.LinkedDataFragmentRequest;
+import org.linkeddatafragments.fragments.tpf.TriplePatternFragmentRequest;
 import org.rdfhdt.hdt.enums.TripleComponentRole;
 import org.rdfhdt.hdt.hdt.HDT;
 import org.rdfhdt.hdt.hdt.HDTManager;
@@ -20,6 +26,7 @@ import com.hp.hpl.jena.rdf.model.Resource;
  * An HDT data source of Basic Linked Data Fragments.
  *
  * @author Ruben Verborgh
+ * @author <a href="http://olafhartig.de">Olaf Hartig</a>
  */
 public class HdtDataSource extends DataSource {
 
@@ -41,16 +48,35 @@ public class HdtDataSource extends DataSource {
     }
 
     @Override
-    public TriplePatternFragment getFragment(Resource subject, Property predicate, RDFNode object, final long offset, final long limit) {
-        checkBoundaries(offset, limit);
+    public IFragmentRequestProcessor getRequestProcessor(
+            final LinkedDataFragmentRequest request )
+    {
+        if ( ! (request instanceof TriplePatternFragmentRequest) )
+            throw new IllegalArgumentException();
 
+        return new MyProcessor( (TriplePatternFragmentRequest) request );
+    }
+
+protected class MyProcessor extends AbstractRequestProcessorForTriplePatterns
+{
+    public MyProcessor( final TriplePatternFragmentRequest request ) {
+        super( request );
+    }
+
+    @Override
+    protected LinkedDataFragment createFragment( final Resource subject,
+                                                 final Property predicate,
+                                                 final RDFNode object,
+                                                 final long offset,
+                                                 final long limit )
+    {
         // look up the result from the HDT datasource)
         int subjectId = subject == null ? 0 : dictionary.getIntID(subject.asNode(), TripleComponentRole.SUBJECT);
         int predicateId = predicate == null ? 0 : dictionary.getIntID(predicate.asNode(), TripleComponentRole.PREDICATE);
         int objectId = object == null ? 0 : dictionary.getIntID(object.asNode(), TripleComponentRole.OBJECT);
         
         if (subjectId < 0 || predicateId < 0 || objectId < 0) {
-            return new TriplePatternFragmentBase();
+            return createEmptyTriplePatternFragment();
         }
         
         final Model triples = ModelFactory.createDefaultModel();
@@ -92,18 +118,11 @@ public class HdtDataSource extends DataSource {
                     : 0;
 
         // create the fragment
-        return new TriplePatternFragment() {
-            @Override
-            public Model getTriples() {
-                return triples;
-            }
-
-            @Override
-            public long getTotalSize() {
-                return estimatedTotal;
-            }
-        };
+        final boolean isLastPage = ( estimatedTotal < offset + limit );
+        return createTriplePatternFragment( triples, estimatedTotal, isLastPage );
     }
+
+} // end of MyProcessor
 
     /**
      * Converts the HDT triple to a Jena Triple.
