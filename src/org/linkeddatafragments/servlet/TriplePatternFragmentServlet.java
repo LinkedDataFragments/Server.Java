@@ -27,6 +27,7 @@ import org.linkeddatafragments.datasource.index.IndexDataSource;
 import org.linkeddatafragments.datasource.tdb.JenaTDBDataSourceType;
 import org.linkeddatafragments.exceptions.DataSourceException;
 import org.linkeddatafragments.exceptions.DataSourceNotFoundException;
+import org.linkeddatafragments.exceptions.NoRegisteredMimeTypesException;
 import org.linkeddatafragments.fragments.LinkedDataFragment;
 import org.linkeddatafragments.fragments.LinkedDataFragmentRequest;
 import org.linkeddatafragments.fragments.LinkedDataFragmentRequestBase;
@@ -87,10 +88,10 @@ public class TriplePatternFragmentServlet extends HttpServlet {
             }
 
             // register content types
-            mimeTypes.add(Lang.TTL.getHeaderString());
-            mimeTypes.add(Lang.JSONLD.getHeaderString());
-            mimeTypes.add(Lang.NTRIPLES.getHeaderString());
-            mimeTypes.add(Lang.RDFXML.getHeaderString());
+            MIMEParse.register(Lang.TTL.getHeaderString());
+            MIMEParse.register(Lang.JSONLD.getHeaderString());
+            MIMEParse.register(Lang.NTRIPLES.getHeaderString());
+            MIMEParse.register(Lang.RDFXML.getHeaderString());
         } catch (IOException | DataSourceException e) {
             throw new ServletException(e);
         }
@@ -152,7 +153,7 @@ public class TriplePatternFragmentServlet extends HttpServlet {
             output.add( fragment.getControls() );
 
             // do conneg
-            String bestMatch = MIMEParse.bestMatch(mimeTypes, request.getHeader("Accept"));
+            String bestMatch = MIMEParse.bestMatch(request.getHeader("Accept"));
             Lang contentType = RDFLanguages.contentTypeToLang(bestMatch);
 
             // serialize the output
@@ -161,7 +162,7 @@ public class TriplePatternFragmentServlet extends HttpServlet {
             response.setCharacterEncoding("utf-8");
 
             RDFDataMgr.write(response.getOutputStream(), output, contentType);
-        } catch (IOException e) {
+        } catch (IOException | NoRegisteredMimeTypesException e) {
             throw new ServletException(e);
         } catch (DataSourceNotFoundException ex) {
             try {
