@@ -1,6 +1,6 @@
 package org.linkeddatafragments.datasource;
 
-import com.hp.hpl.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Model;
 
 /**
  * A Triple Pattern Fragment.

@@ -1,7 +1,7 @@
 package org.linkeddatafragments.datasource;
 
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
 
 /**
  * Base implementation of a Basic Linked Data Fragment.
