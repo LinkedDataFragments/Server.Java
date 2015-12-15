@@ -1,7 +1,10 @@
-package org.linkeddatafragments.datasource;
+package org.linkeddatafragments.datasource.hdt;
 
 import java.io.IOException;
 
+import org.linkeddatafragments.datasource.AbstractRequestProcessorForTriplePatterns;
+import org.linkeddatafragments.datasource.DataSource;
+import org.linkeddatafragments.datasource.IFragmentRequestProcessor;
 import org.linkeddatafragments.fragments.LinkedDataFragment;
 import org.linkeddatafragments.fragments.LinkedDataFragmentRequest;
 import org.linkeddatafragments.fragments.TPF.TriplePatternFragmentRequest;

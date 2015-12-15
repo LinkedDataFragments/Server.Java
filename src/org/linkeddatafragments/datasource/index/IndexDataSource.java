@@ -1,4 +1,4 @@
-package org.linkeddatafragments.datasource;
+package org.linkeddatafragments.datasource.index;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
@@ -11,6 +11,10 @@ import com.hp.hpl.jena.rdf.model.impl.ResourceImpl;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.linkeddatafragments.datasource.AbstractRequestProcessorForTriplePatterns;
+import org.linkeddatafragments.datasource.DataSource;
+import org.linkeddatafragments.datasource.IDataSource;
+import org.linkeddatafragments.datasource.IFragmentRequestProcessor;
 import org.linkeddatafragments.fragments.LinkedDataFragment;
 import org.linkeddatafragments.fragments.LinkedDataFragmentRequest;
 import org.linkeddatafragments.fragments.TPF.TriplePatternFragmentRequest;

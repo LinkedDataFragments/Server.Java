@@ -1,4 +1,4 @@
-package org.linkeddatafragments.datasource;
+package org.linkeddatafragments.datasource.tdb;
 
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.query.Query;
@@ -18,6 +18,9 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.tdb.TDBFactory;
 import java.io.File;
 
+import org.linkeddatafragments.datasource.AbstractRequestProcessorForTriplePatterns;
+import org.linkeddatafragments.datasource.DataSource;
+import org.linkeddatafragments.datasource.IFragmentRequestProcessor;
 import org.linkeddatafragments.fragments.LinkedDataFragment;
 import org.linkeddatafragments.fragments.LinkedDataFragmentRequest;
 import org.linkeddatafragments.fragments.TPF.TriplePatternFragmentRequest;
