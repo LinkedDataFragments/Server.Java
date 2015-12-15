@@ -1,4 +1,4 @@
-package org.linkeddatafragments.datasource;
+package org.linkeddatafragments.fragments;
 
 import javax.servlet.http.HttpServletRequest;
 

@@ -1,8 +1,9 @@
-package org.linkeddatafragments.datasource;
+package org.linkeddatafragments.fragments.TPF;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.linkeddatafragments.config.ConfigReader;
+import org.linkeddatafragments.fragments.LinkedDataFragmentRequestBase;
 
 /**
  * An implementation of {@link TriplePatternFragmentRequest} that is based on

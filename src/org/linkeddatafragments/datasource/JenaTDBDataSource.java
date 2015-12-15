@@ -18,6 +18,10 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.tdb.TDBFactory;
 import java.io.File;
 
+import org.linkeddatafragments.fragments.LinkedDataFragment;
+import org.linkeddatafragments.fragments.LinkedDataFragmentRequest;
+import org.linkeddatafragments.fragments.TPF.TriplePatternFragmentRequest;
+
 /**
  * Experimental Jena TDB-backed data source of Basic Linked Data Fragments.
  *

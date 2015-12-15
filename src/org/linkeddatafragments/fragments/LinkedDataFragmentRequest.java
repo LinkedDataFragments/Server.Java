@@ -1,4 +1,4 @@
-package org.linkeddatafragments.datasource;
+package org.linkeddatafragments.fragments;
 
 /**
  * Basis for representing a request of some type of Linked Data Fragment (LDF).

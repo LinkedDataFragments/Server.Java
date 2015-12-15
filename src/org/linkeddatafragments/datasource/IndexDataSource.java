@@ -11,6 +11,10 @@ import com.hp.hpl.jena.rdf.model.impl.ResourceImpl;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.linkeddatafragments.fragments.LinkedDataFragment;
+import org.linkeddatafragments.fragments.LinkedDataFragmentRequest;
+import org.linkeddatafragments.fragments.TPF.TriplePatternFragmentRequest;
+
 /**
  * An Index data source provides an overview of all available datasets.
  *

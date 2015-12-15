@@ -2,6 +2,9 @@ package org.linkeddatafragments.datasource;
 
 import java.io.IOException;
 
+import org.linkeddatafragments.fragments.LinkedDataFragment;
+import org.linkeddatafragments.fragments.LinkedDataFragmentRequest;
+import org.linkeddatafragments.fragments.TPF.TriplePatternFragmentRequest;
 import org.rdfhdt.hdt.enums.TripleComponentRole;
 import org.rdfhdt.hdt.hdt.HDT;
 import org.rdfhdt.hdt.hdt.HDTManager;

@@ -2,6 +2,8 @@ package org.linkeddatafragments.datasource;
 
 import java.io.Closeable;
 
+import org.linkeddatafragments.fragments.LinkedDataFragmentRequest;
+
 /**
  * A data source of Linked Data Fragments.
  *

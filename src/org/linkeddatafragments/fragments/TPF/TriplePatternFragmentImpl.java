@@ -1,5 +1,6 @@
-package org.linkeddatafragments.datasource;
+package org.linkeddatafragments.fragments.TPF;
 
+import org.linkeddatafragments.fragments.LinkedDataFragmentBase;
 import org.linkeddatafragments.util.CommonResources;
 
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;

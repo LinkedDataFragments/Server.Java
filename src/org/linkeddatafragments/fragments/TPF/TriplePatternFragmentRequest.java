@@ -1,4 +1,6 @@
-package org.linkeddatafragments.datasource;
+package org.linkeddatafragments.fragments.TPF;
+
+import org.linkeddatafragments.fragments.LinkedDataFragmentRequest;
 
 /**
  * Represents a request of a Triple Pattern Fragment (TPF).
