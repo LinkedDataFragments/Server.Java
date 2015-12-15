@@ -38,7 +38,7 @@ import org.linkeddatafragments.util.MIMEParse;
  * @author Bart Hanssens
  * @author <a href="http://olafhartig.de">Olaf Hartig</a>
  */
-public class TriplePatternFragmentServlet extends HttpServlet {
+public class LinkedDataFragmentServlet extends HttpServlet {
 
     private final static long serialVersionUID = 1L;
 
@@ -49,7 +49,7 @@ public class TriplePatternFragmentServlet extends HttpServlet {
     private final HashMap<String, IDataSource> dataSources = new HashMap<>();
     private final Collection<String> mimeTypes = new ArrayList<>();
 
-    public TriplePatternFragmentServlet() {
+    public LinkedDataFragmentServlet() {
         HdtDataSourceType.register();
         JenaTDBDataSourceType.register();
     }
