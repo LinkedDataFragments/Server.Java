@@ -22,6 +22,7 @@ import java.io.File;
  * Experimental Jena TDB-backed data source of Basic Linked Data Fragments.
  *
  * @author Bart Hanssens <bart.hanssens@fedict.be>
+ * @author <a href="http://olafhartig.de">Olaf Hartig</a>
  */
 public class JenaTDBDataSource extends DataSource {
     private final Dataset tdb;
@@ -34,9 +35,28 @@ public class JenaTDBDataSource extends DataSource {
     private final Query countQuery = QueryFactory.create(count, Syntax.syntaxSPARQL_11);
 
     @Override
-    public TriplePatternFragment getFragment(Resource subject, Property predicate, RDFNode object, long offset, long limit) {
-        checkBoundaries(offset, limit);
+    public IFragmentRequestProcessor getRequestProcessor(
+            final LinkedDataFragmentRequest request )
+    {
+        if ( ! (request instanceof TriplePatternFragmentRequest) )
+            throw new IllegalArgumentException();
 
+        return new MyProcessor( (TriplePatternFragmentRequest) request );
+    }
+
+protected class MyProcessor extends AbstractRequestProcessorForTriplePatterns
+{
+    public MyProcessor( final TriplePatternFragmentRequest request ) {
+        super( request );
+    }
+
+    @Override
+    protected LinkedDataFragment createFragment( final Resource subject,
+                                                 final Property predicate,
+                                                 final RDFNode object,
+                                                 final long offset,
+                                                 final long limit )
+    {
         Model model = tdb.getDefaultModel();
         QuerySolutionMap map = new QuerySolutionMap();
         if (subject != null) {
@@ -59,7 +79,7 @@ public class JenaTDBDataSource extends DataSource {
         }
 
         if (triples.isEmpty()) {
-            return new TriplePatternFragmentBase();
+            return createEmptyTriplePatternFragment();
         }
 
         // Try to get an estimate
@@ -87,8 +107,13 @@ public class JenaTDBDataSource extends DataSource {
         if (estimate < offset + size) {
             estimate = (size == limit) ? offset + size + 1 : offset + size;
         }
-        return new TriplePatternFragmentBase(triples, estimate);
+
+        // create the fragment
+        final boolean isLastPage = ( estimate < offset + limit );
+        return createTriplePatternFragment( triples, estimate, isLastPage );
     }
+
+} // end of MyProcessor
 
 
     /**

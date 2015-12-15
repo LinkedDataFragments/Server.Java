@@ -15,6 +15,7 @@ import java.util.Map;
  * An Index data source provides an overview of all available datasets.
  *
  * @author Miel Vander Sande
+ * @author <a href="http://olafhartig.de">Olaf Hartig</a>
  */
 public class IndexDataSource extends DataSource {
 
@@ -44,8 +45,29 @@ public class IndexDataSource extends DataSource {
     }
 
     @Override
-    public TriplePatternFragment getFragment(Resource subject, Property predicate, RDFNode object, long offset, long limit) {
-        StmtIterator listStatements = this.model.listStatements(subject, predicate, object);
+    public IFragmentRequestProcessor getRequestProcessor(
+            final LinkedDataFragmentRequest request )
+    {
+        if ( ! (request instanceof TriplePatternFragmentRequest) )
+            throw new IllegalArgumentException();
+
+        return new MyProcessor( (TriplePatternFragmentRequest) request );
+    }
+
+protected class MyProcessor extends AbstractRequestProcessorForTriplePatterns
+{
+    public MyProcessor( final TriplePatternFragmentRequest request ) {
+        super( request );
+    }
+
+    @Override
+    protected LinkedDataFragment createFragment( final Resource subject,
+                                                 final Property predicate,
+                                                 final RDFNode object,
+                                                 final long offset,
+                                                 final long limit )
+    {
+        StmtIterator listStatements = model.listStatements(subject, predicate, object);
         Model result = ModelFactory.createDefaultModel();
         
         long index = 0;
@@ -58,7 +80,10 @@ public class IndexDataSource extends DataSource {
             result.add(listStatements.next());
         }
 
-        return new TriplePatternFragmentBase(result, result.size());
+        final boolean isLastPage = ( result.size() < offset + limit );
+        return createTriplePatternFragment( result, result.size(), isLastPage );
     }
+
+} // end of MyProcessor
 
 }

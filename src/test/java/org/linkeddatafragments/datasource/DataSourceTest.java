@@ -1,10 +1,6 @@
 package test.java.org.linkeddatafragments.datasource;
 
 import com.google.gson.JsonObject;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.Resource;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,7 +13,9 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import org.linkeddatafragments.datasource.IDataSource;
+import org.linkeddatafragments.datasource.IFragmentRequestProcessor;
 import org.linkeddatafragments.datasource.TriplePatternFragment;
+import org.linkeddatafragments.datasource.TriplePatternFragmentRequest;
 
 
 /**
@@ -84,18 +82,19 @@ public abstract class DataSourceTest {
      * 
      */
     @Test
-    public void testEmpty() {
-        Model model = ModelFactory.createDefaultModel();
-        
-        Resource subj = model.createResource("http://nothing.ldf.org");
-        Property pred = null;
-        Resource obj = null;
-        
-        long offset = 0;
-        long limit = 50;
+    public void testEmpty() {        
+        TriplePatternFragmentRequest request = new TriplePatternFragmentRequest() {
+            public boolean isPageRequest() { return true; }
+            public long getPageNumber() { return 1L; }
+            public String getFragmentURL() { return "http://example.org/f"; }
+            public String getDatasetURL() { return "http://example.org/"; }
+            public String getSubject() { return "http://nothing.ldf.org"; }
+            public String getPredicate() { return null; }
+            public String getObject() { return null; }
+        };
     
-        TriplePatternFragment fragment = 
-                getDatasource().getFragment(subj, pred, obj, offset, limit);
+        IFragmentRequestProcessor proc = getDatasource().getRequestProcessor(request);
+        TriplePatternFragment fragment = (TriplePatternFragment) proc.createRequestedFragment();
         long totalSize = fragment.getTotalSize();
         
         Assert.assertTrue("Estimate is too big : " + totalSize, totalSize == 0);        
@@ -107,17 +106,18 @@ public abstract class DataSourceTest {
      */
     @Test
     public void testEstimate() {
-        Model model = ModelFactory.createDefaultModel();
-        
-        Resource subj = model.createResource("http://data.gov.be/catalog/ckanvl");
-        Property pred = null;
-        Resource obj = null;
-
-        long offset = 0;
-        long limit = 50;
-        
-        TriplePatternFragment fragment = 
-                getDatasource().getFragment(subj, pred, obj, offset, limit);
+        TriplePatternFragmentRequest request = new TriplePatternFragmentRequest() {
+            public boolean isPageRequest() { return true; }
+            public long getPageNumber() { return 1L; }
+            public String getFragmentURL() { return "http://example.org/f"; }
+            public String getDatasetURL() { return "http://example.org/"; }
+            public String getSubject() { return "http://data.gov.be/catalog/ckanvl"; }
+            public String getPredicate() { return null; }
+            public String getObject() { return null; }
+        };
+    
+        IFragmentRequestProcessor proc = getDatasource().getRequestProcessor(request);
+        TriplePatternFragment fragment = (TriplePatternFragment) proc.createRequestedFragment();
         long totalSize = fragment.getTotalSize();
         
         Assert.assertTrue("Estimate is too small : " + totalSize, totalSize > 100);        

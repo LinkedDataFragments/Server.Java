@@ -1,33 +1,20 @@
 package org.linkeddatafragments.servlet;
 
 import com.google.gson.JsonObject;
-import com.hp.hpl.jena.datatypes.TypeMapper;
-import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
-import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
-import com.hp.hpl.jena.shared.InvalidPropertyURIException;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map.Entry;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.http.client.utils.URIBuilder;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFLanguages;
@@ -35,19 +22,23 @@ import org.linkeddatafragments.config.ConfigReader;
 import org.linkeddatafragments.datasource.DataSourceFactory;
 import org.linkeddatafragments.datasource.HdtDataSourceType;
 import org.linkeddatafragments.datasource.IDataSource;
+import org.linkeddatafragments.datasource.IFragmentRequestProcessor;
 import org.linkeddatafragments.datasource.IndexDataSource;
 import org.linkeddatafragments.datasource.JenaTDBDataSourceType;
-import org.linkeddatafragments.datasource.TriplePatternFragment;
+import org.linkeddatafragments.datasource.LinkedDataFragment;
+import org.linkeddatafragments.datasource.LinkedDataFragmentRequest;
+import org.linkeddatafragments.datasource.LinkedDataFragmentRequestBase;
+import org.linkeddatafragments.datasource.TriplePatternFragmentRequestImpl;
 import org.linkeddatafragments.exceptions.DataSourceException;
 import org.linkeddatafragments.exceptions.DataSourceNotFoundException;
-import org.linkeddatafragments.util.CommonResources;
 import org.linkeddatafragments.util.MIMEParse;
 
 /**
- * Servlet that responds with a Basic Linked Data Fragment.
+ * Servlet that responds with a Linked Data Fragment.
  *
  * @author Ruben Verborgh
  * @author Bart Hanssens
+ * @author <a href="http://olafhartig.de">Olaf Hartig</a>
  */
 public class TriplePatternFragmentServlet extends HttpServlet {
 
@@ -55,15 +46,6 @@ public class TriplePatternFragmentServlet extends HttpServlet {
 
     // Parameters
     public final static String CFGFILE = "configFile";
-    public final static String SUBJ = "subject";
-    public final static String PRED = "predicate";
-    public final static String OBJ = "object";
-    public final static String PAGE = "page";
-
-    private final static Pattern STRINGPATTERN
-            = Pattern.compile("^\"(.*)\"(?:@(.*)|\\^\\^<?([^<>]*)>?)?$");
-    private final static TypeMapper TYPES = TypeMapper.getInstance();
-    private final static long TRIPLESPERPAGE = 100;
 
     private ConfigReader config;
     private final HashMap<String, IDataSource> dataSources = new HashMap<>();
@@ -143,7 +125,8 @@ public class TriplePatternFragmentServlet extends HttpServlet {
                 : requestURI.substring(contextPath.length());
 
         if (path.equals("/") || path.isEmpty()) {
-            return new IndexDataSource(getBaseUrl(request), dataSources);
+            final String baseURL = LinkedDataFragmentRequestBase.extractBaseURL(request, config);
+            return new IndexDataSource(baseURL, dataSources);
         }
 
         String dataSourceName = path.substring(1);
@@ -154,155 +137,19 @@ public class TriplePatternFragmentServlet extends HttpServlet {
         return dataSource;
     }
 
-    /**
-     * Get dataset url
-     *
-     * @param request
-     * @return
-     */
-    private String getDatasetUrl(HttpServletRequest request) {
-        return getBaseUrl(request) + request.getRequestURI();
-    }
-
-    /**
-     * Get Base url
-     *
-     * @param request
-     * @return
-     */
-    private String getBaseUrl(HttpServletRequest request) {
-        if (config.getBaseURL() != null) {
-            return config.getBaseURL();
-        } else if ((request.getServerPort() == 80)
-                || (request.getServerPort() == 443)) {
-            return request.getScheme() + "://"
-                    + request.getServerName();
-        } else {
-            return request.getScheme() + "://"
-                    + request.getServerName() + ":" + request.getServerPort();
-        }
-    }
-
-    /**
-     * Add total and limit
-     *
-     * @param output
-     * @param fragmentId
-     * @param total
-     * @param limit
-     */
-    private void addMeta(Model output, Resource datasetId, Resource fragmentId,
-            long total, long limit) {
-        output.add(datasetId, CommonResources.RDF_TYPE, CommonResources.VOID_DATASET);
-        output.add(datasetId, CommonResources.RDF_TYPE, CommonResources.HYDRA_COLLECTION);
-        output.add(datasetId, CommonResources.VOID_SUBSET, fragmentId);
-
-        output.add(fragmentId, CommonResources.RDF_TYPE, CommonResources.HYDRA_COLLECTION);
-        output.add(fragmentId, CommonResources.RDF_TYPE, CommonResources.HYDRA_PAGEDCOLLECTION);
-
-        Literal totalTyped = output.createTypedLiteral(total, XSDDatatype.XSDinteger);
-        Literal limitTyped = output.createTypedLiteral(limit, XSDDatatype.XSDinteger);
-
-        output.add(fragmentId, CommonResources.VOID_TRIPLES, totalTyped);
-        output.add(fragmentId, CommonResources.HYDRA_TOTALITEMS, totalTyped);
-        output.add(fragmentId, CommonResources.HYDRA_ITEMSPERPAGE, limitTyped);
-    }
-
-    /**
-     * Add reference to first/previous/next page
-     *
-     * @param output
-     * @param fragmentId
-     * @param fragmentUrl
-     * @param total
-     * @param limit
-     * @param offset
-     * @param page
-     * @throws URISyntaxException
-     */
-    private void addPages(Model output, Resource fragmentId, String fragmentUrl,
-            long total, long limit, long offset, long page) throws URISyntaxException {
-        URIBuilder pagedUrl = new URIBuilder(fragmentUrl);
-
-        pagedUrl.setParameter(PAGE, "1");
-        output.add(fragmentId, CommonResources.HYDRA_FIRSTPAGE,
-                output.createResource(pagedUrl.toString()));
-        if (offset > 0) {
-            pagedUrl.setParameter(PAGE, Long.toString(page - 1));
-            output.add(fragmentId, CommonResources.HYDRA_PREVIOUSPAGE,
-                    output.createResource(pagedUrl.toString()));
-        }
-        if (offset + limit < total) {
-            pagedUrl.setParameter(PAGE, Long.toString(page + 1));
-            output.add(fragmentId, CommonResources.HYDRA_NEXTPAGE,
-                    output.createResource(pagedUrl.toString()));
-        }
-    }
-
-    /**
-     * Add controls to output
-     *
-     * @param output
-     * @param datasetId
-     * @param datasetUrl
-     */
-    private void addControls(Model output, Resource datasetId, String datasetUrl) {
-        // add controls
-        Resource triplePattern = output.createResource();
-        Resource subjectMapping = output.createResource();
-        Resource predicateMapping = output.createResource();
-        Resource objectMapping = output.createResource();
-
-        output.add(datasetId, CommonResources.HYDRA_SEARCH, triplePattern);
-        output.add(triplePattern, CommonResources.HYDRA_TEMPLATE, output.createLiteral(datasetUrl + "{?subject,predicate,object}"));
-        output.add(triplePattern, CommonResources.HYDRA_MAPPING, subjectMapping);
-        output.add(triplePattern, CommonResources.HYDRA_MAPPING, predicateMapping);
-        output.add(triplePattern, CommonResources.HYDRA_MAPPING, objectMapping);
-
-        output.add(subjectMapping, CommonResources.HYDRA_VARIABLE, output.createLiteral(SUBJ));
-        output.add(subjectMapping, CommonResources.HYDRA_PROPERTY, CommonResources.RDF_SUBJECT);
-
-        output.add(predicateMapping, CommonResources.HYDRA_VARIABLE, output.createLiteral(PRED));
-        output.add(predicateMapping, CommonResources.HYDRA_PROPERTY, CommonResources.RDF_PREDICATE);
-        output.add(objectMapping, CommonResources.HYDRA_VARIABLE, output.createLiteral(OBJ));
-
-        output.add(objectMapping, CommonResources.HYDRA_PROPERTY, CommonResources.RDF_OBJECT);
-    }
-
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException {
         try {
             IDataSource dataSource = getDataSource(request);
+            final LinkedDataFragmentRequest ldfRequest = new TriplePatternFragmentRequestImpl( request, config );
+            final IFragmentRequestProcessor processor = dataSource.getRequestProcessor( ldfRequest );
+            final LinkedDataFragment fragment = processor.createRequestedFragment();
 
-            // query the fragment
-            Resource subject = parseAsResource(request.getParameter(SUBJ));
-            Property predicate = parseAsProperty(request.getParameter(PRED));
-            RDFNode object = parseAsNode(request.getParameter(OBJ));
-
-            long page = Math.max(1, parseAsInteger(request.getParameter(PAGE)));
-            long limit = TRIPLESPERPAGE;
-            long offset = limit * (page - 1);
-
-            TriplePatternFragment fragment
-                    = dataSource.getFragment(subject, predicate, object, offset, limit);
-
-            // fill the output model
-            Model output = fragment.getTriples();
+            final Model output = ModelFactory.createDefaultModel();
             output.setNsPrefixes(config.getPrefixes());
-
-			// add dataset metadata
-            String datasetUrl = getDatasetUrl(request);
-            Resource datasetId = output.createResource(datasetUrl + "#dataset");
-
-            String query = request.getQueryString();
-            String fragmentUrl = query == null ? datasetUrl : (datasetUrl + "?" + query);
-            Resource fragmentId = output.createResource(fragmentUrl);
-
-            long total = fragment.getTotalSize();
-
-            addMeta(output, datasetId, fragmentId, total, limit);
-            addPages(output, fragmentId, fragmentUrl, total, limit, offset, page);
-            addControls(output, datasetId, datasetUrl);
+            output.add( fragment.getMetadata() );
+            output.add( fragment.getTriples() );
+            output.add( fragment.getControls() );
 
             // do conneg
             String bestMatch = MIMEParse.bestMatch(mimeTypes, request.getHeader("Accept"));
@@ -314,7 +161,7 @@ public class TriplePatternFragmentServlet extends HttpServlet {
             response.setCharacterEncoding("utf-8");
 
             RDFDataMgr.write(response.getOutputStream(), output, contentType);
-        } catch (IOException | URISyntaxException e) {
+        } catch (IOException e) {
             throw new ServletException(e);
         } catch (DataSourceNotFoundException ex) {
             try {
@@ -327,91 +174,4 @@ public class TriplePatternFragmentServlet extends HttpServlet {
         }
     }
 
-    /**
-     * Parses the given value as an integer.
-     *
-     * @param value the value
-     * @return the parsed value
-     */
-    private int parseAsInteger(String value) {
-        try {
-            return Integer.parseInt(value);
-        } catch (NumberFormatException ex) {
-            return 0;
-        }
-    }
-
-    /**
-     * Parses the given value as an RDF resource.
-     *
-     * @param value the value
-     * @return the parsed value, or null if unspecified
-     */
-    private Resource parseAsResource(String value) {
-        RDFNode subject = parseAsNode(value);
-        return subject == null || subject instanceof Resource
-                ? (Resource) subject
-                : CommonResources.INVALID_URI;
-    }
-
-    /**
-     * Parses the given value as an RDF property.
-     *
-     * @param value the value
-     * @return the parsed value, or null if unspecified
-     */
-    private Property parseAsProperty(String value) {
-        RDFNode predicateNode = parseAsNode(value);
-        if (predicateNode instanceof Resource) {
-            try {
-                return ResourceFactory.createProperty(((Resource) predicateNode).getURI());
-            } catch (InvalidPropertyURIException ex) {
-                return CommonResources.INVALID_URI;
-            }
-        }
-        return predicateNode == null ? null : CommonResources.INVALID_URI;
-    }
-
-    /**
-     * Parses the given value as an RDF node.
-     *
-     * @param value the value
-     * @return the parsed value, or null if unspecified
-     */
-    private RDFNode parseAsNode(String value) {
-        // nothing or empty indicates an unknown
-        if (value == null || value.isEmpty()) {
-            return null;
-        }
-        // find the kind of entity based on the first character
-        char firstChar = value.charAt(0);
-        switch (firstChar) {
-            // variable or blank node indicates an unknown
-            case '?':
-            case '_':
-                return null;
-            // angular brackets indicate a URI
-            case '<':
-                return ResourceFactory.createResource(value.substring(1, value.length() - 1));
-            // quotes indicate a string
-            case '"':
-                Matcher matcher = STRINGPATTERN.matcher(value);
-                if (matcher.matches()) {
-                    String body = matcher.group(1);
-                    String lang = matcher.group(2);
-                    String type = matcher.group(3);
-                    if (lang != null) {
-                        return ResourceFactory.createLangLiteral(body, lang);
-                    }
-                    if (type != null) {
-                        return ResourceFactory.createTypedLiteral(body, TYPES.getSafeTypeByName(type));
-                    }
-                    return ResourceFactory.createPlainLiteral(body);
-                }
-                return CommonResources.INVALID_URI;
-            // assume it's a URI without angular brackets
-            default:
-                return ResourceFactory.createResource(value);
-        }
-    }
 }
