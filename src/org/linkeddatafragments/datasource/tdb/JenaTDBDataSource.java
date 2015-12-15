@@ -23,7 +23,7 @@ import org.linkeddatafragments.datasource.DataSource;
 import org.linkeddatafragments.datasource.IFragmentRequestProcessor;
 import org.linkeddatafragments.fragments.LinkedDataFragment;
 import org.linkeddatafragments.fragments.LinkedDataFragmentRequest;
-import org.linkeddatafragments.fragments.TPF.TriplePatternFragmentRequest;
+import org.linkeddatafragments.fragments.tpf.TriplePatternFragmentRequest;
 
 /**
  * Experimental Jena TDB-backed data source of Basic Linked Data Fragments.

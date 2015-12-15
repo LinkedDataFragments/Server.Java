@@ -7,7 +7,7 @@ import org.linkeddatafragments.datasource.DataSource;
 import org.linkeddatafragments.datasource.IFragmentRequestProcessor;
 import org.linkeddatafragments.fragments.LinkedDataFragment;
 import org.linkeddatafragments.fragments.LinkedDataFragmentRequest;
-import org.linkeddatafragments.fragments.TPF.TriplePatternFragmentRequest;
+import org.linkeddatafragments.fragments.tpf.TriplePatternFragmentRequest;
 import org.rdfhdt.hdt.enums.TripleComponentRole;
 import org.rdfhdt.hdt.hdt.HDT;
 import org.rdfhdt.hdt.hdt.HDTManager;

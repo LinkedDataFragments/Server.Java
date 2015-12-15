@@ -1,4 +1,4 @@
-package org.linkeddatafragments.fragments.TPF;
+package org.linkeddatafragments.fragments.tpf;
 
 import org.linkeddatafragments.fragments.LinkedDataFragmentRequest;
 

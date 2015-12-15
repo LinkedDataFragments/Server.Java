@@ -30,7 +30,7 @@ import org.linkeddatafragments.exceptions.DataSourceNotFoundException;
 import org.linkeddatafragments.fragments.LinkedDataFragment;
 import org.linkeddatafragments.fragments.LinkedDataFragmentRequest;
 import org.linkeddatafragments.fragments.LinkedDataFragmentRequestBase;
-import org.linkeddatafragments.fragments.TPF.TriplePatternFragmentRequestImpl;
+import org.linkeddatafragments.fragments.tpf.TriplePatternFragmentRequestImpl;
 import org.linkeddatafragments.util.MIMEParse;
 
 /**

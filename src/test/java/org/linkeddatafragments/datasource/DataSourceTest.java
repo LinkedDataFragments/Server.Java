@@ -14,8 +14,8 @@ import org.junit.Test;
 
 import org.linkeddatafragments.datasource.IDataSource;
 import org.linkeddatafragments.datasource.IFragmentRequestProcessor;
-import org.linkeddatafragments.fragments.TPF.TriplePatternFragment;
-import org.linkeddatafragments.fragments.TPF.TriplePatternFragmentRequest;
+import org.linkeddatafragments.fragments.tpf.TriplePatternFragment;
+import org.linkeddatafragments.fragments.tpf.TriplePatternFragmentRequest;
 
 
 /**

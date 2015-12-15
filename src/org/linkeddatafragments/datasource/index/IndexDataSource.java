@@ -17,7 +17,7 @@ import org.linkeddatafragments.datasource.IDataSource;
 import org.linkeddatafragments.datasource.IFragmentRequestProcessor;
 import org.linkeddatafragments.fragments.LinkedDataFragment;
 import org.linkeddatafragments.fragments.LinkedDataFragmentRequest;
-import org.linkeddatafragments.fragments.TPF.TriplePatternFragmentRequest;
+import org.linkeddatafragments.fragments.tpf.TriplePatternFragmentRequest;
 
 /**
  * An Index data source provides an overview of all available datasets.

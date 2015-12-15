@@ -2,9 +2,9 @@ package org.linkeddatafragments.datasource;
 
 import org.linkeddatafragments.fragments.LinkedDataFragment;
 import org.linkeddatafragments.fragments.LinkedDataFragmentRequest;
-import org.linkeddatafragments.fragments.TPF.TriplePatternFragment;
-import org.linkeddatafragments.fragments.TPF.TriplePatternFragmentImpl;
-import org.linkeddatafragments.fragments.TPF.TriplePatternFragmentRequest;
+import org.linkeddatafragments.fragments.tpf.TriplePatternFragment;
+import org.linkeddatafragments.fragments.tpf.TriplePatternFragmentImpl;
+import org.linkeddatafragments.fragments.tpf.TriplePatternFragmentRequest;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Property;
