@@ -1,8 +1,11 @@
-package org.linkeddatafragments.datasource;
+package org.linkeddatafragments.datasource.hdt;
 
 import java.io.File;
 import java.io.IOException;
 
+import org.linkeddatafragments.datasource.DataSourceTypesRegistry;
+import org.linkeddatafragments.datasource.IDataSource;
+import org.linkeddatafragments.datasource.IDataSourceType;
 import org.linkeddatafragments.exceptions.DataSourceException;
 
 import com.google.gson.JsonObject;
