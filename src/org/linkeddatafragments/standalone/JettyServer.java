@@ -5,11 +5,11 @@ import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
-
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.servlet.DefaultServlet;
+import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
-
 import org.linkeddatafragments.servlet.TriplePatternFragmentServlet;
 
 /**
@@ -67,6 +67,15 @@ public class JettyServer {
         ServletHolder tpfServletHolder = new ServletHolder(new TriplePatternFragmentServlet());
         tpfServletHolder.setInitParameter(TriplePatternFragmentServlet.CFGFILE, config);
         handler.addServletWithMapping(tpfServletHolder, "/*");
+        
+       // TODO: create a servlet to serve assets
+        //String assetsPath = System.getProperty("user.dir") + "/assets";
+        //ServletHolder assetsHolder = new ServletHolder(new DefaultServlet());
+        //assetsHolder.setInitParameter("resourceBase", assetsPath);
+        //assetsHolder.setInitParameter("dirAllowed","true");
+        //assetsHolder.setInitParameter("pathInfoOnly","true");
+        //handler.addServletWithMapping(assetsHolder,"/assets/*");
+        
 
         // start the server
         server.start();

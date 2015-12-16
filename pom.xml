@@ -30,7 +30,7 @@
             <artifactId>httpclient</artifactId>
             <version>4.3.5</version>
         </dependency>
-       	<dependency>
+        <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.5</version>
@@ -72,6 +72,11 @@
             <groupId>org.apache.jena</groupId>
             <artifactId>jena-tdb</artifactId>
             <version>1.1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.freemarker</groupId>
+            <artifactId>freemarker</artifactId>
+            <version>2.3.23</version>
         </dependency>
     </dependencies>
     <build>

@@ -3,6 +3,9 @@ package org.linkeddatafragments.servlet;
 import com.google.gson.JsonObject;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.Statement;
+import com.hp.hpl.jena.rdf.model.StmtIterator;
+import freemarker.template.TemplateException;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -10,6 +13,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map.Entry;
+import java.util.function.Consumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -33,6 +40,7 @@ import org.linkeddatafragments.fragments.LinkedDataFragmentRequest;
 import org.linkeddatafragments.fragments.LinkedDataFragmentRequestBase;
 import org.linkeddatafragments.fragments.tpf.TriplePatternFragmentRequestImpl;
 import org.linkeddatafragments.util.MIMEParse;
+import org.linkeddatafragments.views.HtmlWriter;
 
 /**
  * Servlet that responds with a Linked Data Fragment.
@@ -88,6 +96,7 @@ public class TriplePatternFragmentServlet extends HttpServlet {
             }
 
             // register content types
+            MIMEParse.register("text/html");
             MIMEParse.register(Lang.TTL.getHeaderString());
             MIMEParse.register(Lang.JSONLD.getHeaderString());
             MIMEParse.register(Lang.NTRIPLES.getHeaderString());
@@ -145,24 +154,30 @@ public class TriplePatternFragmentServlet extends HttpServlet {
             final LinkedDataFragmentRequest ldfRequest = new TriplePatternFragmentRequestImpl( request, config );
             final IFragmentRequestProcessor processor = dataSource.getRequestProcessor( ldfRequest );
             final LinkedDataFragment fragment = processor.createRequestedFragment();
+            
+            // do conneg
+            String bestMatch = MIMEParse.bestMatch(request.getHeader("Accept"));
+
+            // serialize the output
+            response.setHeader("Server", "Linked Data Fragments Server");
+            response.setContentType(bestMatch);
+            response.setCharacterEncoding("utf-8");
+            
+            if (bestMatch.equals("text/html")) {
+                new HtmlWriter().write(response.getOutputStream(), dataSources, dataSource, fragment);
+                return;
+            }
 
             final Model output = ModelFactory.createDefaultModel();
             output.setNsPrefixes(config.getPrefixes());
             output.add( fragment.getMetadata() );
             output.add( fragment.getTriples() );
             output.add( fragment.getControls() );
-
-            // do conneg
-            String bestMatch = MIMEParse.bestMatch(request.getHeader("Accept"));
+            
             Lang contentType = RDFLanguages.contentTypeToLang(bestMatch);
+            RDFDataMgr.write(response.getOutputStream(), output, contentType);   
 
-            // serialize the output
-            response.setHeader("Server", "Linked Data Fragments Server");
-            response.setContentType(bestMatch);
-            response.setCharacterEncoding("utf-8");
-
-            RDFDataMgr.write(response.getOutputStream(), output, contentType);
-        } catch (IOException | NoRegisteredMimeTypesException e) {
+        } catch (IOException | NoRegisteredMimeTypesException | TemplateException e) {
             throw new ServletException(e);
         } catch (DataSourceNotFoundException ex) {
             try {
