@@ -19,8 +19,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 
 import org.linkeddatafragments.datasource.DataSourceFactory;
-
-import org.linkeddatafragments.datasource.JenaTDBDataSourceType;
+import org.linkeddatafragments.datasource.tdb.JenaTDBDataSourceType;
 
 /**
  *

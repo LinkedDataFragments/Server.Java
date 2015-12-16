@@ -1,7 +1,10 @@
-package org.linkeddatafragments.datasource;
+package org.linkeddatafragments.datasource.tdb;
 
 import java.io.File;
 
+import org.linkeddatafragments.datasource.DataSourceTypesRegistry;
+import org.linkeddatafragments.datasource.IDataSource;
+import org.linkeddatafragments.datasource.IDataSourceType;
 import org.linkeddatafragments.exceptions.DataSourceException;
 
 import com.google.gson.JsonObject;
