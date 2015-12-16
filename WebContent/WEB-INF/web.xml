@@ -4,7 +4,7 @@
     <servlet>
         <display-name>BasicLdfServlet</display-name>
         <servlet-name>BasicLdfServlet</servlet-name>
-        <servlet-class>org.linkeddatafragments.servlet.TriplePatternFragmentServlet</servlet-class>
+        <servlet-class>org.linkeddatafragments.servlet.LinkedDataFragmentServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>BasicLdfServlet</servlet-name>

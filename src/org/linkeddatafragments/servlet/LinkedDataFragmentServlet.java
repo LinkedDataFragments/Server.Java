@@ -30,9 +30,7 @@ import org.linkeddatafragments.exceptions.DataSourceException;
 import org.linkeddatafragments.exceptions.DataSourceNotFoundException;
 import org.linkeddatafragments.exceptions.NoRegisteredMimeTypesException;
 import org.linkeddatafragments.fragments.LinkedDataFragment;
-import org.linkeddatafragments.fragments.LinkedDataFragmentRequest;
 import org.linkeddatafragments.fragments.LinkedDataFragmentRequestBase;
-import org.linkeddatafragments.fragments.tpf.TriplePatternFragmentRequestImpl;
 import org.linkeddatafragments.util.MIMEParse;
 import org.linkeddatafragments.views.HtmlWriter;
 
@@ -43,7 +41,7 @@ import org.linkeddatafragments.views.HtmlWriter;
  * @author Bart Hanssens
  * @author <a href="http://olafhartig.de">Olaf Hartig</a>
  */
-public class TriplePatternFragmentServlet extends HttpServlet {
+public class LinkedDataFragmentServlet extends HttpServlet {
 
     private final static long serialVersionUID = 1L;
 
@@ -54,7 +52,7 @@ public class TriplePatternFragmentServlet extends HttpServlet {
     private final HashMap<String, IDataSource> dataSources = new HashMap<>();
     private final Collection<String> mimeTypes = new ArrayList<>();
 
-    public TriplePatternFragmentServlet() {
+    public LinkedDataFragmentServlet() {
         HdtDataSourceType.register();
         JenaTDBDataSourceType.register();
     }
@@ -145,8 +143,7 @@ public class TriplePatternFragmentServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException {
         try {
             IDataSource dataSource = getDataSource(request);
-            final LinkedDataFragmentRequest ldfRequest = new TriplePatternFragmentRequestImpl( request, config );
-            final IFragmentRequestProcessor processor = dataSource.getRequestProcessor( ldfRequest );
+            final IFragmentRequestProcessor processor = dataSource.getRequestProcessor( request, config );
             final LinkedDataFragment fragment = processor.createRequestedFragment();
             
             // do conneg
