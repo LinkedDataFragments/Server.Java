@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import org.linkeddatafragments.datasource.IDataSource;
@@ -39,10 +40,12 @@ public class HtmlWriter {
         Template temp = cfg.getTemplate("index.ftl.html");
         
         Map data = new HashMap();
-        data.put("assetsPath", "css/");
+        data.put("assetsPath", "assets/");
         data.put("header", datasource.getTitle());
         data.put("datasources", dataSources);
         data.put("content", "");
+        data.put("date", new Date());
+
         
         data.put("controls", fragment.getControls());
         data.put("metadata", fragment.getMetadata());

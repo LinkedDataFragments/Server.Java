@@ -6,8 +6,10 @@
   <dl class="datasets">
     <#list datasources?keys as datasourceName>
         <dt><a href="/${datasourceName}">${datasources[datasourceName].getTitle() }</a></dt>
-        <dd>${ datasources[datasourceName].getDescription() }</dd>
+        <dd>${ datasources[datasourceName].getDescription()!"" }</dd>
     </#list>
   </dl>
   <p>The current dataset <em class="dataset">index</em> contains metadata about these datasets.</p>
 </div>
+
+<#include "fragment.ftl.html">
