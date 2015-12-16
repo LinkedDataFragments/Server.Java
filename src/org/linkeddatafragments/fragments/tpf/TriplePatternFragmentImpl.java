@@ -1,14 +1,17 @@
 package org.linkeddatafragments.fragments.tpf;
 
+import java.util.NoSuchElementException;
+
 import org.linkeddatafragments.fragments.LinkedDataFragmentBase;
 import org.linkeddatafragments.util.CommonResources;
 
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
+import com.hp.hpl.jena.util.iterator.NiceIterator;
 
 /**
  * Implementation of {@link TriplePatternFragment}.
@@ -52,13 +55,16 @@ public class TriplePatternFragmentImpl extends LinkedDataFragmentBase
                                       final long pageNumber,
                                       final boolean isLastPage ) {
         super( fragmentURL, datasetURL, pageNumber, isLastPage );
-        this.triples = triples == null ? ModelFactory.createDefaultModel() : triples;
+        this.triples = triples;
         this.totalSize = totalSize < 0 ? 0 : totalSize;
     }
 
     @Override
     public StmtIterator getTriples() {
-        return triples.listStatements();
+        if ( triples != null )
+            return triples.listStatements();
+        else
+            return emptyStmtIterator;
     }
 
     @Override
@@ -117,6 +123,16 @@ public class TriplePatternFragmentImpl extends LinkedDataFragmentBase
                TriplePatternFragmentRequest.PARAMETERNAME_SUBJ + "," +
                TriplePatternFragmentRequest.PARAMETERNAME_PRED + "," +
                TriplePatternFragmentRequest.PARAMETERNAME_OBJ + "}";
+    }
+
+
+    public static final StmtIterator emptyStmtIterator = new EmptyStmtIterator();
+
+    public static class EmptyStmtIterator
+        extends NiceIterator<Statement>
+        implements StmtIterator
+    {
+        public Statement nextStatement() { throw new NoSuchElementException(); }
     }
 
 }
