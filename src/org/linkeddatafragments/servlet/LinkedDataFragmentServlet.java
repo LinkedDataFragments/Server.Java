@@ -155,15 +155,16 @@ public class LinkedDataFragmentServlet extends HttpServlet {
             response.setCharacterEncoding("utf-8");
             
             if (bestMatch.equals("text/html")) {
-                new HtmlWriter().write(response.getOutputStream(), dataSources, dataSource, fragment);
+                String datasetUrl = LinkedDataFragmentRequestBase.extractDatasetURL(request, config);
+                new HtmlWriter().write(response.getOutputStream(), dataSources, dataSource, fragment, datasetUrl);
                 return;
             }
 
             final Model output = ModelFactory.createDefaultModel();
             output.setNsPrefixes(config.getPrefixes());
-            output.add( fragment.getMetadata() );
-            output.add( fragment.getTriples() );
-            output.add( fragment.getControls() );
+            output.add( fragment.getMetadata().toList() );
+            output.add( fragment.getTriples().toList() );
+            output.add( fragment.getControls().toList() );
             
             Lang contentType = RDFLanguages.contentTypeToLang(bestMatch);
             RDFDataMgr.write(response.getOutputStream(), output, contentType);   

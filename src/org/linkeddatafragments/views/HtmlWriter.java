@@ -35,7 +35,7 @@ public class HtmlWriter {
         cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
     }
    
-    public void write(OutputStream outputStream, HashMap<String, IDataSource> dataSources, IDataSource datasource, LinkedDataFragment fragment) throws IOException, TemplateException{
+    public void write(OutputStream outputStream, HashMap<String, IDataSource> dataSources, IDataSource datasource, LinkedDataFragment fragment, String datasetUrl) throws IOException, TemplateException{
         /* Get the template (uses cache internally) */
         Template temp = cfg.getTemplate("index.ftl.html");
         
@@ -45,8 +45,10 @@ public class HtmlWriter {
         data.put("datasources", dataSources);
         data.put("content", "");
         data.put("date", new Date());
-
         
+
+        data.put("datasourceUrl", datasetUrl);
+        data.put("datasource", datasource);
         data.put("controls", fragment.getControls());
         data.put("metadata", fragment.getMetadata());
         data.put("triples", fragment.getTriples());

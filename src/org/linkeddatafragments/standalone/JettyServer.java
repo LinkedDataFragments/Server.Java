@@ -5,9 +5,16 @@ import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
+import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.ContextHandler;
+import org.eclipse.jetty.server.handler.ContextHandlerCollection;
+import org.eclipse.jetty.server.handler.ResourceHandler;
+import org.eclipse.jetty.servlet.DefaultServlet;
+import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.util.resource.Resource;
 import org.linkeddatafragments.servlet.LinkedDataFragmentServlet;
 
 /**
@@ -58,23 +65,38 @@ public class JettyServer {
 
         // create a new (Jetty) server, and add a servlet handler
         Server server = new Server(port);
-        ServletHandler handler = new ServletHandler();
-        server.setHandler(handler);
-
-        // add the TriplePatternFragmentsServlet to the handler
-        ServletHolder tpfServletHolder = new ServletHolder(new LinkedDataFragmentServlet());
-        tpfServletHolder.setInitParameter(LinkedDataFragmentServlet.CFGFILE, config);
-        handler.addServletWithMapping(tpfServletHolder, "/*");
         
-       // TODO: create a servlet to serve assets
-        //String assetsPath = System.getProperty("user.dir") + "/assets";
-        //ServletHolder assetsHolder = new ServletHolder(new DefaultServlet());
-        //assetsHolder.setInitParameter("resourceBase", assetsPath);
-        //assetsHolder.setInitParameter("dirAllowed","true");
-        //assetsHolder.setInitParameter("pathInfoOnly","true");
-        //handler.addServletWithMapping(assetsHolder,"/assets/*");
-        
+        // The filesystem paths we will map
+        String pwdPath = System.getProperty("user.dir");
+        String assetsPath = pwdPath + "/assets";
 
+        // Setup the basic application "context" for this application at "/"
+        // This is also known as the handler tree (in jetty speak)
+        ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
+        context.setResourceBase(pwdPath);
+        context.setContextPath("/");
+        server.setHandler(context);
+
+        // add a simple Servlet at "/dynamic/*"
+        ServletHolder holderDynamic = new ServletHolder("dynamic", LinkedDataFragmentServlet.class);
+        holderDynamic.setInitParameter(LinkedDataFragmentServlet.CFGFILE, config);
+        context.addServlet(holderDynamic, "/*");
+
+        // add special pathspec of "/home/" content mapped to the homePath
+        ServletHolder holderHome = new ServletHolder("static-home", DefaultServlet.class);
+        holderHome.setInitParameter("resourceBase",assetsPath);
+        holderHome.setInitParameter("dirAllowed","true");
+        holderHome.setInitParameter("pathInfoOnly","true");
+        context.addServlet(holderHome,"/assets/*");
+
+        // Lastly, the default servlet for root content (always needed, to satisfy servlet spec)
+        // It is important that this is last.
+        ServletHolder holderPwd = new ServletHolder("default", DefaultServlet.class);
+        holderPwd.setInitParameter("dirAllowed","true");
+        context.addServlet(holderPwd,"/");
+        
+        
+        
         // start the server
         server.start();
         System.out.println("Started server, listening at port " + port);
