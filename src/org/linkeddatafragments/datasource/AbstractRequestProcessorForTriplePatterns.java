@@ -49,7 +49,7 @@ public abstract class AbstractRequestProcessorForTriplePatterns
             if ( request.isPageRequest() )
                 offset = limit * ( request.getPageNumber() - 1L );
             else
-                offset = 0L; // FIXME: we should not have a limit in this case!
+                offset = 0L;
 
             final TriplePatternFragmentRequest tpfRequest =
                                         (TriplePatternFragmentRequest) request;
@@ -78,13 +78,17 @@ public abstract class AbstractRequestProcessorForTriplePatterns
                                                      final long totalSize,
                                                      final boolean isLastPage )
         {
-            // FIXME: deal with the case in which request.isPageRequest()==false
+            final long pageNumber;
+            if ( request.isPageRequest() )
+                pageNumber = request.getPageNumber();
+            else
+                pageNumber = 1L;
 
             return new TriplePatternFragmentImpl( triples,
                                                   totalSize,
                                                   request.getFragmentURL(),
                                                   request.getDatasetURL(),
-                                                  request.getPageNumber(),
+                                                  pageNumber,
                                                   isLastPage );
         }
 
