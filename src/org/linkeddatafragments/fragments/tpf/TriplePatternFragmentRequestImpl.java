@@ -45,4 +45,18 @@ public class TriplePatternFragmentRequestImpl
         return object;
     }
 
+    @Override
+    public String toString()
+    {
+        return "TriplePatternFragmentRequest(" +
+               "class: " + getClass().getName() +
+               ", subject: " + subject +
+               ", predicate: " + predicate +
+               ", object: " + object +
+               ", fragmentURL: " + fragmentURL +
+               ", isPageRequest: " + pageNumberWasRequested +
+               ", pageNumber: " + pageNumber +
+               ")";
+    }
+
 }

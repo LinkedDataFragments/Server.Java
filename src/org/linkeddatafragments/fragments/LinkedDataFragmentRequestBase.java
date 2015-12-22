@@ -47,4 +47,15 @@ public abstract class LinkedDataFragmentRequestBase
             throw new UnsupportedOperationException();
     }
 
+    @Override
+    public String toString()
+    {
+        return "LinkedDataFragmentRequest(" +
+               "class: " + getClass().getName() +
+               ", fragmentURL: " + fragmentURL +
+               ", isPageRequest: " + pageNumberWasRequested +
+               ", pageNumber: " + pageNumber +
+               ")";
+    }
+
 }
