@@ -1,39 +1,62 @@
 package org.linkeddatafragments.fragments.tpf;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.linkeddatafragments.config.ConfigReader;
 import org.linkeddatafragments.fragments.LinkedDataFragmentRequestBase;
 
 /**
- * An implementation of {@link TriplePatternFragmentRequest} that is based on
- * an {@link HttpServletRequest}.
+ * An implementation of {@link TriplePatternFragmentRequest}.
  *
  * @author <a href="http://olafhartig.de">Olaf Hartig</a>
  */
 public class TriplePatternFragmentRequestImpl
     extends LinkedDataFragmentRequestBase
     implements TriplePatternFragmentRequest
-{    
-    public TriplePatternFragmentRequestImpl( final HttpServletRequest request,
-                                             final ConfigReader config )
+{
+    public final String subject;
+    public final String predicate;
+    public final String object;
+
+    public TriplePatternFragmentRequestImpl( final String fragmentURL,
+                                             final String datasetURL,
+                                             final boolean pageNumberWasRequested,
+                                             final long pageNumber,
+                                             final String subject,
+                                             final String predicate,
+                                             final String object )
     {
-        super( request, config );
+        super( fragmentURL, datasetURL, pageNumberWasRequested, pageNumber );
+
+        this.subject = subject;
+        this.predicate = predicate;
+        this.object = object;
     }
 
     @Override
     public String getSubject() {
-        return request.getParameter( PARAMETERNAME_SUBJ );
+        return subject;
     }
 
     @Override
     public String getPredicate() {
-        return request.getParameter( PARAMETERNAME_PRED );
+        return predicate;
     }
 
     @Override
     public String getObject() {
-        return request.getParameter( PARAMETERNAME_OBJ );
+        return object;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "TriplePatternFragmentRequest(" +
+               "class: " + getClass().getName() +
+               ", subject: " + subject +
+               ", predicate: " + predicate +
+               ", object: " + object +
+               ", fragmentURL: " + fragmentURL +
+               ", isPageRequest: " + pageNumberWasRequested +
+               ", pageNumber: " + pageNumber +
+               ")";
     }
 
 }

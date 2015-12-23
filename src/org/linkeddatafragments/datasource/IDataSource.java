@@ -2,10 +2,7 @@ package org.linkeddatafragments.datasource;
 
 import java.io.Closeable;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.linkeddatafragments.config.ConfigReader;
-import org.linkeddatafragments.fragments.LinkedDataFragmentRequest;
+import org.linkeddatafragments.fragments.IFragmentRequestParser;
 
 /**
  * A data source of Linked Data Fragments.
@@ -20,17 +17,12 @@ public interface IDataSource extends Closeable {
     public String getDescription();
 
     /**
-     * Returns a data source specific processor for the given request of a
-     * Linked Data Fragment.
+     * Returns a data source specific {@link IFragmentRequestParser}.
      */
-    IFragmentRequestProcessor getRequestProcessor(
-            final HttpServletRequest request,
-            final ConfigReader config );
+    IFragmentRequestParser getRequestParser();
 
     /**
-     * Returns a data source specific processor for the given request of a
-     * Linked Data Fragment.
+     * Returns a data source specific {@link IFragmentRequestProcessor}.
      */
-    IFragmentRequestProcessor getRequestProcessor(
-            final LinkedDataFragmentRequest request );
+    IFragmentRequestProcessor getRequestProcessor();
 }

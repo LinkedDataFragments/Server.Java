@@ -4,10 +4,12 @@
   <h2>Available datasets</h2>
   <p>Browse the following datasets as <a href="http://linkeddatafragments.org/in-depth/#tpf">Triple Pattern Fragments</a>:</p>
   <dl class="datasets">
+      <#if datasources??>
     <#list datasources?keys as datasourceName>
         <dt><a href="/${datasourceName}">${datasources[datasourceName].getTitle() }</a></dt>
         <dd>${ datasources[datasourceName].getDescription()!"" }</dd>
     </#list>
+    </#if>
   </dl>
   <p>The current dataset <em class="dataset">index</em> contains metadata about these datasets.</p>
 </div>

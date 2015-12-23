@@ -18,8 +18,11 @@ import java.io.Writer;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import javax.servlet.ServletOutputStream;
 import org.linkeddatafragments.datasource.IDataSource;
+import org.linkeddatafragments.datasource.index.IndexDataSource;
 import org.linkeddatafragments.fragments.LinkedDataFragment;
+import org.linkeddatafragments.fragments.LinkedDataFragmentRequest;
 
 /**
  *
@@ -35,19 +38,20 @@ public class HtmlWriter {
         cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
     }
    
-    public void write(OutputStream outputStream, HashMap<String, IDataSource> dataSources, IDataSource datasource, LinkedDataFragment fragment, String datasetUrl) throws IOException, TemplateException{
+    public void write(OutputStream outputStream, IDataSource datasource, LinkedDataFragment fragment,  LinkedDataFragmentRequest ldfRequest) throws IOException, TemplateException{
         /* Get the template (uses cache internally) */
         Template temp = cfg.getTemplate("index.ftl.html");
         
         Map data = new HashMap();
         data.put("assetsPath", "assets/");
         data.put("header", datasource.getTitle());
-        data.put("datasources", dataSources);
+        if (datasource instanceof IndexDataSource)
+            data.put("datasources", ((IndexDataSource) datasource).getDatasources());
         data.put("content", "");
         data.put("date", new Date());
         
 
-        data.put("datasourceUrl", datasetUrl);
+        data.put("datasourceUrl", ldfRequest.getDatasetURL());
         data.put("datasource", datasource);
         data.put("controls", fragment.getControls());
         data.put("metadata", fragment.getMetadata());
