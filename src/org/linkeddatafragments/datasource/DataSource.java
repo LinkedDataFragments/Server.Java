@@ -1,11 +1,9 @@
 package org.linkeddatafragments.datasource;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.linkeddatafragments.config.ConfigReader;
+import org.linkeddatafragments.fragments.IFragmentRequestParser;
 import org.linkeddatafragments.fragments.LinkedDataFragmentRequest;
+import org.linkeddatafragments.fragments.tpf.TPFRequestParser;
 import org.linkeddatafragments.fragments.tpf.TriplePatternFragmentRequest;
-import org.linkeddatafragments.fragments.tpf.TriplePatternFragmentRequestImpl;
 
 /**
  *
@@ -32,21 +30,16 @@ public abstract class DataSource implements IDataSource {
     };
 
     /**
-     * This implementation assumes that the given request is a
-     * {@link TriplePatternFragmentRequest}.
+     * This implementation assumes that requests are
+     * {@link TriplePatternFragmentRequest}s.
      *
      * Data sources for other types of {@link LinkedDataFragmentRequest}s must
      * override this method accordingly.
      */
     @Override
-    public IFragmentRequestProcessor getRequestProcessor(
-            final HttpServletRequest request,
-            final ConfigReader config )
+    public IFragmentRequestParser getRequestParser()
     {
-        final TriplePatternFragmentRequest r =
-                new TriplePatternFragmentRequestImpl( request, config );
-
-        return getRequestProcessor( r );
+        return new TPFRequestParser();
     }
 
     @Override

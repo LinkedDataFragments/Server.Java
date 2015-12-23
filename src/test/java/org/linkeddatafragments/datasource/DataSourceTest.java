@@ -14,6 +14,7 @@ import org.junit.Test;
 
 import org.linkeddatafragments.datasource.IDataSource;
 import org.linkeddatafragments.datasource.IFragmentRequestProcessor;
+import org.linkeddatafragments.fragments.LinkedDataFragment;
 import org.linkeddatafragments.fragments.tpf.TriplePatternFragment;
 import org.linkeddatafragments.fragments.tpf.TriplePatternFragmentRequest;
 
@@ -92,10 +93,12 @@ public abstract class DataSourceTest {
             public String getPredicate() { return null; }
             public String getObject() { return null; }
         };
-    
-        IFragmentRequestProcessor proc = getDatasource().getRequestProcessor(request);
-        TriplePatternFragment fragment = (TriplePatternFragment) proc.createRequestedFragment();
-        long totalSize = fragment.getTotalSize();
+
+        final IFragmentRequestProcessor proc = getDatasource().getRequestProcessor();
+        final LinkedDataFragment ldf = proc.createRequestedFragment( request );
+        final TriplePatternFragment tpf = (TriplePatternFragment) ldf;
+
+        long totalSize = tpf.getTotalSize();
         
         Assert.assertTrue("Estimate is too big : " + totalSize, totalSize == 0);        
         
@@ -115,10 +118,12 @@ public abstract class DataSourceTest {
             public String getPredicate() { return null; }
             public String getObject() { return null; }
         };
-    
-        IFragmentRequestProcessor proc = getDatasource().getRequestProcessor(request);
-        TriplePatternFragment fragment = (TriplePatternFragment) proc.createRequestedFragment();
-        long totalSize = fragment.getTotalSize();
+
+        final IFragmentRequestProcessor proc = getDatasource().getRequestProcessor();
+        final LinkedDataFragment ldf = proc.createRequestedFragment( request );
+        final TriplePatternFragment tpf = (TriplePatternFragment) ldf;
+
+        long totalSize = tpf.getTotalSize();
         
         Assert.assertTrue("Estimate is too small : " + totalSize, totalSize > 100);        
     }
