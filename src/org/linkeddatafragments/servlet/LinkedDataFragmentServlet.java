@@ -21,14 +21,14 @@ import org.apache.jena.riot.RDFLanguages;
 import org.linkeddatafragments.config.ConfigReader;
 import org.linkeddatafragments.datasource.DataSourceFactory;
 import org.linkeddatafragments.datasource.IDataSource;
-import org.linkeddatafragments.datasource.IFragmentRequestProcessor;
 import org.linkeddatafragments.datasource.hdt.HdtDataSourceType;
 import org.linkeddatafragments.datasource.index.IndexDataSource;
 import org.linkeddatafragments.datasource.tdb.JenaTDBDataSourceType;
 import org.linkeddatafragments.exceptions.DataSourceException;
 import org.linkeddatafragments.exceptions.DataSourceNotFoundException;
+import org.linkeddatafragments.fragments.FragmentRequestParserBase;
 import org.linkeddatafragments.fragments.LinkedDataFragment;
-import org.linkeddatafragments.fragments.LinkedDataFragmentRequestBase;
+import org.linkeddatafragments.fragments.LinkedDataFragmentRequest;
 import org.linkeddatafragments.util.MIMEParse;
 
 /**
@@ -123,7 +123,7 @@ public class LinkedDataFragmentServlet extends HttpServlet {
                 : requestURI.substring(contextPath.length());
 
         if (path.equals("/") || path.isEmpty()) {
-            final String baseURL = LinkedDataFragmentRequestBase.extractBaseURL(request, config);
+            final String baseURL = FragmentRequestParserBase.extractBaseURL(request, config);
             return new IndexDataSource(baseURL, dataSources);
         }
 
@@ -138,9 +138,15 @@ public class LinkedDataFragmentServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException {
         try {
-            IDataSource dataSource = getDataSource(request);
-            final IFragmentRequestProcessor processor = dataSource.getRequestProcessor( request, config );
-            final LinkedDataFragment fragment = processor.createRequestedFragment();
+            final IDataSource dataSource = getDataSource( request );
+
+            final LinkedDataFragmentRequest ldfRequest =
+                    dataSource.getRequestParser()
+                              .parseIntoFragmentRequest( request, config );
+
+            final LinkedDataFragment fragment =
+                    dataSource.getRequestProcessor()
+                              .createRequestedFragment( ldfRequest );
 
             final Model output = ModelFactory.createDefaultModel();
             output.setNsPrefixes(config.getPrefixes());
