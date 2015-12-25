@@ -2,7 +2,6 @@ package org.linkeddatafragments.datasource.tdb;
 
 import java.io.File;
 
-import org.linkeddatafragments.datasource.DataSourceTypesRegistry;
 import org.linkeddatafragments.datasource.IDataSource;
 import org.linkeddatafragments.datasource.IDataSourceType;
 import org.linkeddatafragments.exceptions.DataSourceException;
@@ -17,15 +16,6 @@ import com.google.gson.JsonObject;
  */
 public class JenaTDBDataSourceType implements IDataSourceType
 {
-    public static final String TYPE_NAME = "JenaTDBDatasource";
-
-    public static void register() {
-        if ( ! DataSourceTypesRegistry.isRegistered(TYPE_NAME) ) {
-            DataSourceTypesRegistry.register( TYPE_NAME,
-                                              new JenaTDBDataSourceType() );
-        }
-    }
-
     @Override
     public IDataSource createDataSource( final String title,
                                          final String description,
