@@ -72,6 +72,7 @@ public class HdtBasedRequestProcessorForTPFs
             // FIXME: The following algorithm is incorrect for cases in which
             //        the requested triple pattern contains a specific variable
             //        multiple times (e.g., ?x foaf:knows ?x ).
+            // see https://github.com/LinkedDataFragments/Server.Java/issues/23
 
             // look up the result from the HDT datasource)
             int subjectId = subject.isVariable() ? 0 : dictionary.getIntID(subject.asTerm().asNode(), TripleComponentRole.SUBJECT);

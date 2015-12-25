@@ -69,6 +69,7 @@ public class JenaTDBBasedRequestProcessorForTPFs
             // FIXME: The following algorithm is incorrect for cases in which
             //        the requested triple pattern contains a specific variable
             //        multiple times (e.g., ?x foaf:knows ?x ).
+            // see https://github.com/LinkedDataFragments/Server.Java/issues/24
 
             Model model = tdb.getDefaultModel();
             QuerySolutionMap map = new QuerySolutionMap();
