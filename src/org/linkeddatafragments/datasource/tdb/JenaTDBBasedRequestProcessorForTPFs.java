@@ -12,15 +12,14 @@ import com.hp.hpl.jena.query.Syntax;
 import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.tdb.TDBFactory;
 import java.io.File;
 
-import org.linkeddatafragments.datasource.AbstractJenaBasedRequestProcessorForTriplePatterns;
+import org.linkeddatafragments.datasource.AbstractRequestProcessorForTriplePatterns;
 import org.linkeddatafragments.datasource.IFragmentRequestProcessor;
 import org.linkeddatafragments.fragments.LinkedDataFragment;
+import org.linkeddatafragments.fragments.tpf.TriplePatternElement;
 import org.linkeddatafragments.fragments.tpf.TriplePatternFragmentRequest;
 
 /**
@@ -31,7 +30,7 @@ import org.linkeddatafragments.fragments.tpf.TriplePatternFragmentRequest;
  * @author <a href="http://olafhartig.de">Olaf Hartig</a>
  */
 public class JenaTDBBasedRequestProcessorForTPFs
-    extends AbstractJenaBasedRequestProcessorForTriplePatterns
+    extends AbstractRequestProcessorForTriplePatterns<RDFNode,String>
 {
     private final Dataset tdb;
     private final String sparql = "CONSTRUCT WHERE { ?s ?p ?o } " +
@@ -43,7 +42,8 @@ public class JenaTDBBasedRequestProcessorForTPFs
     private final Query countQuery = QueryFactory.create(count, Syntax.syntaxSPARQL_11);
 
     @Override
-    protected Worker getWorker( final TriplePatternFragmentRequest request )
+    protected Worker getTPFSpecificWorker(
+            final TriplePatternFragmentRequest<RDFNode,String> request )
                                                 throws IllegalArgumentException
     {
         return new Worker( request );
@@ -51,29 +51,35 @@ public class JenaTDBBasedRequestProcessorForTPFs
 
 
     protected class Worker
-        extends AbstractJenaBasedRequestProcessorForTriplePatterns.Worker
+       extends AbstractRequestProcessorForTriplePatterns.Worker<RDFNode,String>
     {
-        public Worker( final TriplePatternFragmentRequest request ) {
-            super( request );
+        public Worker( final TriplePatternFragmentRequest<RDFNode,String> req )
+        {
+            super( req );
         }
 
         @Override
-        protected LinkedDataFragment createFragment( final Resource subject,
-                                                     final Property predicate,
-                                                     final RDFNode object,
-                                                     final long offset,
-                                                     final long limit )
+        protected LinkedDataFragment createFragment(
+                          final TriplePatternElement<RDFNode,String> subject,
+                          final TriplePatternElement<RDFNode,String> predicate,
+                          final TriplePatternElement<RDFNode,String> object,
+                          final long offset,
+                          final long limit )
         {
+            // FIXME: The following algorithm is incorrect for cases in which
+            //        the requested triple pattern contains a specific variable
+            //        multiple times (e.g., ?x foaf:knows ?x ).
+
             Model model = tdb.getDefaultModel();
             QuerySolutionMap map = new QuerySolutionMap();
-            if (subject != null) {
-                map.add("s", subject);
+            if ( ! subject.isVariable() ) {
+                map.add("s", subject.asTerm());
             }
-            if (predicate != null) {
-                map.add("p", predicate);
+            if ( ! predicate.isVariable() ) {
+                map.add("p", predicate.asTerm());
             }
-            if (object != null) {
-                map.add("o", object);
+            if ( ! object.isVariable() ) {
+                map.add("o", object.asTerm());
             }
 
             query.setOffset(offset);
