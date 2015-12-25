@@ -5,32 +5,30 @@ import org.linkeddatafragments.fragments.LinkedDataFragmentRequest;
 /**
  * Represents a request of a Triple Pattern Fragment (TPF).
  *
+ * @param <TermType> type for representing RDF terms in triple patterns 
+ * @param <VarType> type for representing specific variables in triple patterns
+ *
  * @author <a href="http://olafhartig.de">Olaf Hartig</a>
  */
-public interface TriplePatternFragmentRequest extends LinkedDataFragmentRequest
+public interface TriplePatternFragmentRequest<TermType,VarType>
+    extends LinkedDataFragmentRequest
 {
     public final static String PARAMETERNAME_SUBJ = "subject";
     public final static String PARAMETERNAME_PRED = "predicate";
     public final static String PARAMETERNAME_OBJ = "object";
 
     /**
-     * Returns the subject position of the requested triple pattern (or null,
-     * in which case the requested triple pattern has an unnamed variable as
-     * subject).
+     * Returns the subject position of the requested triple pattern.
      */
-    String getSubject();
+    TriplePatternElement<TermType,VarType> getSubject();
 
     /**
-     * Returns the predicate position of the requested triple pattern (or null,
-     * in which case the requested triple pattern has an unnamed variable as
-     * predicate).
+     * Returns the predicate position of the requested triple pattern.
      */
-    String getPredicate();
+    TriplePatternElement<TermType,VarType> getPredicate();
 
     /**
-     * Returns the object position of the requested triple pattern (or null,
-     * in which case the requested triple pattern has an unnamed variable as
-     * object).
+     * Returns the object position of the requested triple pattern.
      */
-    String getObject();
+    TriplePatternElement<TermType,VarType> getObject();
 }

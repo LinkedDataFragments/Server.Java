@@ -7,23 +7,32 @@ import org.linkeddatafragments.fragments.LinkedDataFragmentRequestBase;
  *
  * @author <a href="http://olafhartig.de">Olaf Hartig</a>
  */
-public class TriplePatternFragmentRequestImpl
+public class TriplePatternFragmentRequestImpl<TermType,VarType>
     extends LinkedDataFragmentRequestBase
-    implements TriplePatternFragmentRequest
+    implements TriplePatternFragmentRequest<TermType,VarType>
 {
-    public final String subject;
-    public final String predicate;
-    public final String object;
+    public final TriplePatternElement<TermType,VarType> subject;
+    public final TriplePatternElement<TermType,VarType> predicate;
+    public final TriplePatternElement<TermType,VarType> object;
 
     public TriplePatternFragmentRequestImpl( final String fragmentURL,
                                              final String datasetURL,
                                              final boolean pageNumberWasRequested,
                                              final long pageNumber,
-                                             final String subject,
-                                             final String predicate,
-                                             final String object )
+                                             final TriplePatternElement<TermType,VarType> subject,
+                                             final TriplePatternElement<TermType,VarType> predicate,
+                                             final TriplePatternElement<TermType,VarType> object )
     {
         super( fragmentURL, datasetURL, pageNumberWasRequested, pageNumber );
+
+        if ( subject == null )
+            throw new IllegalArgumentException();
+
+        if ( predicate == null )
+            throw new IllegalArgumentException();
+
+        if ( object == null )
+            throw new IllegalArgumentException();
 
         this.subject = subject;
         this.predicate = predicate;
@@ -31,17 +40,17 @@ public class TriplePatternFragmentRequestImpl
     }
 
     @Override
-    public String getSubject() {
+    public TriplePatternElement<TermType,VarType> getSubject() {
         return subject;
     }
 
     @Override
-    public String getPredicate() {
+    public TriplePatternElement<TermType,VarType> getPredicate() {
         return predicate;
     }
 
     @Override
-    public String getObject() {
+    public TriplePatternElement<TermType,VarType> getObject() {
         return object;
     }
 
@@ -50,9 +59,9 @@ public class TriplePatternFragmentRequestImpl
     {
         return "TriplePatternFragmentRequest(" +
                "class: " + getClass().getName() +
-               ", subject: " + subject +
-               ", predicate: " + predicate +
-               ", object: " + object +
+               ", subject: " + subject.toString() +
+               ", predicate: " + predicate.toString() +
+               ", object: " + object.toString() +
                ", fragmentURL: " + fragmentURL +
                ", isPageRequest: " + pageNumberWasRequested +
                ", pageNumber: " + pageNumber +
