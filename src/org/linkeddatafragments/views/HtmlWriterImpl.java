@@ -49,11 +49,13 @@ public class HtmlWriterImpl extends LinkedDataFragmentWriterBase implements Link
     @Override
     public void writeFragment(ServletOutputStream outputStream, IDataSource datasource, LinkedDataFragment fragment,  LinkedDataFragmentRequest ldfRequest) throws IOException, TemplateException{
         Map data = new HashMap();
+        
+        // base.ftl.html
         data.put("assetsPath", "assets/");
         data.put("header", datasource.getTitle());
-
         data.put("date", new Date());
         
+        // fragment.ftl.html
         data.put("datasourceUrl", ldfRequest.getDatasetURL());
         data.put("datasource", datasource);
         data.put("controls", fragment.getControls());
@@ -79,8 +81,10 @@ public class HtmlWriterImpl extends LinkedDataFragmentWriterBase implements Link
     @Override
     public void writeNotFound(ServletOutputStream outputStream, HttpServletRequest request) throws Exception {
         Map data = new HashMap();
-        data.put("url", request.getRequestURL().toString());
+        data.put("assetsPath", "assets/");
         data.put("datasources", getDatasources());
+        data.put("date", new Date());
+        data.put("url", request.getRequestURL().toString());
         
         Writer out = new OutputStreamWriter(outputStream);
         notfoundTemplate.process(data, out);
@@ -89,6 +93,8 @@ public class HtmlWriterImpl extends LinkedDataFragmentWriterBase implements Link
     @Override
     public void writeError(ServletOutputStream outputStream, Exception ex)  throws Exception {
         Map data = new HashMap();
+        data.put("assetsPath", "assets/");
+        data.put("date", new Date());
         data.put("error", ex);
         
         Writer out = new OutputStreamWriter(outputStream);

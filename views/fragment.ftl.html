@@ -1,0 +1,73 @@
+<#-- @license ©2015 Miel Vander Sande - Multimedia Lab / iMinds / Ghent University -->
+<#setting url_escaping_charset='UTF-8'>
+<div resource="${datasourceUrl}" typeof="void:datasource hydra:Collection">
+<h2><a href="${datasourceUrl}">${datasource.getTitle()?cap_first}</a></h2>
+
+<form action="?" method="GET" property="hydra:search" resource="#triplePattern">
+  <fieldset resource="#triplePattern">
+    <legend>Query ${datasource.getTitle()} by triple pattern</legend>
+    <ul>
+<#list ['subject', 'predicate', 'object'] as component>
+      <li property="hydra:mapping" resource="#${component}">
+        <label for="${component}>"
+               about="#${component}" property="hydra:variable" lang="">${component}</label>
+       <input class="uri" id="${component}" name="${component}"
+              about="#${component}" property="hydra:property" resource="rdf:${component}" value="${(query[component])!""}" />
+      </li>
+</#list>
+    </ul>
+  </fieldset>
+  <p>
+    <input type="submit" value="Find matching triples" />
+  </p>
+</form>
+</div>
+
+<h3>Matches in ${datasource.getTitle()} for <em class="pattern">${ (query.getPatternString())!"" }</em></h3>
+
+<#assign HYDRA = "http://www.w3.org/ns/hydra/core#">
+
+<div class="counts">
+    <#list metadata as triple>
+        <#if triple.getPredicate().getURI() == (HYDRA + "totalItems")>
+            Total number of triples:  ${triple.getObject().getString()}
+        </#if>
+    </#list>
+</div>
+
+<ul class="triples">
+<#list triples as triple>
+<#assign subject = triple.getSubject().asNode().toString()>
+<#assign predicate = triple.getPredicate().asNode().toString()>
+<#assign object = triple.getObject().asNode().toString()>
+    <li>
+      <a href="?subject=${subject?url}">
+        <abbr title="${ subject }">${subject?keep_after_last("/")}</abbr>
+      </a>
+      <a href="?predicate=${predicate?url}">
+        <abbr title="${ predicate }">${predicate?keep_after_last("/")}</abbr>
+      </a>
+      <#if !triple.getObject().isLiteral()>
+      <a href="?object=${object?url}" resource="${ subject}">
+          <abbr title="${ object }" property="${ predicate }" resource="${ object }">${object?keep_after_last("/")}</abbr>
+      </a>.
+      <#else>
+      <a href="?object=${object?url}" resource="${ subject}">${object}</a>.
+      </#if>
+    </li>
+</#list>
+</ul>
+
+<#list controls as triple>
+<ul class="links">
+    <#if triple.getPredicate().getURI() == (HYDRA + "firstPage")>
+    <li><a href="${triple.getObject().getURI()}" rel="first" property="hydra:firstPage">first</a></li>
+    </#if>
+    <#if triple.getPredicate().getURI() == (HYDRA + "previousPage")>
+    <li><a href="${triple.getObject().getURI()}" rel="prev" property="hydra:previousPage">previous</a></li>
+    </#if>
+    <#if triple.getPredicate().getURI() == (HYDRA + "nextPage")>
+    <li><a href="${triple.getObject().getURI()}" rel="next" property="hydra:nextPage">next</a></li>
+    </#if>
+  </ul>
+</#list>
