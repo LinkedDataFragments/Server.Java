@@ -1,6 +1,11 @@
 {
   "title": "My Linked Data Fragments server",
 
+  "datasourcetypes": {
+    "HdtDatasource"       : "org.linkeddatafragments.datasource.hdt.HdtDataSourceType",
+    "JenaTDBDatasource"   : "org.linkeddatafragments.datasource.tdb.JenaTDBDataSourceType"
+  },
+
   "datasources": {
     "dbpedia": {
       "title": "DBPedia",

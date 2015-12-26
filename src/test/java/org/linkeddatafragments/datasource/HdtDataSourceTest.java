@@ -7,6 +7,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.linkeddatafragments.datasource.DataSourceFactory;
+import org.linkeddatafragments.datasource.DataSourceTypesRegistry;
 import org.linkeddatafragments.datasource.hdt.HdtDataSourceType;
 import org.rdfhdt.hdt.enums.RDFNotation;
 import org.rdfhdt.hdt.hdt.HDT;
@@ -24,7 +25,11 @@ public class HdtDataSourceTest extends DataSourceTest {
     
     @BeforeClass
     public static void setUpClass() throws Exception {
-        HdtDataSourceType.register();
+        final String typeName = "HdtTestSourceType";
+        if ( ! DataSourceTypesRegistry.isRegistered(typeName) ) {
+            DataSourceTypesRegistry.register( typeName, new HdtDataSourceType() );
+        }
+
         // HDT does not seem to support an InputReader, so write to temp file
         File temp = getResourceAsFile();
 
@@ -37,8 +42,7 @@ public class HdtDataSourceTest extends DataSourceTest {
         temp.getAbsoluteFile().delete();
         
         // Everything is in place, now create the LDF datasource
-        JsonObject config = createConfig("hdt test", "hdt test", 
-                HdtDataSourceType.TYPE_NAME);
+        JsonObject config = createConfig("hdt test", "hdt test", typeName);
         
         JsonObject settings = new JsonObject();
         settings.addProperty("file", hdtfile.getAbsolutePath());

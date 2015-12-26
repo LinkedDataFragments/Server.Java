@@ -20,11 +20,10 @@ import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFLanguages;
 import org.linkeddatafragments.config.ConfigReader;
 import org.linkeddatafragments.datasource.DataSourceFactory;
+import org.linkeddatafragments.datasource.DataSourceTypesRegistry;
 import org.linkeddatafragments.datasource.IDataSource;
-import org.linkeddatafragments.datasource.hdt.HdtDataSourceType;
+import org.linkeddatafragments.datasource.IDataSourceType;
 import org.linkeddatafragments.datasource.index.IndexDataSource;
-import org.linkeddatafragments.datasource.tdb.JenaTDBDataSourceType;
-import org.linkeddatafragments.exceptions.DataSourceException;
 import org.linkeddatafragments.exceptions.DataSourceNotFoundException;
 import org.linkeddatafragments.fragments.FragmentRequestParserBase;
 import org.linkeddatafragments.fragments.LinkedDataFragment;
@@ -48,11 +47,6 @@ public class LinkedDataFragmentServlet extends HttpServlet {
     private ConfigReader config;
     private final HashMap<String, IDataSource> dataSources = new HashMap<>();
     private final Collection<String> mimeTypes = new ArrayList<>();
-
-    public LinkedDataFragmentServlet() {
-        HdtDataSourceType.register();
-        JenaTDBDataSourceType.register();
-    }
 
     private File getConfigFile(ServletConfig config) throws IOException {
         String path = config.getServletContext().getRealPath("/");
@@ -80,6 +74,13 @@ public class LinkedDataFragmentServlet extends HttpServlet {
             File configFile = getConfigFile(servletConfig);
             config = new ConfigReader(new FileReader(configFile));
 
+            // register data source types
+            for ( Entry<String,IDataSourceType> typeEntry : config.getDataSourceTypes().entrySet() ) {
+                DataSourceTypesRegistry.register( typeEntry.getKey(),
+                                                  typeEntry.getValue() );
+            }
+
+            // register data sources
             for (Entry<String, JsonObject> dataSource : config.getDataSources().entrySet()) {
                 dataSources.put(dataSource.getKey(), DataSourceFactory.create(dataSource.getValue()));
             }
@@ -89,7 +90,7 @@ public class LinkedDataFragmentServlet extends HttpServlet {
             mimeTypes.add(Lang.JSONLD.getHeaderString());
             mimeTypes.add(Lang.NTRIPLES.getHeaderString());
             mimeTypes.add(Lang.RDFXML.getHeaderString());
-        } catch (IOException | DataSourceException e) {
+        } catch (Exception e) {
             throw new ServletException(e);
         }
     }

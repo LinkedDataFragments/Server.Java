@@ -3,7 +3,6 @@ package org.linkeddatafragments.datasource.hdt;
 import java.io.File;
 import java.io.IOException;
 
-import org.linkeddatafragments.datasource.DataSourceTypesRegistry;
 import org.linkeddatafragments.datasource.IDataSource;
 import org.linkeddatafragments.datasource.IDataSourceType;
 import org.linkeddatafragments.exceptions.DataSourceException;
@@ -17,15 +16,6 @@ import com.google.gson.JsonObject;
  */
 public class HdtDataSourceType implements IDataSourceType
 {
-    public static final String TYPE_NAME = "HdtDatasource";
-
-    public static void register() {
-        if ( ! DataSourceTypesRegistry.isRegistered(TYPE_NAME) ) {
-            DataSourceTypesRegistry.register( TYPE_NAME,
-                                              new HdtDataSourceType() );
-        }
-    }
-
     @Override
     public IDataSource createDataSource( final String title,
                                          final String description,
