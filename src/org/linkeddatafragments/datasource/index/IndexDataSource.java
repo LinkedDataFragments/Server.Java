@@ -15,22 +15,16 @@ import org.linkeddatafragments.datasource.IFragmentRequestProcessor;
 public class IndexDataSource extends DataSource {
 
     protected final IndexRequestProcessorForTPFs requestProcessor;
-    private final HashMap<String, IDataSource> datasources;
 
     public IndexDataSource(String baseUrl, HashMap<String, IDataSource> datasources) {
         super("Index", "List of all datasources");
         requestProcessor = new IndexRequestProcessorForTPFs( baseUrl, datasources );
-        this.datasources = datasources;
     }
 
     @Override
     public IFragmentRequestProcessor getRequestProcessor()
     {
         return requestProcessor;
-    }
-    
-    public HashMap<String, IDataSource> getDatasources() {
-        return datasources;
     }
 
 }

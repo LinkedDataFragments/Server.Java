@@ -1,9 +1,6 @@
 package org.linkeddatafragments.servlet;
 
 import com.google.gson.JsonObject;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import freemarker.template.TemplateException;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -17,8 +14,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.jena.riot.Lang;
-import org.apache.jena.riot.RDFDataMgr;
-import org.apache.jena.riot.RDFLanguages;
 import org.linkeddatafragments.config.ConfigReader;
 import org.linkeddatafragments.datasource.DataSourceFactory;
 import org.linkeddatafragments.datasource.IDataSource;
@@ -27,12 +22,12 @@ import org.linkeddatafragments.datasource.index.IndexDataSource;
 import org.linkeddatafragments.datasource.tdb.JenaTDBDataSourceType;
 import org.linkeddatafragments.exceptions.DataSourceException;
 import org.linkeddatafragments.exceptions.DataSourceNotFoundException;
-import org.linkeddatafragments.exceptions.NoRegisteredMimeTypesException;
 import org.linkeddatafragments.fragments.FragmentRequestParserBase;
 import org.linkeddatafragments.fragments.LinkedDataFragment;
 import org.linkeddatafragments.fragments.LinkedDataFragmentRequest;
 import org.linkeddatafragments.util.MIMEParse;
-import org.linkeddatafragments.views.HtmlWriter;
+import org.linkeddatafragments.views.LinkedDataFragmentWriter;
+import org.linkeddatafragments.views.LinkedDataFragmentWriterFactory;
 
 /**
  * Servlet that responds with a Linked Data Fragment.
@@ -142,16 +137,6 @@ public class LinkedDataFragmentServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException {
         try {
-            final IDataSource dataSource = getDataSource( request );
-
-            final LinkedDataFragmentRequest ldfRequest =
-                    dataSource.getRequestParser()
-                              .parseIntoFragmentRequest( request, config );
-
-            final LinkedDataFragment fragment =
-                    dataSource.getRequestProcessor()
-                              .createRequestedFragment( ldfRequest );
-            
             // do conneg
             String bestMatch = MIMEParse.bestMatch(request.getHeader("Accept"));
 
@@ -160,30 +145,36 @@ public class LinkedDataFragmentServlet extends HttpServlet {
             response.setContentType(bestMatch);
             response.setCharacterEncoding("utf-8");
             
-            if (bestMatch.equals("text/html")) {
-                new HtmlWriter().write(response.getOutputStream(), dataSource, fragment, ldfRequest);
-                return;
-            }
-
-            final Model output = ModelFactory.createDefaultModel();
-            output.setNsPrefixes(config.getPrefixes());
-            output.add( fragment.getMetadata() );
-            output.add( fragment.getTriples() );
-            output.add( fragment.getControls() );
+            LinkedDataFragmentWriter writer = LinkedDataFragmentWriterFactory.create(config.getPrefixes(), dataSources, bestMatch);
             
-            Lang contentType = RDFLanguages.contentTypeToLang(bestMatch);
-            RDFDataMgr.write(response.getOutputStream(), output, contentType);   
-
-        } catch (IOException | NoRegisteredMimeTypesException | TemplateException e) {
-            throw new ServletException(e);
-        } catch (DataSourceNotFoundException ex) {
             try {
-                response.setStatus(404);
-                response.getOutputStream().println(ex.getMessage());
-                response.getOutputStream().close();
-            } catch (IOException ex1) {
-                throw new ServletException(ex1);
+            
+                final IDataSource dataSource = getDataSource( request );
+
+                final LinkedDataFragmentRequest ldfRequest =
+                        dataSource.getRequestParser()
+                                  .parseIntoFragmentRequest( request, config );
+
+                final LinkedDataFragment fragment =
+                        dataSource.getRequestProcessor()
+                                  .createRequestedFragment( ldfRequest );
+
+                writer.writeFragment(response.getOutputStream(), dataSource, fragment, ldfRequest);
+            
+            } catch (DataSourceNotFoundException ex) {
+                try {
+                    response.setStatus(404);
+                    writer.writeNotFound(response.getOutputStream(), request);
+                } catch (Exception ex1) {
+                    throw new ServletException(ex1);
+                }
+            } catch (Exception e) {
+                response.setStatus(500);
+                writer.writeError(response.getOutputStream(), e);
             }
+          
+        } catch (Exception e) {
+            throw new ServletException(e);
         }
     }
 
