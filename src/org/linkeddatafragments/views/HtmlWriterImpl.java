@@ -1,5 +1,8 @@
 package org.linkeddatafragments.views;
 
+import com.hp.hpl.jena.rdf.model.RDFNode;
+import com.hp.hpl.jena.rdf.model.Statement;
+import com.hp.hpl.jena.rdf.model.StmtIterator;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -10,26 +13,30 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import org.linkeddatafragments.datasource.IDataSource;
 import org.linkeddatafragments.datasource.index.IndexDataSource;
-import org.linkeddatafragments.fragments.LinkedDataFragment;
+import org.linkeddatafragments.fragments.ILinkedDataFragment;
 import org.linkeddatafragments.fragments.LinkedDataFragmentRequest;
-import org.linkeddatafragments.fragments.tpf.TriplePatternFragmentRequest;
+import org.linkeddatafragments.fragments.tpf.ITriplePatternFragmentRequest;
 
 /**
  *
  * @author mielvandersande
  */
-public class HtmlWriterImpl extends LinkedDataFragmentWriterBase implements LinkedDataFragmentWriter {
+public class HtmlWriterImpl extends LinkedDataFragmentWriterBase implements ILinkedDataFragmentWriter {
     private final Configuration cfg;
     
     private final Template indexTemplate;
     private final Template datasourceTemplate;
     private final Template notfoundTemplate;
     private final Template errorTemplate;
+    
+    private final String HYDRA = "http://www.w3.org/ns/hydra/core#"; 
+    private final String VOID = "http://rdfs.org/ns/void#"; 
     
 
     public HtmlWriterImpl(Map<String, String> prefixes, HashMap<String, IDataSource> datasources) throws IOException {
@@ -47,7 +54,7 @@ public class HtmlWriterImpl extends LinkedDataFragmentWriterBase implements Link
     }
    
     @Override
-    public void writeFragment(ServletOutputStream outputStream, IDataSource datasource, LinkedDataFragment fragment,  LinkedDataFragmentRequest ldfRequest) throws IOException, TemplateException{
+    public void writeFragment(ServletOutputStream outputStream, IDataSource datasource, ILinkedDataFragment fragment,  LinkedDataFragmentRequest ldfRequest) throws IOException, TemplateException{
         Map data = new HashMap();
         
         // base.ftl.html
@@ -58,16 +65,46 @@ public class HtmlWriterImpl extends LinkedDataFragmentWriterBase implements Link
         // fragment.ftl.html
         data.put("datasourceUrl", ldfRequest.getDatasetURL());
         data.put("datasource", datasource);
-        data.put("controls", fragment.getControls());
-        data.put("metadata", fragment.getMetadata());
-        data.put("triples", fragment.getTriples());
-        data.put("datasources", getDatasources());
         
+        StmtIterator controls = fragment.getControls();
+        while (controls.hasNext()) {
+            Statement control = controls.next();
+            
+            String predicate = control.getPredicate().getURI();
+            RDFNode object = control.getObject();
+            if (!object.isAnon()) {
+                String value = object.isURIResource() ? object.asResource().getURI() : object.asLiteral().getLexicalForm();
+                data.put(predicate.replaceFirst(HYDRA, ""), value);
+            }
+        }
+        
+        StmtIterator metadata = fragment.getMetadata();
+        while (metadata.hasNext()) {
+            Statement item = metadata.next();
+            String predicate = item.getPredicate().getURI();
+            
+            if (predicate.equals(HYDRA + "totalItems") || predicate.equals( VOID + "triples")) {
+                data.put("totalEstimate", item.getObject().asLiteral().getLong());
+                break;
+            }
+        }
+        data.put("itemsPerPage", fragment.getMaxPageSize());
+        
+        List<Statement> triples = fragment.getTriples().toList();
+        data.put("triples", triples);
+        data.put("datasources", getDatasources());
+         
         Map query = new HashMap();
-        TriplePatternFragmentRequest tpfRequest = (TriplePatternFragmentRequest) ldfRequest;
-        query.put("subject", tpfRequest.getSubject());
-        query.put("predicate", tpfRequest.getPredicate());
-        query.put("object", tpfRequest.getObject());
+        ITriplePatternFragmentRequest tpfRequest = (ITriplePatternFragmentRequest) ldfRequest;
+        
+        Long start = ((tpfRequest.getPageNumber() - 1) * fragment.getMaxPageSize()) + 1;
+        data.put("start", start);
+        data.put("end", start + (triples.size() < fragment.getMaxPageSize() ? triples.size() : fragment.getMaxPageSize()));
+    
+        
+        query.put("subject", !tpfRequest.getSubject().isVariable() ? tpfRequest.getSubject().asTerm() : "");
+        query.put("predicate", !tpfRequest.getPredicate().isVariable() ? tpfRequest.getPredicate().asTerm() : "");
+        query.put("object", !tpfRequest.getObject().isVariable() ? tpfRequest.getObject().asTerm() : "");
         data.put("query", query);
        
         /* Get the template (uses cache internally) */

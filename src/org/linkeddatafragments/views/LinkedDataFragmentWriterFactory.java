@@ -14,7 +14,7 @@ public class LinkedDataFragmentWriterFactory {
     private final static String HTML = "text/html";
     
     
-    public static LinkedDataFragmentWriter create(Map <String, String> prefixes, HashMap<String, IDataSource> datasources, String mimeType) throws IOException {
+    public static ILinkedDataFragmentWriter create(Map <String, String> prefixes, HashMap<String, IDataSource> datasources, String mimeType) throws IOException {
         switch (mimeType) {
             case HTML:
                 return new HtmlWriterImpl(prefixes, datasources);

@@ -11,14 +11,14 @@ import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFLanguages;
 import org.linkeddatafragments.datasource.IDataSource;
-import org.linkeddatafragments.fragments.LinkedDataFragment;
+import org.linkeddatafragments.fragments.ILinkedDataFragment;
 import org.linkeddatafragments.fragments.LinkedDataFragmentRequest;
 
 /**
  *
  * @author mielvandersande
  */
-class RdfWriterImpl extends LinkedDataFragmentWriterBase implements LinkedDataFragmentWriter {
+class RdfWriterImpl extends LinkedDataFragmentWriterBase implements ILinkedDataFragmentWriter {
 
     private final Lang contentType;
 
@@ -40,7 +40,7 @@ class RdfWriterImpl extends LinkedDataFragmentWriterBase implements LinkedDataFr
     }
 
     @Override
-    public void writeFragment(ServletOutputStream outputStream, IDataSource datasource, LinkedDataFragment fragment, LinkedDataFragmentRequest ldfRequest) throws Exception {
+    public void writeFragment(ServletOutputStream outputStream, IDataSource datasource, ILinkedDataFragment fragment, LinkedDataFragmentRequest ldfRequest) throws Exception {
         final Model output = ModelFactory.createDefaultModel();
         output.setNsPrefixes(getPrefixes());
         output.add(fragment.getMetadata());

@@ -3,27 +3,36 @@ package org.linkeddatafragments.fragments.tpf;
 import org.linkeddatafragments.fragments.LinkedDataFragmentRequestBase;
 
 /**
- * An implementation of {@link TriplePatternFragmentRequest}.
+ * An implementation of {@link ITriplePatternFragmentRequest}.
  *
  * @author <a href="http://olafhartig.de">Olaf Hartig</a>
  */
-public class TriplePatternFragmentRequestImpl
+public class TriplePatternFragmentRequestImpl<TermType,VarType>
     extends LinkedDataFragmentRequestBase
-    implements TriplePatternFragmentRequest
+    implements ITriplePatternFragmentRequest<TermType,VarType>
 {
-    public final String subject;
-    public final String predicate;
-    public final String object;
+    public final ITriplePatternElement<TermType,VarType> subject;
+    public final ITriplePatternElement<TermType,VarType> predicate;
+    public final ITriplePatternElement<TermType,VarType> object;
 
     public TriplePatternFragmentRequestImpl( final String fragmentURL,
                                              final String datasetURL,
                                              final boolean pageNumberWasRequested,
                                              final long pageNumber,
-                                             final String subject,
-                                             final String predicate,
-                                             final String object )
+                                             final ITriplePatternElement<TermType,VarType> subject,
+                                             final ITriplePatternElement<TermType,VarType> predicate,
+                                             final ITriplePatternElement<TermType,VarType> object )
     {
         super( fragmentURL, datasetURL, pageNumberWasRequested, pageNumber );
+
+        if ( subject == null )
+            throw new IllegalArgumentException();
+
+        if ( predicate == null )
+            throw new IllegalArgumentException();
+
+        if ( object == null )
+            throw new IllegalArgumentException();
 
         this.subject = subject;
         this.predicate = predicate;
@@ -31,17 +40,17 @@ public class TriplePatternFragmentRequestImpl
     }
 
     @Override
-    public String getSubject() {
+    public ITriplePatternElement<TermType,VarType> getSubject() {
         return subject;
     }
 
     @Override
-    public String getPredicate() {
+    public ITriplePatternElement<TermType,VarType> getPredicate() {
         return predicate;
     }
 
     @Override
-    public String getObject() {
+    public ITriplePatternElement<TermType,VarType> getObject() {
         return object;
     }
 
@@ -50,9 +59,9 @@ public class TriplePatternFragmentRequestImpl
     {
         return "TriplePatternFragmentRequest(" +
                "class: " + getClass().getName() +
-               ", subject: " + subject +
-               ", predicate: " + predicate +
-               ", object: " + object +
+               ", subject: " + subject.toString() +
+               ", predicate: " + predicate.toString() +
+               ", object: " + object.toString() +
                ", fragmentURL: " + fragmentURL +
                ", isPageRequest: " + pageNumberWasRequested +
                ", pageNumber: " + pageNumber +

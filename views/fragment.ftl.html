@@ -25,14 +25,24 @@
 
 <h3>Matches in ${datasource.getTitle()} for <em class="pattern">${ (query.getPatternString())!"" }</em></h3>
 
-<#assign HYDRA = "http://www.w3.org/ns/hydra/core#">
-
 <div class="counts">
-    <#list metadata as triple>
-        <#if triple.getPredicate().getURI() == (HYDRA + "totalItems")>
-            Total number of triples:  ${triple.getObject().getString()}
-        </#if>
-    </#list>
+<#if (triples?size > 0)>
+  Showing triples ${ start } to ${ end } of
+  <#if totalEstimate != end>±</#if>
+  <span property="void:triples hydra:totalItems" datatype="xsd:integer" content="${ totalEstimate }">${ totalEstimate }</span>
+  with <span property="hydra:itemsPerPage" datatype="xsd:integer" content="${ itemsPerPage }">${
+    itemsPerPage
+  }</span> triples per page.
+  <@pageLinks/>
+<#else>
+  <p>
+    <%= datasource.getTitle() %> contains
+    <span property="void:triples hydra:totalItems" datatype="xsd:integer" content="0">
+      no <#if totalEstimate > 0 >more</#if>
+    </span>
+    triples that match this pattern.
+  </p>
+</#if>
 </div>
 
 <ul class="triples">
@@ -58,16 +68,16 @@
 </#list>
 </ul>
 
-<#list controls as triple>
-<ul class="links">
-    <#if triple.getPredicate().getURI() == (HYDRA + "firstPage")>
-    <li><a href="${triple.getObject().getURI()}" rel="first" property="hydra:firstPage">first</a></li>
-    </#if>
-    <#if triple.getPredicate().getURI() == (HYDRA + "previousPage")>
-    <li><a href="${triple.getObject().getURI()}" rel="prev" property="hydra:previousPage">previous</a></li>
-    </#if>
-    <#if triple.getPredicate().getURI() == (HYDRA + "nextPage")>
-    <li><a href="${triple.getObject().getURI()}" rel="next" property="hydra:nextPage">next</a></li>
-    </#if>
-  </ul>
-</#list>
+<@pageLinks/>
+
+<#macro pageLinks>
+ <ul class="links">
+   <#if previousPage??>
+   <li><a href="${ firstPage }" rel="first" property="hydra:firstPage">first</a></li>
+   <li><a href="${ previousPage }" rel="prev" property="hydra:previousPage">previous</a></li>
+   </#if>
+   <#if nextPage??>
+   <li><a href="${ nextPage }" rel="next" property="hydra:nextPage">next</a></li>
+   </#if>
+ </ul>
+</#macro>

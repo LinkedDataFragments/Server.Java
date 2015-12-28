@@ -1,6 +1,6 @@
 package org.linkeddatafragments.datasource;
 
-import org.linkeddatafragments.fragments.LinkedDataFragment;
+import org.linkeddatafragments.fragments.ILinkedDataFragment;
 import org.linkeddatafragments.fragments.LinkedDataFragmentRequest;
 
 /**
@@ -15,7 +15,7 @@ abstract public class AbstractRequestProcessor
     public void close() {}
 
     @Override
-    final public LinkedDataFragment createRequestedFragment(
+    final public ILinkedDataFragment createRequestedFragment(
             final LinkedDataFragmentRequest request )
                     throws IllegalArgumentException
     {
@@ -36,7 +36,7 @@ abstract public class AbstractRequestProcessor
             this.request = request;
         }
 
-        abstract public LinkedDataFragment createRequestedFragment()
+        abstract public ILinkedDataFragment createRequestedFragment()
                                                throws IllegalArgumentException;
 
     } // end of class Worker

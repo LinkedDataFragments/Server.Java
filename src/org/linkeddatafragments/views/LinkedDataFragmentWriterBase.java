@@ -8,7 +8,7 @@ import org.linkeddatafragments.datasource.IDataSource;
  *
  * @author mielvandersande
  */
-public abstract class LinkedDataFragmentWriterBase implements LinkedDataFragmentWriter {
+public abstract class LinkedDataFragmentWriterBase implements ILinkedDataFragmentWriter {
     private final Map<String, String> prefixes;
     private final HashMap<String, IDataSource> datasources;
 

@@ -22,10 +22,10 @@ import org.linkeddatafragments.datasource.IDataSourceType;
 import org.linkeddatafragments.datasource.index.IndexDataSource;
 import org.linkeddatafragments.exceptions.DataSourceNotFoundException;
 import org.linkeddatafragments.fragments.FragmentRequestParserBase;
-import org.linkeddatafragments.fragments.LinkedDataFragment;
+import org.linkeddatafragments.fragments.ILinkedDataFragment;
 import org.linkeddatafragments.fragments.LinkedDataFragmentRequest;
 import org.linkeddatafragments.util.MIMEParse;
-import org.linkeddatafragments.views.LinkedDataFragmentWriter;
+import org.linkeddatafragments.views.ILinkedDataFragmentWriter;
 import org.linkeddatafragments.views.LinkedDataFragmentWriterFactory;
 
 /**
@@ -138,6 +138,7 @@ public class LinkedDataFragmentServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException {
         try {
+
             // do conneg
             String bestMatch = MIMEParse.bestMatch(request.getHeader("Accept"));
 
@@ -146,7 +147,7 @@ public class LinkedDataFragmentServlet extends HttpServlet {
             response.setContentType(bestMatch);
             response.setCharacterEncoding("utf-8");
             
-            LinkedDataFragmentWriter writer = LinkedDataFragmentWriterFactory.create(config.getPrefixes(), dataSources, bestMatch);
+            ILinkedDataFragmentWriter writer = LinkedDataFragmentWriterFactory.create(config.getPrefixes(), dataSources, bestMatch);
             
             try {
             
@@ -156,7 +157,7 @@ public class LinkedDataFragmentServlet extends HttpServlet {
                         dataSource.getRequestParser()
                                   .parseIntoFragmentRequest( request, config );
 
-                final LinkedDataFragment fragment =
+                final ILinkedDataFragment fragment =
                         dataSource.getRequestProcessor()
                                   .createRequestedFragment( ldfRequest );
 
@@ -170,6 +171,7 @@ public class LinkedDataFragmentServlet extends HttpServlet {
                     throw new ServletException(ex1);
                 }
             } catch (Exception e) {
+                e.printStackTrace();
                 response.setStatus(500);
                 writer.writeError(response.getOutputStream(), e);
             }

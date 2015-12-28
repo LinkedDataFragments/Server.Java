@@ -1,47 +1,58 @@
 package org.linkeddatafragments.datasource;
 
-import org.linkeddatafragments.fragments.LinkedDataFragment;
-import org.linkeddatafragments.fragments.LinkedDataFragmentRequest;
-import org.linkeddatafragments.fragments.tpf.TriplePatternFragment;
-import org.linkeddatafragments.fragments.tpf.TriplePatternFragmentImpl;
-import org.linkeddatafragments.fragments.tpf.TriplePatternFragmentRequest;
-
 import com.hp.hpl.jena.rdf.model.Model;
+
+import org.linkeddatafragments.fragments.ILinkedDataFragment;
+import org.linkeddatafragments.fragments.LinkedDataFragmentRequest;
+import org.linkeddatafragments.fragments.tpf.ITriplePatternElement;
+import org.linkeddatafragments.fragments.tpf.ITriplePatternFragment;
+import org.linkeddatafragments.fragments.tpf.TriplePatternFragmentImpl;
+import org.linkeddatafragments.fragments.tpf.ITriplePatternFragmentRequest;
 
 /**
  * Base class for implementations of {@link IFragmentRequestProcessor} that
- * process {@link TriplePatternFragmentRequest}s.
+ * process {@link ITriplePatternFragmentRequest}s.
+ *
+ * @param <TermType> type for representing RDF terms in triple patterns 
+ * @param <VarType> type for representing specific variables in triple patterns
  *
  * @author <a href="http://olafhartig.de">Olaf Hartig</a>
  */
-public abstract class AbstractRequestProcessorForTriplePatterns
-    extends AbstractRequestProcessor
+public abstract class
+    AbstractRequestProcessorForTriplePatterns<TermType,VarType>
+        extends AbstractRequestProcessor
 {
     @Override
-    protected Worker getWorker( final LinkedDataFragmentRequest request )
+    protected final Worker<TermType,VarType> getWorker(
+            final LinkedDataFragmentRequest request )
                                                 throws IllegalArgumentException
     {
-        if ( request instanceof TriplePatternFragmentRequest )
-            return getWorker( (TriplePatternFragmentRequest) request );
+        if ( request instanceof ITriplePatternFragmentRequest<?,?> ) {
+            @SuppressWarnings("unchecked")
+            final ITriplePatternFragmentRequest<TermType,VarType> tpfRequest =
+                      (ITriplePatternFragmentRequest<TermType,VarType>) request;
+            return getTPFSpecificWorker( tpfRequest );
+        }
         else
             throw new IllegalArgumentException( request.getClass().getName() );
     }
 
-    abstract protected Worker getWorker(
-            final TriplePatternFragmentRequest request )
+    abstract protected Worker<TermType,VarType> getTPFSpecificWorker(
+            final ITriplePatternFragmentRequest<TermType,VarType> request )
                     throws IllegalArgumentException;
 
 
-    abstract static protected class Worker
+    abstract static protected class Worker<TermType,VarType>
         extends AbstractRequestProcessor.Worker
     {        
-        public Worker( final TriplePatternFragmentRequest request )
+        public Worker(
+                 final ITriplePatternFragmentRequest<TermType,VarType> request )
         {
             super( request );
         }
 
         @Override
-        public LinkedDataFragment createRequestedFragment()
+        public ILinkedDataFragment createRequestedFragment()
                                                 throws IllegalArgumentException
         {
             final long limit = LinkedDataFragmentRequest.TRIPLESPERPAGE;
@@ -51,8 +62,9 @@ public abstract class AbstractRequestProcessorForTriplePatterns
             else
                 offset = 0L;
 
-            final TriplePatternFragmentRequest tpfRequest =
-                                        (TriplePatternFragmentRequest) request;
+            @SuppressWarnings("unchecked")
+            final ITriplePatternFragmentRequest<TermType,VarType> tpfRequest =
+                      (ITriplePatternFragmentRequest<TermType,VarType>) request;
 
             return createFragment( tpfRequest.getSubject(),
                                    tpfRequest.getPredicate(),
@@ -60,35 +72,30 @@ public abstract class AbstractRequestProcessorForTriplePatterns
                                    offset, limit );
         }
 
-        abstract protected LinkedDataFragment createFragment( final String subj,
-                                                              final String pred,
-                                                              final String obj,
-                                                              final long offset,
-                                                              final long limit )
+        abstract protected ILinkedDataFragment createFragment(
+                            final ITriplePatternElement<TermType,VarType> subj,
+                            final ITriplePatternElement<TermType,VarType> pred,
+                            final ITriplePatternElement<TermType,VarType> obj,
+                            final long offset,
+                            final long limit )
                                                throws IllegalArgumentException;
 
-        protected TriplePatternFragment createEmptyTriplePatternFragment()
+        protected ITriplePatternFragment createEmptyTriplePatternFragment()
         {
             return new TriplePatternFragmentImpl( request.getFragmentURL(),
                                                   request.getDatasetURL() );
         }
 
-        protected TriplePatternFragment createTriplePatternFragment(
+        protected ITriplePatternFragment createTriplePatternFragment(
                                                      final Model triples,
                                                      final long totalSize,
                                                      final boolean isLastPage )
         {
-            final long pageNumber;
-            if ( request.isPageRequest() )
-                pageNumber = request.getPageNumber();
-            else
-                pageNumber = 1L;
-
             return new TriplePatternFragmentImpl( triples,
                                                   totalSize,
                                                   request.getFragmentURL(),
                                                   request.getDatasetURL(),
-                                                  pageNumber,
+                                                  request.getPageNumber(),
                                                   isLastPage );
         }
 
