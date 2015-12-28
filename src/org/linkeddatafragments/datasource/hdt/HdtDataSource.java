@@ -2,7 +2,7 @@ package org.linkeddatafragments.datasource.hdt;
 
 import java.io.IOException;
 
-import org.linkeddatafragments.datasource.DataSource;
+import org.linkeddatafragments.datasource.DataSourceBase;
 import org.linkeddatafragments.datasource.IFragmentRequestProcessor;
 import org.linkeddatafragments.fragments.IFragmentRequestParser;
 import org.linkeddatafragments.fragments.tpf.TPFRequestParserForJenaBackends;
@@ -13,7 +13,7 @@ import org.linkeddatafragments.fragments.tpf.TPFRequestParserForJenaBackends;
  * @author Ruben Verborgh
  * @author <a href="http://olafhartig.de">Olaf Hartig</a>
  */
-public class HdtDataSource extends DataSource {
+public class HdtDataSource extends DataSourceBase {
 
     protected final HdtBasedRequestProcessorForTPFs requestProcessor;
 

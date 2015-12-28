@@ -1,7 +1,7 @@
 package org.linkeddatafragments.fragments.tpf;
 
 /**
- * A factory for {@link TriplePatternElement}s. 
+ * A factory for {@link ITriplePatternElement}s. 
  *
  * @param <TermType> type for representing RDF terms in triple patterns 
  * @param <VarType> type for representing specific variables in triple patterns
@@ -10,21 +10,21 @@ package org.linkeddatafragments.fragments.tpf;
  */
 public class TriplePatternElementFactory<TermType,VarType>
 {
-    public TriplePatternElement<TermType,VarType> createUnspecifiedVariable() {
+    public ITriplePatternElement<TermType,VarType> createUnspecifiedVariable() {
         return new UnspecifiedVariable<TermType,VarType>();
     }
 
-    public TriplePatternElement<TermType,VarType> createSpecificVariable(
+    public ITriplePatternElement<TermType,VarType> createSpecificVariable(
             final VarType variable ) {
         return new SpecificVariable<TermType,VarType>( variable );
     }
-    public TriplePatternElement<TermType,VarType> createRDFTerm(
+    public ITriplePatternElement<TermType,VarType> createRDFTerm(
             final TermType term ) {
         return new RDFTerm<TermType,VarType>( term );
     }
 
     static abstract public class Variable<TermType,VarType>
-        implements TriplePatternElement<TermType,VarType>
+        implements ITriplePatternElement<TermType,VarType>
     {
         public boolean isVariable() { return true; }
         public TermType asTerm() { throw new UnsupportedOperationException(); }
@@ -49,7 +49,7 @@ public class TriplePatternElementFactory<TermType,VarType>
     }
 
     static public class RDFTerm<TermType,VarType>
-        implements TriplePatternElement<TermType,VarType>
+        implements ITriplePatternElement<TermType,VarType>
     {
         protected final TermType t;
         public RDFTerm( final TermType term ) { t = term; }

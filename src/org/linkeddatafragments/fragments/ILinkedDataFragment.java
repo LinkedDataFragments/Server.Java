@@ -7,7 +7,7 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
  *
  * @author <a href="http://olafhartig.de">Olaf Hartig</a>
  */
-public interface LinkedDataFragment
+public interface ILinkedDataFragment
 {
     /**
      * Returns an iterator over the RDF data of this fragment (possibly only

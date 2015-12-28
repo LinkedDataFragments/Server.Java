@@ -10,7 +10,7 @@ import org.linkeddatafragments.fragments.LinkedDataFragmentRequest;
  *
  * @author <a href="http://olafhartig.de">Olaf Hartig</a>
  */
-public interface TriplePatternFragmentRequest<TermType,VarType>
+public interface ITriplePatternFragmentRequest<TermType,VarType>
     extends LinkedDataFragmentRequest
 {
     public final static String PARAMETERNAME_SUBJ = "subject";
@@ -20,15 +20,15 @@ public interface TriplePatternFragmentRequest<TermType,VarType>
     /**
      * Returns the subject position of the requested triple pattern.
      */
-    TriplePatternElement<TermType,VarType> getSubject();
+    ITriplePatternElement<TermType,VarType> getSubject();
 
     /**
      * Returns the predicate position of the requested triple pattern.
      */
-    TriplePatternElement<TermType,VarType> getPredicate();
+    ITriplePatternElement<TermType,VarType> getPredicate();
 
     /**
      * Returns the object position of the requested triple pattern.
      */
-    TriplePatternElement<TermType,VarType> getObject();
+    ITriplePatternElement<TermType,VarType> getObject();
 }

@@ -9,7 +9,7 @@ import org.linkeddatafragments.fragments.LinkedDataFragmentRequest;
 import org.linkeddatafragments.util.TriplePatternElementParser;
 
 /**
- * An {@link IFragmentRequestParser} for {@link TriplePatternFragmentRequest}s.
+ * An {@link IFragmentRequestParser} for {@link ITriplePatternFragmentRequest}s.
  *
  * @param <TermType> type for representing RDF terms in triple patterns 
  * @param <VarType> type for representing specific variables in triple patterns
@@ -57,22 +57,22 @@ public class TPFRequestParser<TermType,VarType>
                                                          getObject() );
         }
 
-        public TriplePatternElement<TermType,VarType> getSubject() {
+        public ITriplePatternElement<TermType,VarType> getSubject() {
             return getParameterAsTriplePatternElement(
-                    TriplePatternFragmentRequest.PARAMETERNAME_SUBJ );
+                    ITriplePatternFragmentRequest.PARAMETERNAME_SUBJ );
         }
 
-        public TriplePatternElement<TermType,VarType> getPredicate() {
+        public ITriplePatternElement<TermType,VarType> getPredicate() {
             return getParameterAsTriplePatternElement(
-                    TriplePatternFragmentRequest.PARAMETERNAME_PRED );
+                    ITriplePatternFragmentRequest.PARAMETERNAME_PRED );
         }
 
-        public TriplePatternElement<TermType,VarType> getObject() {
+        public ITriplePatternElement<TermType,VarType> getObject() {
             return getParameterAsTriplePatternElement(
-                    TriplePatternFragmentRequest.PARAMETERNAME_OBJ );
+                    ITriplePatternFragmentRequest.PARAMETERNAME_OBJ );
         }
 
-        public TriplePatternElement<TermType,VarType>
+        public ITriplePatternElement<TermType,VarType>
                    getParameterAsTriplePatternElement( final String paramName )
         {
             final String parameter = request.getParameter( paramName );

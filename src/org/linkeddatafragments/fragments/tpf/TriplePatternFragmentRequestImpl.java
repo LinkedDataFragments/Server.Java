@@ -3,25 +3,25 @@ package org.linkeddatafragments.fragments.tpf;
 import org.linkeddatafragments.fragments.LinkedDataFragmentRequestBase;
 
 /**
- * An implementation of {@link TriplePatternFragmentRequest}.
+ * An implementation of {@link ITriplePatternFragmentRequest}.
  *
  * @author <a href="http://olafhartig.de">Olaf Hartig</a>
  */
 public class TriplePatternFragmentRequestImpl<TermType,VarType>
     extends LinkedDataFragmentRequestBase
-    implements TriplePatternFragmentRequest<TermType,VarType>
+    implements ITriplePatternFragmentRequest<TermType,VarType>
 {
-    public final TriplePatternElement<TermType,VarType> subject;
-    public final TriplePatternElement<TermType,VarType> predicate;
-    public final TriplePatternElement<TermType,VarType> object;
+    public final ITriplePatternElement<TermType,VarType> subject;
+    public final ITriplePatternElement<TermType,VarType> predicate;
+    public final ITriplePatternElement<TermType,VarType> object;
 
     public TriplePatternFragmentRequestImpl( final String fragmentURL,
                                              final String datasetURL,
                                              final boolean pageNumberWasRequested,
                                              final long pageNumber,
-                                             final TriplePatternElement<TermType,VarType> subject,
-                                             final TriplePatternElement<TermType,VarType> predicate,
-                                             final TriplePatternElement<TermType,VarType> object )
+                                             final ITriplePatternElement<TermType,VarType> subject,
+                                             final ITriplePatternElement<TermType,VarType> predicate,
+                                             final ITriplePatternElement<TermType,VarType> object )
     {
         super( fragmentURL, datasetURL, pageNumberWasRequested, pageNumber );
 
@@ -40,17 +40,17 @@ public class TriplePatternFragmentRequestImpl<TermType,VarType>
     }
 
     @Override
-    public TriplePatternElement<TermType,VarType> getSubject() {
+    public ITriplePatternElement<TermType,VarType> getSubject() {
         return subject;
     }
 
     @Override
-    public TriplePatternElement<TermType,VarType> getPredicate() {
+    public ITriplePatternElement<TermType,VarType> getPredicate() {
         return predicate;
     }
 
     @Override
-    public TriplePatternElement<TermType,VarType> getObject() {
+    public ITriplePatternElement<TermType,VarType> getObject() {
         return object;
     }
 

@@ -8,7 +8,7 @@ package org.linkeddatafragments.fragments.tpf;
  *
  * @author <a href="http://olafhartig.de">Olaf Hartig</a>
  */
-public interface TriplePatternElement<TermType,VarType>
+public interface ITriplePatternElement<TermType,VarType>
 {
     /**
      * Returns true if this element is a variable (named or unnamed).

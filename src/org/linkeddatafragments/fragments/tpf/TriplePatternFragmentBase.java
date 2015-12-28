@@ -14,13 +14,13 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.util.iterator.NiceIterator;
 
 /**
- * Base class for implementations of {@link TriplePatternFragment}.
+ * Base class for implementations of {@link ITriplePatternFragment}.
  *
  * @author Ruben Verborgh
  * @author <a href="http://olafhartig.de">Olaf Hartig</a>
  */
 abstract public class TriplePatternFragmentBase extends LinkedDataFragmentBase
-                                       implements TriplePatternFragment
+                                       implements ITriplePatternFragment
 {
     private final long totalSize;
 
@@ -106,21 +106,21 @@ abstract public class TriplePatternFragmentBase extends LinkedDataFragmentBase
         triplePattern.addProperty( CommonResources.HYDRA_MAPPING, predicateMapping );
         triplePattern.addProperty( CommonResources.HYDRA_MAPPING, objectMapping );
 
-        subjectMapping.addProperty( CommonResources.HYDRA_VARIABLE, TriplePatternFragmentRequest.PARAMETERNAME_SUBJ );
+        subjectMapping.addProperty( CommonResources.HYDRA_VARIABLE, ITriplePatternFragmentRequest.PARAMETERNAME_SUBJ );
         subjectMapping.addProperty( CommonResources.HYDRA_PROPERTY, CommonResources.RDF_SUBJECT );
 
-        predicateMapping.addProperty( CommonResources.HYDRA_VARIABLE, TriplePatternFragmentRequest.PARAMETERNAME_PRED );
+        predicateMapping.addProperty( CommonResources.HYDRA_VARIABLE, ITriplePatternFragmentRequest.PARAMETERNAME_PRED );
         predicateMapping.addProperty( CommonResources.HYDRA_PROPERTY, CommonResources.RDF_PREDICATE );
         
-        objectMapping.addProperty( CommonResources.HYDRA_VARIABLE, TriplePatternFragmentRequest.PARAMETERNAME_OBJ );
+        objectMapping.addProperty( CommonResources.HYDRA_VARIABLE, ITriplePatternFragmentRequest.PARAMETERNAME_OBJ );
         objectMapping.addProperty( CommonResources.HYDRA_PROPERTY, CommonResources.RDF_OBJECT );
     }
 
     public String getTemplate() {
         return datasetURL + "{?" +
-               TriplePatternFragmentRequest.PARAMETERNAME_SUBJ + "," +
-               TriplePatternFragmentRequest.PARAMETERNAME_PRED + "," +
-               TriplePatternFragmentRequest.PARAMETERNAME_OBJ + "}";
+               ITriplePatternFragmentRequest.PARAMETERNAME_SUBJ + "," +
+               ITriplePatternFragmentRequest.PARAMETERNAME_PRED + "," +
+               ITriplePatternFragmentRequest.PARAMETERNAME_OBJ + "}";
     }
 
 

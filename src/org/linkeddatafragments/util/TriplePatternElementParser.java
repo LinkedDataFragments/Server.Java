@@ -1,11 +1,11 @@
 package org.linkeddatafragments.util;
 
-import org.linkeddatafragments.fragments.tpf.TriplePatternElement;
+import org.linkeddatafragments.fragments.tpf.ITriplePatternElement;
 import org.linkeddatafragments.fragments.tpf.TriplePatternElementFactory;
 
 /**
  * Parses strings (as obtained from HTTP request parameters) into
- * {@link TriplePatternElement}s. 
+ * {@link ITriplePatternElement}s. 
  *
  * @param <TermType> type for representing RDF terms
  * @param <VarType> type for representing specific variables
@@ -19,7 +19,7 @@ abstract public class TriplePatternElementParser<TermType,VarType>
     public final TriplePatternElementFactory<TermType,VarType> factory =
             new TriplePatternElementFactory<TermType,VarType>();
 
-    public TriplePatternElement<TermType,VarType>
+    public ITriplePatternElement<TermType,VarType>
                             parseIntoTriplePatternElement( final String param )
     {
         // nothing or empty indicates an unspecified variable

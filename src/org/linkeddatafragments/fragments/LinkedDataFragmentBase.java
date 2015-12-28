@@ -11,12 +11,12 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 /**
- * Base class of any implementation of {@link LinkedDataFragment} that uses
+ * Base class of any implementation of {@link ILinkedDataFragment} that uses
  * paging.
  *
  * @author <a href="http://olafhartig.de">Olaf Hartig</a>
  */
-public abstract class LinkedDataFragmentBase implements LinkedDataFragment
+public abstract class LinkedDataFragmentBase implements ILinkedDataFragment
 {
     public final String fragmentURL;
     public final String datasetURL;

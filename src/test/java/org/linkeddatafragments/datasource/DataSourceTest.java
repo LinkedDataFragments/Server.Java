@@ -14,10 +14,10 @@ import org.junit.Test;
 
 import org.linkeddatafragments.datasource.IDataSource;
 import org.linkeddatafragments.datasource.IFragmentRequestProcessor;
-import org.linkeddatafragments.fragments.LinkedDataFragment;
-import org.linkeddatafragments.fragments.tpf.TriplePatternElement;
-import org.linkeddatafragments.fragments.tpf.TriplePatternFragment;
-import org.linkeddatafragments.fragments.tpf.TriplePatternFragmentRequest;
+import org.linkeddatafragments.fragments.ILinkedDataFragment;
+import org.linkeddatafragments.fragments.tpf.ITriplePatternElement;
+import org.linkeddatafragments.fragments.tpf.ITriplePatternFragment;
+import org.linkeddatafragments.fragments.tpf.ITriplePatternFragmentRequest;
 import org.linkeddatafragments.fragments.tpf.TriplePatternFragmentRequestImpl;
 import org.linkeddatafragments.util.TriplePatternElementParser;
 
@@ -93,7 +93,7 @@ public abstract class DataSourceTest<TermType,VarType> {
         final TriplePatternElementParser<TermType,VarType> tpeParser =
                                                getTriplePatternElementParser();
 
-        final TriplePatternFragmentRequest<TermType,VarType> request =
+        final ITriplePatternFragmentRequest<TermType,VarType> request =
                 new TriplePatternFragmentRequestImpl<TermType,VarType>(
                         "http://example.org/f", // fragmentURL
                         "http://example.org/",  // datasetURL,
@@ -104,8 +104,8 @@ public abstract class DataSourceTest<TermType,VarType> {
                         tpeParser.parseIntoTriplePatternElement(null) ); //object
 
         final IFragmentRequestProcessor proc = getDatasource().getRequestProcessor();
-        final LinkedDataFragment ldf = proc.createRequestedFragment( request );
-        final TriplePatternFragment tpf = (TriplePatternFragment) ldf;
+        final ILinkedDataFragment ldf = proc.createRequestedFragment( request );
+        final ITriplePatternFragment tpf = (ITriplePatternFragment) ldf;
 
         long totalSize = tpf.getTotalSize();
         
@@ -121,27 +121,27 @@ public abstract class DataSourceTest<TermType,VarType> {
         final TriplePatternElementParser<TermType,VarType> tpeParser =
                                                getTriplePatternElementParser();
 
-        final TriplePatternFragmentRequest<TermType,VarType> request =
-          new TriplePatternFragmentRequest<TermType,VarType>() {
+        final ITriplePatternFragmentRequest<TermType,VarType> request =
+          new ITriplePatternFragmentRequest<TermType,VarType>() {
             public boolean isPageRequest() { return true; }
             public long getPageNumber() { return 1L; }
             public String getFragmentURL() { return "http://example.org/f"; }
             public String getDatasetURL() { return "http://example.org/"; }
 
-            public TriplePatternElement<TermType,VarType> getSubject() {
+            public ITriplePatternElement<TermType,VarType> getSubject() {
                 return tpeParser.parseIntoTriplePatternElement("http://data.gov.be/catalog/ckanvl");
             }
-            public TriplePatternElement<TermType,VarType> getPredicate() {
+            public ITriplePatternElement<TermType,VarType> getPredicate() {
                 return tpeParser.parseIntoTriplePatternElement(null);
             }
-            public TriplePatternElement<TermType,VarType> getObject() {
+            public ITriplePatternElement<TermType,VarType> getObject() {
                 return tpeParser.parseIntoTriplePatternElement(null);
             }
         };
 
         final IFragmentRequestProcessor proc = getDatasource().getRequestProcessor();
-        final LinkedDataFragment ldf = proc.createRequestedFragment( request );
-        final TriplePatternFragment tpf = (TriplePatternFragment) ldf;
+        final ILinkedDataFragment ldf = proc.createRequestedFragment( request );
+        final ITriplePatternFragment tpf = (ITriplePatternFragment) ldf;
 
         long totalSize = tpf.getTotalSize();
         

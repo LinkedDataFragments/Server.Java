@@ -4,9 +4,9 @@ import java.io.IOException;
 
 import org.linkeddatafragments.datasource.AbstractRequestProcessorForTriplePatterns;
 import org.linkeddatafragments.datasource.IFragmentRequestProcessor;
-import org.linkeddatafragments.fragments.LinkedDataFragment;
-import org.linkeddatafragments.fragments.tpf.TriplePatternElement;
-import org.linkeddatafragments.fragments.tpf.TriplePatternFragmentRequest;
+import org.linkeddatafragments.fragments.ILinkedDataFragment;
+import org.linkeddatafragments.fragments.tpf.ITriplePatternElement;
+import org.linkeddatafragments.fragments.tpf.ITriplePatternFragmentRequest;
 import org.rdfhdt.hdt.enums.TripleComponentRole;
 import org.rdfhdt.hdt.hdt.HDT;
 import org.rdfhdt.hdt.hdt.HDTManager;
@@ -21,7 +21,7 @@ import com.hp.hpl.jena.rdf.model.RDFNode;
 
 /**
  * Implementation of {@link IFragmentRequestProcessor} that processes
- * {@link TriplePatternFragmentRequest}s over data stored in HDT.
+ * {@link ITriplePatternFragmentRequest}s over data stored in HDT.
  *
  * @author Ruben Verborgh
  * @author <a href="http://olafhartig.de">Olaf Hartig</a>
@@ -46,7 +46,7 @@ public class HdtBasedRequestProcessorForTPFs
 
     @Override
     protected Worker getTPFSpecificWorker(
-            final TriplePatternFragmentRequest<RDFNode,String> request )
+            final ITriplePatternFragmentRequest<RDFNode,String> request )
                                                 throws IllegalArgumentException
     {
         return new Worker( request );
@@ -56,16 +56,16 @@ public class HdtBasedRequestProcessorForTPFs
     protected class Worker
        extends AbstractRequestProcessorForTriplePatterns.Worker<RDFNode,String>
     {
-        public Worker( final TriplePatternFragmentRequest<RDFNode,String> req )
+        public Worker( final ITriplePatternFragmentRequest<RDFNode,String> req )
         {
             super( req );
         }
 
         @Override
-        protected LinkedDataFragment createFragment(
-                          final TriplePatternElement<RDFNode,String> subject,
-                          final TriplePatternElement<RDFNode,String> predicate,
-                          final TriplePatternElement<RDFNode,String> object,
+        protected ILinkedDataFragment createFragment(
+                          final ITriplePatternElement<RDFNode,String> subject,
+                          final ITriplePatternElement<RDFNode,String> predicate,
+                          final ITriplePatternElement<RDFNode,String> object,
                           final long offset,
                           final long limit )
         {

@@ -2,7 +2,7 @@ package org.linkeddatafragments.datasource.index;
 
 import java.util.HashMap;
 
-import org.linkeddatafragments.datasource.DataSource;
+import org.linkeddatafragments.datasource.DataSourceBase;
 import org.linkeddatafragments.datasource.IDataSource;
 import org.linkeddatafragments.datasource.IFragmentRequestProcessor;
 import org.linkeddatafragments.fragments.IFragmentRequestParser;
@@ -14,7 +14,7 @@ import org.linkeddatafragments.fragments.tpf.TPFRequestParserForJenaBackends;
  * @author Miel Vander Sande
  * @author <a href="http://olafhartig.de">Olaf Hartig</a>
  */
-public class IndexDataSource extends DataSource {
+public class IndexDataSource extends DataSourceBase {
 
     protected final IndexRequestProcessorForTPFs requestProcessor;
 

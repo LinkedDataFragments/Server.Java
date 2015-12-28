@@ -15,13 +15,13 @@ import java.util.Map;
 import org.linkeddatafragments.datasource.AbstractRequestProcessorForTriplePatterns;
 import org.linkeddatafragments.datasource.IDataSource;
 import org.linkeddatafragments.datasource.IFragmentRequestProcessor;
-import org.linkeddatafragments.fragments.LinkedDataFragment;
-import org.linkeddatafragments.fragments.tpf.TriplePatternElement;
-import org.linkeddatafragments.fragments.tpf.TriplePatternFragmentRequest;
+import org.linkeddatafragments.fragments.ILinkedDataFragment;
+import org.linkeddatafragments.fragments.tpf.ITriplePatternElement;
+import org.linkeddatafragments.fragments.tpf.ITriplePatternFragmentRequest;
 
 /**
  * Implementation of {@link IFragmentRequestProcessor} that processes
- * {@link TriplePatternFragmentRequest}s over an index that provides
+ * {@link ITriplePatternFragmentRequest}s over an index that provides
  * an overview of all available datasets.
  *
  * @author Miel Vander Sande
@@ -58,7 +58,7 @@ public class IndexRequestProcessorForTPFs
 
     @Override
     protected Worker getTPFSpecificWorker(
-            final TriplePatternFragmentRequest<RDFNode,String> request )
+            final ITriplePatternFragmentRequest<RDFNode,String> request )
                                                 throws IllegalArgumentException
     {
         return new Worker( request );
@@ -68,16 +68,16 @@ public class IndexRequestProcessorForTPFs
     protected class Worker
        extends AbstractRequestProcessorForTriplePatterns.Worker<RDFNode,String>
     {
-        public Worker( final TriplePatternFragmentRequest<RDFNode,String> req )
+        public Worker( final ITriplePatternFragmentRequest<RDFNode,String> req )
         {
             super( req );
         }
 
         @Override
-        protected LinkedDataFragment createFragment(
-                                  final TriplePatternElement<RDFNode,String> s,
-                                  final TriplePatternElement<RDFNode,String> p,
-                                  final TriplePatternElement<RDFNode,String> o,
+        protected ILinkedDataFragment createFragment(
+                                  final ITriplePatternElement<RDFNode,String> s,
+                                  final ITriplePatternElement<RDFNode,String> p,
+                                  final ITriplePatternElement<RDFNode,String> o,
                                   final long offset,
                                   final long limit )
         {

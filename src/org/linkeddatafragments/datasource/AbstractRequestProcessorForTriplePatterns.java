@@ -2,16 +2,16 @@ package org.linkeddatafragments.datasource;
 
 import com.hp.hpl.jena.rdf.model.Model;
 
-import org.linkeddatafragments.fragments.LinkedDataFragment;
+import org.linkeddatafragments.fragments.ILinkedDataFragment;
 import org.linkeddatafragments.fragments.LinkedDataFragmentRequest;
-import org.linkeddatafragments.fragments.tpf.TriplePatternElement;
-import org.linkeddatafragments.fragments.tpf.TriplePatternFragment;
+import org.linkeddatafragments.fragments.tpf.ITriplePatternElement;
+import org.linkeddatafragments.fragments.tpf.ITriplePatternFragment;
 import org.linkeddatafragments.fragments.tpf.TriplePatternFragmentImpl;
-import org.linkeddatafragments.fragments.tpf.TriplePatternFragmentRequest;
+import org.linkeddatafragments.fragments.tpf.ITriplePatternFragmentRequest;
 
 /**
  * Base class for implementations of {@link IFragmentRequestProcessor} that
- * process {@link TriplePatternFragmentRequest}s.
+ * process {@link ITriplePatternFragmentRequest}s.
  *
  * @param <TermType> type for representing RDF terms in triple patterns 
  * @param <VarType> type for representing specific variables in triple patterns
@@ -27,10 +27,10 @@ public abstract class
             final LinkedDataFragmentRequest request )
                                                 throws IllegalArgumentException
     {
-        if ( request instanceof TriplePatternFragmentRequest<?,?> ) {
+        if ( request instanceof ITriplePatternFragmentRequest<?,?> ) {
             @SuppressWarnings("unchecked")
-            final TriplePatternFragmentRequest<TermType,VarType> tpfRequest =
-                      (TriplePatternFragmentRequest<TermType,VarType>) request;
+            final ITriplePatternFragmentRequest<TermType,VarType> tpfRequest =
+                      (ITriplePatternFragmentRequest<TermType,VarType>) request;
             return getTPFSpecificWorker( tpfRequest );
         }
         else
@@ -38,7 +38,7 @@ public abstract class
     }
 
     abstract protected Worker<TermType,VarType> getTPFSpecificWorker(
-            final TriplePatternFragmentRequest<TermType,VarType> request )
+            final ITriplePatternFragmentRequest<TermType,VarType> request )
                     throws IllegalArgumentException;
 
 
@@ -46,13 +46,13 @@ public abstract class
         extends AbstractRequestProcessor.Worker
     {        
         public Worker(
-                 final TriplePatternFragmentRequest<TermType,VarType> request )
+                 final ITriplePatternFragmentRequest<TermType,VarType> request )
         {
             super( request );
         }
 
         @Override
-        public LinkedDataFragment createRequestedFragment()
+        public ILinkedDataFragment createRequestedFragment()
                                                 throws IllegalArgumentException
         {
             final long limit = LinkedDataFragmentRequest.TRIPLESPERPAGE;
@@ -63,8 +63,8 @@ public abstract class
                 offset = 0L;
 
             @SuppressWarnings("unchecked")
-            final TriplePatternFragmentRequest<TermType,VarType> tpfRequest =
-                      (TriplePatternFragmentRequest<TermType,VarType>) request;
+            final ITriplePatternFragmentRequest<TermType,VarType> tpfRequest =
+                      (ITriplePatternFragmentRequest<TermType,VarType>) request;
 
             return createFragment( tpfRequest.getSubject(),
                                    tpfRequest.getPredicate(),
@@ -72,21 +72,21 @@ public abstract class
                                    offset, limit );
         }
 
-        abstract protected LinkedDataFragment createFragment(
-                            final TriplePatternElement<TermType,VarType> subj,
-                            final TriplePatternElement<TermType,VarType> pred,
-                            final TriplePatternElement<TermType,VarType> obj,
+        abstract protected ILinkedDataFragment createFragment(
+                            final ITriplePatternElement<TermType,VarType> subj,
+                            final ITriplePatternElement<TermType,VarType> pred,
+                            final ITriplePatternElement<TermType,VarType> obj,
                             final long offset,
                             final long limit )
                                                throws IllegalArgumentException;
 
-        protected TriplePatternFragment createEmptyTriplePatternFragment()
+        protected ITriplePatternFragment createEmptyTriplePatternFragment()
         {
             return new TriplePatternFragmentImpl( request.getFragmentURL(),
                                                   request.getDatasetURL() );
         }
 
-        protected TriplePatternFragment createTriplePatternFragment(
+        protected ITriplePatternFragment createTriplePatternFragment(
                                                      final Model triples,
                                                      final long totalSize,
                                                      final boolean isLastPage )
