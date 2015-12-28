@@ -21,7 +21,7 @@ public abstract class LinkedDataFragmentRequestBase
         this.fragmentURL = fragmentURL;
         this.datasetURL = datasetURL;
         this.pageNumberWasRequested = pageNumberWasRequested;
-        this.pageNumber = pageNumber;
+        this.pageNumber = (pageNumberWasRequested) ? pageNumber : 1L;
     }
 
     @Override
@@ -40,11 +40,8 @@ public abstract class LinkedDataFragmentRequestBase
     }
 
     @Override
-    public long getPageNumber() throws UnsupportedOperationException {
-        if ( pageNumberWasRequested )
-            return pageNumber;
-        else
-            throw new UnsupportedOperationException();
+    public long getPageNumber() {
+        return pageNumber;
     }
 
     @Override

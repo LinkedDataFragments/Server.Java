@@ -28,11 +28,9 @@ public interface LinkedDataFragmentRequest
     boolean isPageRequest();
 
     /**
-     * Returns the number of the page requested for the LDF, if any (thatis,
-     * if {@link #isPageOnly()} returns true).
-     *
-     * @throws UnsupportedOperationException
-     *         If the request is not for a specific page. 
+     * Returns the number of the page requested for the LDF; if this is not a
+     * page-based request (that is, if {@link #isPageRequest()} returns true),
+     * then this method returns 1. 
      */
-    long getPageNumber() throws UnsupportedOperationException;
+    long getPageNumber();
 }
