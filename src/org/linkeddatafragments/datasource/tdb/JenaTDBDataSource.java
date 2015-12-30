@@ -4,6 +4,8 @@ import java.io.File;
 
 import org.linkeddatafragments.datasource.DataSource;
 import org.linkeddatafragments.datasource.IFragmentRequestProcessor;
+import org.linkeddatafragments.fragments.IFragmentRequestParser;
+import org.linkeddatafragments.fragments.tpf.TPFRequestParserForJenaBackends;
 
 /**
  * Experimental Jena TDB-backed data source of Basic Linked Data Fragments.
@@ -14,6 +16,12 @@ import org.linkeddatafragments.datasource.IFragmentRequestProcessor;
 public class JenaTDBDataSource extends DataSource {
 
     protected final JenaTDBBasedRequestProcessorForTPFs requestProcessor;
+
+    @Override
+    public IFragmentRequestParser getRequestParser()
+    {
+        return TPFRequestParserForJenaBackends.getInstance();
+    }
 
     @Override
     public IFragmentRequestProcessor getRequestProcessor()

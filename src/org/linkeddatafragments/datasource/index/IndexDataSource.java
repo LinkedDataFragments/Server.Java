@@ -5,6 +5,8 @@ import java.util.HashMap;
 import org.linkeddatafragments.datasource.DataSource;
 import org.linkeddatafragments.datasource.IDataSource;
 import org.linkeddatafragments.datasource.IFragmentRequestProcessor;
+import org.linkeddatafragments.fragments.IFragmentRequestParser;
+import org.linkeddatafragments.fragments.tpf.TPFRequestParserForJenaBackends;
 
 /**
  * An Index data source provides an overview of all available datasets.
@@ -19,6 +21,12 @@ public class IndexDataSource extends DataSource {
     public IndexDataSource(String baseUrl, HashMap<String, IDataSource> datasources) {
         super("Index", "List of all datasources");
         requestProcessor = new IndexRequestProcessorForTPFs( baseUrl, datasources );
+    }
+
+    @Override
+    public IFragmentRequestParser getRequestParser()
+    {
+        return TPFRequestParserForJenaBackends.getInstance();
     }
 
     @Override

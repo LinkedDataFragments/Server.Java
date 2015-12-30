@@ -4,6 +4,8 @@ import java.io.IOException;
 
 import org.linkeddatafragments.datasource.DataSource;
 import org.linkeddatafragments.datasource.IFragmentRequestProcessor;
+import org.linkeddatafragments.fragments.IFragmentRequestParser;
+import org.linkeddatafragments.fragments.tpf.TPFRequestParserForJenaBackends;
 
 /**
  * An HDT data source of Basic Linked Data Fragments.
@@ -26,6 +28,12 @@ public class HdtDataSource extends DataSource {
     public HdtDataSource(String title, String description, String hdtFile) throws IOException {
         super(title, description);
         requestProcessor = new HdtBasedRequestProcessorForTPFs( hdtFile );
+    }
+
+    @Override
+    public IFragmentRequestParser getRequestParser()
+    {
+        return TPFRequestParserForJenaBackends.getInstance();
     }
 
     @Override
