@@ -30,7 +30,7 @@ import org.linkeddatafragments.fragments.tpf.TriplePatternFragmentRequest;
  * @author <a href="http://olafhartig.de">Olaf Hartig</a>
  */
 public class JenaTDBBasedRequestProcessorForTPFs
-    extends AbstractRequestProcessorForTriplePatterns<RDFNode,String>
+    extends AbstractRequestProcessorForTriplePatterns<RDFNode,String,String>
 {
     private final Dataset tdb;
     private final String sparql = "CONSTRUCT WHERE { ?s ?p ?o } " +
@@ -43,7 +43,7 @@ public class JenaTDBBasedRequestProcessorForTPFs
 
     @Override
     protected Worker getTPFSpecificWorker(
-            final TriplePatternFragmentRequest<RDFNode,String> request )
+            final TriplePatternFragmentRequest<RDFNode,String,String> request )
                                                 throws IllegalArgumentException
     {
         return new Worker( request );
@@ -51,36 +51,38 @@ public class JenaTDBBasedRequestProcessorForTPFs
 
 
     protected class Worker
-       extends AbstractRequestProcessorForTriplePatterns.Worker<RDFNode,String>
+       extends AbstractRequestProcessorForTriplePatterns.Worker<RDFNode,String,String>
     {
-        public Worker( final TriplePatternFragmentRequest<RDFNode,String> req )
+        public Worker(
+                final TriplePatternFragmentRequest<RDFNode,String,String> req )
         {
             super( req );
         }
 
         @Override
         protected LinkedDataFragment createFragment(
-                          final TriplePatternElement<RDFNode,String> subject,
-                          final TriplePatternElement<RDFNode,String> predicate,
-                          final TriplePatternElement<RDFNode,String> object,
-                          final long offset,
-                          final long limit )
+                   final TriplePatternElement<RDFNode,String,String> subject,
+                   final TriplePatternElement<RDFNode,String,String> predicate,
+                   final TriplePatternElement<RDFNode,String,String> object,
+                   final long offset,
+                   final long limit )
         {
             // FIXME: The following algorithm is incorrect for cases in which
             //        the requested triple pattern contains a specific variable
-            //        multiple times (e.g., ?x foaf:knows ?x ).
+            //        multiple times;
+            //        e.g., (?x foaf:knows ?x ) or (_:bn foaf:knows _:bn)
             // see https://github.com/LinkedDataFragments/Server.Java/issues/24
 
             Model model = tdb.getDefaultModel();
             QuerySolutionMap map = new QuerySolutionMap();
             if ( ! subject.isVariable() ) {
-                map.add("s", subject.asTerm());
+                map.add("s", subject.asConstantTerm());
             }
             if ( ! predicate.isVariable() ) {
-                map.add("p", predicate.asTerm());
+                map.add("p", predicate.asConstantTerm());
             }
             if ( ! object.isVariable() ) {
-                map.add("o", object.asTerm());
+                map.add("o", object.asConstantTerm());
             }
 
             query.setOffset(offset);

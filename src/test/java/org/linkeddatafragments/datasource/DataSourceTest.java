@@ -26,7 +26,8 @@ import org.linkeddatafragments.util.TriplePatternElementParser;
  *
  * @author Bart Hanssens <bart.hanssens@fedict.be>
  */
-public abstract class DataSourceTest<TermType,VarType> {
+public abstract class DataSourceTest<ConstantTermType,NamedVarType,AnonVarType>
+{
     private static IDataSource ds;
     
     /**
@@ -47,7 +48,7 @@ public abstract class DataSourceTest<TermType,VarType> {
         DataSourceTest.ds = ds;
     }
 
-    protected abstract TriplePatternElementParser<TermType,VarType>
+    protected abstract TriplePatternElementParser<ConstantTermType,NamedVarType,AnonVarType>
                                                getTriplePatternElementParser();
         
     /**
@@ -90,11 +91,11 @@ public abstract class DataSourceTest<TermType,VarType> {
      */
     @Test
     public void testEmpty() {        
-        final TriplePatternElementParser<TermType,VarType> tpeParser =
+        final TriplePatternElementParser<ConstantTermType,NamedVarType,AnonVarType> tpeParser =
                                                getTriplePatternElementParser();
 
-        final TriplePatternFragmentRequest<TermType,VarType> request =
-                new TriplePatternFragmentRequestImpl<TermType,VarType>(
+        final TriplePatternFragmentRequest<ConstantTermType,NamedVarType,AnonVarType> request =
+                new TriplePatternFragmentRequestImpl<ConstantTermType,NamedVarType,AnonVarType>(
                         "http://example.org/f", // fragmentURL
                         "http://example.org/",  // datasetURL,
                         true, // pageNumberWasRequested,
@@ -118,23 +119,23 @@ public abstract class DataSourceTest<TermType,VarType> {
      */
     @Test
     public void testEstimate() {
-        final TriplePatternElementParser<TermType,VarType> tpeParser =
+        final TriplePatternElementParser<ConstantTermType,NamedVarType,AnonVarType> tpeParser =
                                                getTriplePatternElementParser();
 
-        final TriplePatternFragmentRequest<TermType,VarType> request =
-          new TriplePatternFragmentRequest<TermType,VarType>() {
+        final TriplePatternFragmentRequest<ConstantTermType,NamedVarType,AnonVarType> request =
+          new TriplePatternFragmentRequest<ConstantTermType,NamedVarType,AnonVarType>() {
             public boolean isPageRequest() { return true; }
             public long getPageNumber() { return 1L; }
             public String getFragmentURL() { return "http://example.org/f"; }
             public String getDatasetURL() { return "http://example.org/"; }
 
-            public TriplePatternElement<TermType,VarType> getSubject() {
+            public TriplePatternElement<ConstantTermType,NamedVarType,AnonVarType> getSubject() {
                 return tpeParser.parseIntoTriplePatternElement("http://data.gov.be/catalog/ckanvl");
             }
-            public TriplePatternElement<TermType,VarType> getPredicate() {
+            public TriplePatternElement<ConstantTermType,NamedVarType,AnonVarType> getPredicate() {
                 return tpeParser.parseIntoTriplePatternElement(null);
             }
-            public TriplePatternElement<TermType,VarType> getObject() {
+            public TriplePatternElement<ConstantTermType,NamedVarType,AnonVarType> getObject() {
                 return tpeParser.parseIntoTriplePatternElement(null);
             }
         };
