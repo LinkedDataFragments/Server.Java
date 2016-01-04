@@ -4,11 +4,11 @@ import java.io.Closeable;
 
 import org.linkeddatafragments.fragments.ILinkedDataFragment;
 import org.linkeddatafragments.fragments.ILinkedDataFragment;
-import org.linkeddatafragments.fragments.LinkedDataFragmentRequest;
-import org.linkeddatafragments.fragments.LinkedDataFragmentRequest;
+import org.linkeddatafragments.fragments.ILinkedDataFragmentRequest;
+import org.linkeddatafragments.fragments.ILinkedDataFragmentRequest;
 
 /**
- * Processes {@link LinkedDataFragmentRequest}s and returns
+ * Processes {@link ILinkedDataFragmentRequest}s and returns
  * the requested {@link ILinkedDataFragment}s.
  *
  * @author <a href="http://olafhartig.de">Olaf Hartig</a>
@@ -16,6 +16,6 @@ import org.linkeddatafragments.fragments.LinkedDataFragmentRequest;
 public interface IFragmentRequestProcessor extends Closeable
 {
     ILinkedDataFragment createRequestedFragment(
-            final LinkedDataFragmentRequest request )
+            final ILinkedDataFragmentRequest request )
                     throws IllegalArgumentException;
 }

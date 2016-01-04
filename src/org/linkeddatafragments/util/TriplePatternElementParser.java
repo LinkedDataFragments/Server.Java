@@ -7,19 +7,23 @@ import org.linkeddatafragments.fragments.tpf.TriplePatternElementFactory;
  * Parses strings (as obtained from HTTP request parameters) into
  * {@link ITriplePatternElement}s. 
  *
- * @param <TermType> type for representing RDF terms
- * @param <VarType> type for representing specific variables
+ * @param <ConstantTermType> type for representing constants in triple patterns
+ *                           (i.e., URIs and literals)
+ * @param <NamedVarType> type for representing named variables in triple patterns
+ * @param <AnonVarType> type for representing anonymous variables in triple
+ *                      patterns (i.e., variables denoted by a blank node)
  *
  * @author <a href="http://olafhartig.de">Olaf Hartig</a>
  * @author Ruben Verborgh
  */
-abstract public class TriplePatternElementParser<TermType,VarType>
-    extends RDFTermParser<TermType>
+abstract public
+    class TriplePatternElementParser<ConstantTermType,NamedVarType,AnonVarType>
+        extends RDFTermParser<ConstantTermType>
 {
-    public final TriplePatternElementFactory<TermType,VarType> factory =
-            new TriplePatternElementFactory<TermType,VarType>();
+    public final TriplePatternElementFactory<ConstantTermType,NamedVarType,AnonVarType>
+        factory = new TriplePatternElementFactory<ConstantTermType,NamedVarType,AnonVarType>();
 
-    public ITriplePatternElement<TermType,VarType>
+    public ITriplePatternElement<ConstantTermType,NamedVarType,AnonVarType>
                             parseIntoTriplePatternElement( final String param )
     {
         // nothing or empty indicates an unspecified variable
@@ -30,25 +34,28 @@ abstract public class TriplePatternElementParser<TermType,VarType>
         char firstChar = param.charAt(0);
         switch ( firstChar )
         {
-            // specific variable
+            // specific variable that has a name
             case '?':
             {
                 final String varName = param.substring(1);
-                final VarType var = createSpecificVariable( varName );
-                return factory.createSpecificVariable( var );
+                final NamedVarType var = createNamedVariable( varName );
+                return factory.createNamedVariable( var );
             }
 
-            // blank node indicates an unspecified variable
+            // specific variable that is denoted by a blank node
             case '_':
             {
-                return factory.createUnspecifiedVariable();
+                final AnonVarType var = createAnonymousVariable( param );
+                return factory.createAnonymousVariable( var );
             }
 
             // assume it is an RDF term
             default:
-                return factory.createRDFTerm( parseIntoRDFNode(param) );
+                return factory.createConstantRDFTerm( parseIntoRDFNode(param) );
         }
     }
 
-    abstract public VarType createSpecificVariable( final String varName );
+    abstract public NamedVarType createNamedVariable( final String varName );
+
+    abstract public AnonVarType createAnonymousVariable( final String label );
 }

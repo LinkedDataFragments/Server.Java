@@ -1,17 +1,23 @@
 package org.linkeddatafragments.exceptions;
 
+import org.linkeddatafragments.datasource.IDataSource;
+
 /**
  *
  * @author mielvandersande
  */
-public class DataSourceException extends Exception {
-    private static final long serialVersionUID = 1L;
+abstract public class DataSourceException extends Exception {
 
     public DataSourceException(Throwable cause) {
-        super(cause.getMessage());
+        super(cause);
     }
 
-    public DataSourceException(String message) {
-        super("Could not create DataSource: " + message);
-    }  
+    public DataSourceException(String datasourceName, String message) {
+        super("Error for datasource '" + datasourceName + "': " + message);
+    }
+    
+    public DataSourceException(IDataSource datasource, String message) {
+        this(datasource.getTitle(), message);
+    }
+    
 }

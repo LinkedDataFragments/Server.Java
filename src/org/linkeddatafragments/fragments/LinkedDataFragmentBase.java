@@ -52,7 +52,7 @@ public abstract class LinkedDataFragmentBase implements ILinkedDataFragment
 
     @Override
     public long getMaxPageSize() {
-        return LinkedDataFragmentRequest.TRIPLESPERPAGE;
+        return ILinkedDataFragmentRequest.TRIPLESPERPAGE;
     }
 
     /**
@@ -117,7 +117,7 @@ public abstract class LinkedDataFragmentBase implements ILinkedDataFragment
 
         final Resource firstPageId =
                 model.createResource(
-                        pagedURL.setParameter(LinkedDataFragmentRequest.PARAMETERNAME_PAGE,
+                        pagedURL.setParameter(ILinkedDataFragmentRequest.PARAMETERNAME_PAGE,
                                               "1").toString() );
 
         fragmentId.addProperty( CommonResources.HYDRA_FIRSTPAGE, firstPageId );
@@ -126,7 +126,7 @@ public abstract class LinkedDataFragmentBase implements ILinkedDataFragment
             final String prevPageNumber = Long.toString( pageNumber - 1 );
             final Resource prevPageId =
                     model.createResource(
-                            pagedURL.setParameter(LinkedDataFragmentRequest.PARAMETERNAME_PAGE,
+                            pagedURL.setParameter(ILinkedDataFragmentRequest.PARAMETERNAME_PAGE,
                                                   prevPageNumber).toString() );
 
             fragmentId.addProperty( CommonResources.HYDRA_PREVIOUSPAGE, prevPageId );
@@ -136,7 +136,7 @@ public abstract class LinkedDataFragmentBase implements ILinkedDataFragment
             final String nextPageNumber = Long.toString( pageNumber + 1 );
             final Resource nextPageId =
                     model.createResource(
-                            pagedURL.setParameter(LinkedDataFragmentRequest.PARAMETERNAME_PAGE,
+                            pagedURL.setParameter(ILinkedDataFragmentRequest.PARAMETERNAME_PAGE,
                                                   nextPageNumber).toString() );
 
             fragmentId.addProperty( CommonResources.HYDRA_NEXTPAGE, nextPageId );

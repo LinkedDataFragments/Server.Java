@@ -10,7 +10,7 @@ import org.linkeddatafragments.util.TriplePatternElementParserForJena;
  * @author <a href="http://olafhartig.de">Olaf Hartig</a>
  */
 public class TPFRequestParserForJenaBackends
-    extends TPFRequestParser<RDFNode,String>
+    extends TPFRequestParser<RDFNode,String,String>
 {
     private static TPFRequestParserForJenaBackends instance = null;
 

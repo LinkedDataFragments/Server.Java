@@ -1,12 +1,12 @@
 package org.linkeddatafragments.fragments;
 
 /**
- * Base class for implementations of {@link LinkedDataFragmentRequest}.
+ * Base class for implementations of {@link ILinkedDataFragmentRequest}.
  *
  * @author <a href="http://olafhartig.de">Olaf Hartig</a>
  */
 public abstract class LinkedDataFragmentRequestBase
-    implements LinkedDataFragmentRequest
+    implements ILinkedDataFragmentRequest
 {
     public final String fragmentURL;
     public final String datasetURL;

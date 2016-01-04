@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.linkeddatafragments.datasource.IDataSource;
 import org.linkeddatafragments.datasource.index.IndexDataSource;
 import org.linkeddatafragments.fragments.ILinkedDataFragment;
-import org.linkeddatafragments.fragments.LinkedDataFragmentRequest;
+import org.linkeddatafragments.fragments.ILinkedDataFragmentRequest;
 import org.linkeddatafragments.fragments.tpf.ITriplePatternFragmentRequest;
 
 /**
@@ -54,7 +54,7 @@ public class HtmlWriterImpl extends LinkedDataFragmentWriterBase implements ILin
     }
    
     @Override
-    public void writeFragment(ServletOutputStream outputStream, IDataSource datasource, ILinkedDataFragment fragment,  LinkedDataFragmentRequest ldfRequest) throws IOException, TemplateException{
+    public void writeFragment(ServletOutputStream outputStream, IDataSource datasource, ILinkedDataFragment fragment,  ILinkedDataFragmentRequest ldfRequest) throws IOException, TemplateException{
         Map data = new HashMap();
         
         // base.ftl.html
@@ -102,9 +102,9 @@ public class HtmlWriterImpl extends LinkedDataFragmentWriterBase implements ILin
         data.put("end", start + (triples.size() < fragment.getMaxPageSize() ? triples.size() : fragment.getMaxPageSize()));
     
         
-        query.put("subject", !tpfRequest.getSubject().isVariable() ? tpfRequest.getSubject().asTerm() : "");
-        query.put("predicate", !tpfRequest.getPredicate().isVariable() ? tpfRequest.getPredicate().asTerm() : "");
-        query.put("object", !tpfRequest.getObject().isVariable() ? tpfRequest.getObject().asTerm() : "");
+        query.put("subject", !tpfRequest.getSubject().isVariable() ? tpfRequest.getSubject().asConstantTerm() : "");
+        query.put("predicate", !tpfRequest.getPredicate().isVariable() ? tpfRequest.getPredicate().asConstantTerm() : "");
+        query.put("object", !tpfRequest.getObject().isVariable() ? tpfRequest.getObject().asConstantTerm() : "");
         data.put("query", query);
        
         /* Get the template (uses cache internally) */
