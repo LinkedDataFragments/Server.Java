@@ -28,7 +28,7 @@ import org.linkeddatafragments.fragments.tpf.TriplePatternFragmentRequest;
  * @author <a href="http://olafhartig.de">Olaf Hartig</a>
  */
 public class IndexRequestProcessorForTPFs
-    extends AbstractRequestProcessorForTriplePatterns<RDFNode,String>
+    extends AbstractRequestProcessorForTriplePatterns<RDFNode,String,String>
 {
     final static String RDF = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
     final static String RDFS = "http://www.w3.org/2000/01/rdf-schema#";
@@ -58,7 +58,7 @@ public class IndexRequestProcessorForTPFs
 
     @Override
     protected Worker getTPFSpecificWorker(
-            final TriplePatternFragmentRequest<RDFNode,String> request )
+            final TriplePatternFragmentRequest<RDFNode,String,String> request )
                                                 throws IllegalArgumentException
     {
         return new Worker( request );
@@ -66,32 +66,34 @@ public class IndexRequestProcessorForTPFs
 
 
     protected class Worker
-       extends AbstractRequestProcessorForTriplePatterns.Worker<RDFNode,String>
+       extends AbstractRequestProcessorForTriplePatterns.Worker<RDFNode,String,String>
     {
-        public Worker( final TriplePatternFragmentRequest<RDFNode,String> req )
+        public Worker(
+                final TriplePatternFragmentRequest<RDFNode,String,String> req )
         {
             super( req );
         }
 
         @Override
         protected LinkedDataFragment createFragment(
-                                  final TriplePatternElement<RDFNode,String> s,
-                                  final TriplePatternElement<RDFNode,String> p,
-                                  final TriplePatternElement<RDFNode,String> o,
-                                  final long offset,
-                                  final long limit )
+                           final TriplePatternElement<RDFNode,String,String> s,
+                           final TriplePatternElement<RDFNode,String,String> p,
+                           final TriplePatternElement<RDFNode,String,String> o,
+                           final long offset,
+                           final long limit )
         {
             // FIXME: The following algorithm is incorrect for cases in which
             //        the requested triple pattern contains a specific variable
-            //        multiple times (e.g., ?x foaf:knows ?x ).
+            //        multiple times;
+            //        e.g., (?x foaf:knows ?x ) or (_:bn foaf:knows _:bn)
             // see https://github.com/LinkedDataFragments/Server.Java/issues/25
 
             final Resource subject   = s.isVariable() ? null
-                                                      : s.asTerm().asResource();
+                                                      : s.asConstantTerm().asResource();
             final Property predicate = p.isVariable() ? null
-                                                      : ResourceFactory.createProperty(p.asTerm().asResource().getURI());
+                                                      : ResourceFactory.createProperty(p.asConstantTerm().asResource().getURI());
             final RDFNode object     = o.isVariable() ? null
-                                                      : o.asTerm();
+                                                      : o.asConstantTerm();
 
             StmtIterator listStatements = model.listStatements(subject, predicate, object);
             Model result = ModelFactory.createDefaultModel();
