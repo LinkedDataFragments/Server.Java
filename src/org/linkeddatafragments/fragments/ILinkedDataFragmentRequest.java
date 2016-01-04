@@ -5,7 +5,7 @@ package org.linkeddatafragments.fragments;
  *
  * @author <a href="http://olafhartig.de">Olaf Hartig</a>
  */
-public interface LinkedDataFragmentRequest
+public interface ILinkedDataFragmentRequest
 {
     public final static long TRIPLESPERPAGE = 100L;
     public final static String PARAMETERNAME_PAGE = "page";

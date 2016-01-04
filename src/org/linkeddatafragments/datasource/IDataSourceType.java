@@ -1,6 +1,6 @@
 package org.linkeddatafragments.datasource;
 
-import org.linkeddatafragments.exceptions.DataSourceException;
+import org.linkeddatafragments.exceptions.DataSourceCreationException;
 
 import com.google.gson.JsonObject;
 
@@ -28,5 +28,5 @@ public interface IDataSourceType
     IDataSource createDataSource( final String title,
                                   final String description,
                                   final JsonObject settings )
-                                                    throws DataSourceException;
+                                                    throws DataSourceCreationException;
 }

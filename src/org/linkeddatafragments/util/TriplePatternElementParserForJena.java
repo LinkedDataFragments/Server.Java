@@ -11,7 +11,7 @@ import com.hp.hpl.jena.rdf.model.ResourceFactory;
  * @author <a href="http://olafhartig.de">Olaf Hartig</a>
  */
 public class TriplePatternElementParserForJena
-    extends TriplePatternElementParser<RDFNode,String>
+    extends TriplePatternElementParser<RDFNode,String,String>
 {
     private static TriplePatternElementParserForJena instance = null;
 
@@ -26,9 +26,15 @@ public class TriplePatternElementParserForJena
     protected TriplePatternElementParserForJena() {}
 
     @Override
-    public String createSpecificVariable( final String varName )
+    public String createNamedVariable( final String varName )
     {
         return varName;
+    }
+
+    @Override
+    public String createAnonymousVariable( final String label )
+    {
+        return label;
     }
 
     @Override

@@ -14,10 +14,10 @@ import org.junit.Test;
 
 import org.linkeddatafragments.datasource.IDataSource;
 import org.linkeddatafragments.datasource.IFragmentRequestProcessor;
-import org.linkeddatafragments.fragments.LinkedDataFragment;
-import org.linkeddatafragments.fragments.tpf.TriplePatternElement;
-import org.linkeddatafragments.fragments.tpf.TriplePatternFragment;
-import org.linkeddatafragments.fragments.tpf.TriplePatternFragmentRequest;
+import org.linkeddatafragments.fragments.ILinkedDataFragment;
+import org.linkeddatafragments.fragments.tpf.ITriplePatternElement;
+import org.linkeddatafragments.fragments.tpf.ITriplePatternFragment;
+import org.linkeddatafragments.fragments.tpf.ITriplePatternFragmentRequest;
 import org.linkeddatafragments.fragments.tpf.TriplePatternFragmentRequestImpl;
 import org.linkeddatafragments.util.TriplePatternElementParser;
 
@@ -26,13 +26,14 @@ import org.linkeddatafragments.util.TriplePatternElementParser;
  *
  * @author Bart Hanssens <bart.hanssens@fedict.be>
  */
-public abstract class DataSourceTest<TermType,VarType> {
+public abstract class DataSourceTest<ConstantTermType,NamedVarType,AnonVarType>
+{
     private static IDataSource ds;
-    
+
     /**
      * Get data source
-     * 
-     * @return data source interface 
+     *
+     * @return data source interface
      */
     public static IDataSource getDatasource() {
         return ds;
@@ -40,21 +41,21 @@ public abstract class DataSourceTest<TermType,VarType> {
 
     /**
      * Set the data source
-     * 
-     * @param ds data source 
+     *
+     * @param ds data source
      */
     public static void setDatasource(IDataSource ds) {
         DataSourceTest.ds = ds;
     }
 
-    protected abstract TriplePatternElementParser<TermType,VarType>
+    protected abstract TriplePatternElementParser<ConstantTermType,NamedVarType,AnonVarType>
                                                getTriplePatternElementParser();
-        
+
     /**
      * Copy the demo triple in the jar to a temp file.
-     * 
+     *
      * @return temp file
-     * @throws IOException 
+     * @throws IOException
      */
     public static File getResourceAsFile() throws IOException {
         File temp = File.createTempFile("ldf-test-hdt", ".ttl");
@@ -65,10 +66,10 @@ public abstract class DataSourceTest<TermType,VarType> {
 
         return temp;
     }
-    
+
     /**
      * Generate a basic Json configuration
-     * 
+     *
      * @param title
      * @param desc
      * @param type
@@ -79,22 +80,22 @@ public abstract class DataSourceTest<TermType,VarType> {
         config.addProperty("title", title);
         config.addProperty("description", desc);
         config.addProperty("type", type);
-        
+
         return config;
     }
-    
-    
+
+
     /**
      * Test total size of empty TPF
-     * 
+     *
      */
     @Test
-    public void testEmpty() {        
-        final TriplePatternElementParser<TermType,VarType> tpeParser =
+    public void testEmpty() {
+        final TriplePatternElementParser<ConstantTermType,NamedVarType,AnonVarType> tpeParser =
                                                getTriplePatternElementParser();
 
-        final TriplePatternFragmentRequest<TermType,VarType> request =
-                new TriplePatternFragmentRequestImpl<TermType,VarType>(
+        final ITriplePatternFragmentRequest<ConstantTermType,NamedVarType,AnonVarType> request =
+                new TriplePatternFragmentRequestImpl<ConstantTermType,NamedVarType,AnonVarType>(
                         "http://example.org/f", // fragmentURL
                         "http://example.org/",  // datasetURL,
                         true, // pageNumberWasRequested,
@@ -104,47 +105,47 @@ public abstract class DataSourceTest<TermType,VarType> {
                         tpeParser.parseIntoTriplePatternElement(null) ); //object
 
         final IFragmentRequestProcessor proc = getDatasource().getRequestProcessor();
-        final LinkedDataFragment ldf = proc.createRequestedFragment( request );
-        final TriplePatternFragment tpf = (TriplePatternFragment) ldf;
+        final ILinkedDataFragment ldf = proc.createRequestedFragment( request );
+        final ITriplePatternFragment tpf = (ITriplePatternFragment) ldf;
 
         long totalSize = tpf.getTotalSize();
-        
-        Assert.assertTrue("Estimate is too big : " + totalSize, totalSize == 0);        
-        
+
+        Assert.assertTrue("Estimate is too big : " + totalSize, totalSize == 0);
+
     }
-    
+
     /**
      * Test if estimate seems reasonable.
      */
     @Test
     public void testEstimate() {
-        final TriplePatternElementParser<TermType,VarType> tpeParser =
+        final TriplePatternElementParser<ConstantTermType,NamedVarType,AnonVarType> tpeParser =
                                                getTriplePatternElementParser();
 
-        final TriplePatternFragmentRequest<TermType,VarType> request =
-          new TriplePatternFragmentRequest<TermType,VarType>() {
+        final ITriplePatternFragmentRequest<ConstantTermType,NamedVarType,AnonVarType> request =
+          new ITriplePatternFragmentRequest<ConstantTermType,NamedVarType,AnonVarType>() {
             public boolean isPageRequest() { return true; }
             public long getPageNumber() { return 1L; }
             public String getFragmentURL() { return "http://example.org/f"; }
             public String getDatasetURL() { return "http://example.org/"; }
 
-            public TriplePatternElement<TermType,VarType> getSubject() {
+            public ITriplePatternElement<ConstantTermType,NamedVarType,AnonVarType> getSubject() {
                 return tpeParser.parseIntoTriplePatternElement("http://data.gov.be/catalog/ckanvl");
             }
-            public TriplePatternElement<TermType,VarType> getPredicate() {
+            public ITriplePatternElement<ConstantTermType,NamedVarType,AnonVarType> getPredicate() {
                 return tpeParser.parseIntoTriplePatternElement(null);
             }
-            public TriplePatternElement<TermType,VarType> getObject() {
+            public ITriplePatternElement<ConstantTermType,NamedVarType,AnonVarType> getObject() {
                 return tpeParser.parseIntoTriplePatternElement(null);
             }
         };
 
         final IFragmentRequestProcessor proc = getDatasource().getRequestProcessor();
-        final LinkedDataFragment ldf = proc.createRequestedFragment( request );
-        final TriplePatternFragment tpf = (TriplePatternFragment) ldf;
+        final ILinkedDataFragment ldf = proc.createRequestedFragment( request );
+        final ITriplePatternFragment tpf = (ITriplePatternFragment) ldf;
 
         long totalSize = tpf.getTotalSize();
-        
-        Assert.assertTrue("Estimate is too small : " + totalSize, totalSize > 100);        
+
+        Assert.assertTrue("Estimate is too small : " + totalSize, totalSize > 100);
     }
 }

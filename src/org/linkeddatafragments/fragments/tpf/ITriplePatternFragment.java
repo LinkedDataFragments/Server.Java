@@ -1,12 +1,12 @@
 package org.linkeddatafragments.fragments.tpf;
 
-import org.linkeddatafragments.fragments.LinkedDataFragment;
+import org.linkeddatafragments.fragments.ILinkedDataFragment;
 
 /**
  * A Triple Pattern Fragment.
  * @author Ruben Verborgh
  */
-public interface TriplePatternFragment extends LinkedDataFragment {
+public interface ITriplePatternFragment extends ILinkedDataFragment {
     /**
      * Gets the total number of triples in the fragment (can be an estimate).
      * @return the total number of triples

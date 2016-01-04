@@ -4,9 +4,9 @@ import java.io.IOException;
 
 import org.linkeddatafragments.datasource.AbstractRequestProcessorForTriplePatterns;
 import org.linkeddatafragments.datasource.IFragmentRequestProcessor;
-import org.linkeddatafragments.fragments.LinkedDataFragment;
-import org.linkeddatafragments.fragments.tpf.TriplePatternElement;
-import org.linkeddatafragments.fragments.tpf.TriplePatternFragmentRequest;
+import org.linkeddatafragments.fragments.ILinkedDataFragment;
+import org.linkeddatafragments.fragments.tpf.ITriplePatternElement;
+import org.linkeddatafragments.fragments.tpf.ITriplePatternFragmentRequest;
 import org.rdfhdt.hdt.enums.TripleComponentRole;
 import org.rdfhdt.hdt.hdt.HDT;
 import org.rdfhdt.hdt.hdt.HDTManager;
@@ -21,13 +21,13 @@ import com.hp.hpl.jena.rdf.model.RDFNode;
 
 /**
  * Implementation of {@link IFragmentRequestProcessor} that processes
- * {@link TriplePatternFragmentRequest}s over data stored in HDT.
+ * {@link ITriplePatternFragmentRequest}s over data stored in HDT.
  *
  * @author Ruben Verborgh
  * @author <a href="http://olafhartig.de">Olaf Hartig</a>
  */
 public class HdtBasedRequestProcessorForTPFs
-    extends AbstractRequestProcessorForTriplePatterns<RDFNode,String>
+    extends AbstractRequestProcessorForTriplePatterns<RDFNode,String,String>
 {
     protected final HDT datasource;
     protected final NodeDictionary dictionary;
@@ -46,7 +46,7 @@ public class HdtBasedRequestProcessorForTPFs
 
     @Override
     protected Worker getTPFSpecificWorker(
-            final TriplePatternFragmentRequest<RDFNode,String> request )
+            final ITriplePatternFragmentRequest<RDFNode,String,String> request )
                                                 throws IllegalArgumentException
     {
         return new Worker( request );
@@ -54,30 +54,32 @@ public class HdtBasedRequestProcessorForTPFs
 
 
     protected class Worker
-       extends AbstractRequestProcessorForTriplePatterns.Worker<RDFNode,String>
+       extends AbstractRequestProcessorForTriplePatterns.Worker<RDFNode,String,String>
     {
-        public Worker( final TriplePatternFragmentRequest<RDFNode,String> req )
+        public Worker(
+                final ITriplePatternFragmentRequest<RDFNode,String,String> req )
         {
             super( req );
         }
 
         @Override
-        protected LinkedDataFragment createFragment(
-                          final TriplePatternElement<RDFNode,String> subject,
-                          final TriplePatternElement<RDFNode,String> predicate,
-                          final TriplePatternElement<RDFNode,String> object,
-                          final long offset,
-                          final long limit )
+        protected ILinkedDataFragment createFragment(
+                   final ITriplePatternElement<RDFNode,String,String> subject,
+                   final ITriplePatternElement<RDFNode,String,String> predicate,
+                   final ITriplePatternElement<RDFNode,String,String> object,
+                   final long offset,
+                   final long limit )
         {
             // FIXME: The following algorithm is incorrect for cases in which
             //        the requested triple pattern contains a specific variable
-            //        multiple times (e.g., ?x foaf:knows ?x ).
+            //        multiple times;
+            //        e.g., (?x foaf:knows ?x ) or (_:bn foaf:knows _:bn)
             // see https://github.com/LinkedDataFragments/Server.Java/issues/23
 
             // look up the result from the HDT datasource)
-            int subjectId = subject.isVariable() ? 0 : dictionary.getIntID(subject.asTerm().asNode(), TripleComponentRole.SUBJECT);
-            int predicateId = predicate.isVariable() ? 0 : dictionary.getIntID(predicate.asTerm().asNode(), TripleComponentRole.PREDICATE);
-            int objectId = object.isVariable() ? 0 : dictionary.getIntID(object.asTerm().asNode(), TripleComponentRole.OBJECT);
+            int subjectId = subject.isVariable() ? 0 : dictionary.getIntID(subject.asConstantTerm().asNode(), TripleComponentRole.SUBJECT);
+            int predicateId = predicate.isVariable() ? 0 : dictionary.getIntID(predicate.asConstantTerm().asNode(), TripleComponentRole.PREDICATE);
+            int objectId = object.isVariable() ? 0 : dictionary.getIntID(object.asConstantTerm().asNode(), TripleComponentRole.OBJECT);
         
             if (subjectId < 0 || predicateId < 0 || objectId < 0) {
                 return createEmptyTriplePatternFragment();

@@ -1,7 +1,7 @@
 package org.linkeddatafragments.datasource;
 
-import org.linkeddatafragments.fragments.LinkedDataFragment;
-import org.linkeddatafragments.fragments.LinkedDataFragmentRequest;
+import org.linkeddatafragments.fragments.ILinkedDataFragment;
+import org.linkeddatafragments.fragments.ILinkedDataFragmentRequest;
 
 /**
  * Base class for implementations of {@link IFragmentRequestProcessor}.
@@ -15,28 +15,28 @@ abstract public class AbstractRequestProcessor
     public void close() {}
 
     @Override
-    final public LinkedDataFragment createRequestedFragment(
-            final LinkedDataFragmentRequest request )
+    final public ILinkedDataFragment createRequestedFragment(
+            final ILinkedDataFragmentRequest request )
                     throws IllegalArgumentException
     {
         return getWorker( request ).createRequestedFragment();
     }
 
     abstract protected Worker getWorker(
-            final LinkedDataFragmentRequest request )
+            final ILinkedDataFragmentRequest request )
                     throws IllegalArgumentException;
 
 
     abstract static protected class Worker
     {
-        public final LinkedDataFragmentRequest request;
+        public final ILinkedDataFragmentRequest request;
         
-        public Worker( final LinkedDataFragmentRequest request )
+        public Worker( final ILinkedDataFragmentRequest request )
         {
             this.request = request;
         }
 
-        abstract public LinkedDataFragment createRequestedFragment()
+        abstract public ILinkedDataFragment createRequestedFragment()
                                                throws IllegalArgumentException;
 
     } // end of class Worker

@@ -5,24 +5,24 @@ import javax.servlet.http.HttpServletRequest;
 import org.linkeddatafragments.config.ConfigReader;
 import org.linkeddatafragments.fragments.FragmentRequestParserBase;
 import org.linkeddatafragments.fragments.IFragmentRequestParser;
-import org.linkeddatafragments.fragments.LinkedDataFragmentRequest;
+import org.linkeddatafragments.fragments.ILinkedDataFragmentRequest;
 import org.linkeddatafragments.util.TriplePatternElementParser;
 
 /**
- * An {@link IFragmentRequestParser} for {@link TriplePatternFragmentRequest}s.
+ * An {@link IFragmentRequestParser} for {@link ITriplePatternFragmentRequest}s.
  *
  * @param <TermType> type for representing RDF terms in triple patterns 
  * @param <VarType> type for representing specific variables in triple patterns
  *
  * @author <a href="http://olafhartig.de">Olaf Hartig</a>
  */
-public class TPFRequestParser<TermType,VarType>
+public class TPFRequestParser<ConstantTermType,NamedVarType,AnonVarType>
     extends FragmentRequestParserBase
 {
-    public final TriplePatternElementParser<TermType,VarType> elmtParser;
+    public final TriplePatternElementParser<ConstantTermType,NamedVarType,AnonVarType> elmtParser;
 
     public TPFRequestParser(
-                final TriplePatternElementParser<TermType,VarType> elmtParser )
+                final TriplePatternElementParser<ConstantTermType,NamedVarType,AnonVarType> elmtParser )
     {
         this.elmtParser = elmtParser;
     }
@@ -44,10 +44,10 @@ public class TPFRequestParser<TermType,VarType>
         }
 
         @Override
-        public LinkedDataFragmentRequest createFragmentRequest()
+        public ILinkedDataFragmentRequest createFragmentRequest()
                                                throws IllegalArgumentException
         {
-            return new TriplePatternFragmentRequestImpl<TermType,VarType>(
+            return new TriplePatternFragmentRequestImpl<ConstantTermType,NamedVarType,AnonVarType>(
                                                          getFragmentURL(),
                                                          getDatasetURL(),
                                                          pageNumberWasRequested,
@@ -57,22 +57,22 @@ public class TPFRequestParser<TermType,VarType>
                                                          getObject() );
         }
 
-        public TriplePatternElement<TermType,VarType> getSubject() {
+        public ITriplePatternElement<ConstantTermType,NamedVarType,AnonVarType> getSubject() {
             return getParameterAsTriplePatternElement(
-                    TriplePatternFragmentRequest.PARAMETERNAME_SUBJ );
+                    ITriplePatternFragmentRequest.PARAMETERNAME_SUBJ );
         }
 
-        public TriplePatternElement<TermType,VarType> getPredicate() {
+        public ITriplePatternElement<ConstantTermType,NamedVarType,AnonVarType> getPredicate() {
             return getParameterAsTriplePatternElement(
-                    TriplePatternFragmentRequest.PARAMETERNAME_PRED );
+                    ITriplePatternFragmentRequest.PARAMETERNAME_PRED );
         }
 
-        public TriplePatternElement<TermType,VarType> getObject() {
+        public ITriplePatternElement<ConstantTermType,NamedVarType,AnonVarType> getObject() {
             return getParameterAsTriplePatternElement(
-                    TriplePatternFragmentRequest.PARAMETERNAME_OBJ );
+                    ITriplePatternFragmentRequest.PARAMETERNAME_OBJ );
         }
 
-        public TriplePatternElement<TermType,VarType>
+        public ITriplePatternElement<ConstantTermType,NamedVarType,AnonVarType>
                    getParameterAsTriplePatternElement( final String paramName )
         {
             final String parameter = request.getParameter( paramName );

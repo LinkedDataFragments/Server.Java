@@ -29,12 +29,13 @@ import org.linkeddatafragments.util.TriplePatternElementParserForJena;
  *
  * @author Bart Hanssens <bart.hanssens@fedict.be>
  */
-public class JenaTDBDataSourceTest extends DataSourceTest<RDFNode,String> {
+public class JenaTDBDataSourceTest extends DataSourceTest<RDFNode,String,String>
+{
     private static File jena;
     private static Dataset dataset;
 
     @Override
-    protected TriplePatternElementParser<RDFNode,String>
+    protected TriplePatternElementParser<RDFNode,String,String>
                                                getTriplePatternElementParser()
     {
         return TriplePatternElementParserForJena.getInstance();

@@ -2,7 +2,7 @@ package org.linkeddatafragments.datasource.tdb;
 
 import java.io.File;
 
-import org.linkeddatafragments.datasource.DataSource;
+import org.linkeddatafragments.datasource.DataSourceBase;
 import org.linkeddatafragments.datasource.IFragmentRequestProcessor;
 import org.linkeddatafragments.fragments.IFragmentRequestParser;
 import org.linkeddatafragments.fragments.tpf.TPFRequestParserForJenaBackends;
@@ -13,7 +13,7 @@ import org.linkeddatafragments.fragments.tpf.TPFRequestParserForJenaBackends;
  * @author Bart Hanssens <bart.hanssens@fedict.be>
  * @author <a href="http://olafhartig.de">Olaf Hartig</a>
  */
-public class JenaTDBDataSource extends DataSource {
+public class JenaTDBDataSource extends DataSourceBase {
 
     protected final JenaTDBBasedRequestProcessorForTPFs requestProcessor;
 

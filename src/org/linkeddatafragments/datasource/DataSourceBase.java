@@ -5,11 +5,11 @@ package org.linkeddatafragments.datasource;
  * @author mielvandersande
  * @author Bart Hanssens
  */
-public abstract class DataSource implements IDataSource {
+public abstract class DataSourceBase implements IDataSource {
     protected String title;
     protected String description; 
     
-    public DataSource(String title, String description) {
+    public DataSourceBase(String title, String description) {
         this.title = title;
         this.description = description;
     }

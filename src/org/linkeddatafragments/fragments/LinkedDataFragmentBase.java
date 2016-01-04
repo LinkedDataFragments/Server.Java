@@ -11,12 +11,12 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 /**
- * Base class of any implementation of {@link LinkedDataFragment} that uses
+ * Base class of any implementation of {@link ILinkedDataFragment} that uses
  * paging.
  *
  * @author <a href="http://olafhartig.de">Olaf Hartig</a>
  */
-public abstract class LinkedDataFragmentBase implements LinkedDataFragment
+public abstract class LinkedDataFragmentBase implements ILinkedDataFragment
 {
     public final String fragmentURL;
     public final String datasetURL;
@@ -51,7 +51,7 @@ public abstract class LinkedDataFragmentBase implements LinkedDataFragment
 
     @Override
     public long getMaxPageSize() {
-        return LinkedDataFragmentRequest.TRIPLESPERPAGE;
+        return ILinkedDataFragmentRequest.TRIPLESPERPAGE;
     }
 
     /**
@@ -113,7 +113,7 @@ public abstract class LinkedDataFragmentBase implements LinkedDataFragment
 
         final Resource firstPageId =
                 model.createResource(
-                        pagedURL.setParameter(LinkedDataFragmentRequest.PARAMETERNAME_PAGE,
+                        pagedURL.setParameter(ILinkedDataFragmentRequest.PARAMETERNAME_PAGE,
                                               "1").toString() );
 
         fragmentId.addProperty( CommonResources.HYDRA_FIRSTPAGE, firstPageId );
@@ -122,7 +122,7 @@ public abstract class LinkedDataFragmentBase implements LinkedDataFragment
             final String prevPageNumber = Long.toString( pageNumber - 1 );
             final Resource prevPageId =
                     model.createResource(
-                            pagedURL.setParameter(LinkedDataFragmentRequest.PARAMETERNAME_PAGE,
+                            pagedURL.setParameter(ILinkedDataFragmentRequest.PARAMETERNAME_PAGE,
                                                   prevPageNumber).toString() );
 
             fragmentId.addProperty( CommonResources.HYDRA_PREVIOUSPAGE, prevPageId );
@@ -132,7 +132,7 @@ public abstract class LinkedDataFragmentBase implements LinkedDataFragment
             final String nextPageNumber = Long.toString( pageNumber + 1 );
             final Resource nextPageId =
                     model.createResource(
-                            pagedURL.setParameter(LinkedDataFragmentRequest.PARAMETERNAME_PAGE,
+                            pagedURL.setParameter(ILinkedDataFragmentRequest.PARAMETERNAME_PAGE,
                                                   nextPageNumber).toString() );
 
             fragmentId.addProperty( CommonResources.HYDRA_NEXTPAGE, nextPageId );

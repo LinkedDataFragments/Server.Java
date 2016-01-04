@@ -26,8 +26,8 @@ import org.linkeddatafragments.datasource.IDataSourceType;
 import org.linkeddatafragments.datasource.index.IndexDataSource;
 import org.linkeddatafragments.exceptions.DataSourceNotFoundException;
 import org.linkeddatafragments.fragments.FragmentRequestParserBase;
-import org.linkeddatafragments.fragments.LinkedDataFragment;
-import org.linkeddatafragments.fragments.LinkedDataFragmentRequest;
+import org.linkeddatafragments.fragments.ILinkedDataFragment;
+import org.linkeddatafragments.fragments.ILinkedDataFragmentRequest;
 import org.linkeddatafragments.util.MIMEParse;
 
 /**
@@ -141,11 +141,11 @@ public class LinkedDataFragmentServlet extends HttpServlet {
         try {
             final IDataSource dataSource = getDataSource( request );
 
-            final LinkedDataFragmentRequest ldfRequest =
+            final ILinkedDataFragmentRequest ldfRequest =
                     dataSource.getRequestParser()
                               .parseIntoFragmentRequest( request, config );
 
-            final LinkedDataFragment fragment =
+            final ILinkedDataFragment fragment =
                     dataSource.getRequestProcessor()
                               .createRequestedFragment( ldfRequest );
 
