@@ -13,40 +13,46 @@ import org.linkeddatafragments.fragments.tpf.ITriplePatternFragmentRequest;
  * Base class for implementations of {@link IFragmentRequestProcessor} that
  * process {@link ITriplePatternFragmentRequest}s.
  *
- * @param <TermType> type for representing RDF terms in triple patterns 
- * @param <VarType> type for representing specific variables in triple patterns
+ * @param <CTT>
+ *          type for representing constants in triple patterns (i.e., URIs and
+ *          literals)
+ * @param <NVT>
+ *          type for representing named variables in triple patterns
+ * @param <AVT>
+ *          type for representing anonymous variables in triple patterns (i.e.,
+ *          variables denoted by a blank node)
  *
  * @author <a href="http://olafhartig.de">Olaf Hartig</a>
  */
 public abstract class
-    AbstractRequestProcessorForTriplePatterns<TermType,VarType>
+    AbstractRequestProcessorForTriplePatterns<CTT,NVT,AVT>
         extends AbstractRequestProcessor
 {
     @Override
-    protected final Worker<TermType,VarType> getWorker(
+    protected final Worker<CTT,NVT,AVT> getWorker(
             final LinkedDataFragmentRequest request )
                                                 throws IllegalArgumentException
     {
-        if ( request instanceof ITriplePatternFragmentRequest<?,?> ) {
+        if ( request instanceof ITriplePatternFragmentRequest<?,?,?> ) {
             @SuppressWarnings("unchecked")
-            final ITriplePatternFragmentRequest<TermType,VarType> tpfRequest =
-                      (ITriplePatternFragmentRequest<TermType,VarType>) request;
+            final ITriplePatternFragmentRequest<CTT,NVT,AVT> tpfRequest =
+                      (ITriplePatternFragmentRequest<CTT,NVT,AVT>) request;
             return getTPFSpecificWorker( tpfRequest );
         }
         else
             throw new IllegalArgumentException( request.getClass().getName() );
     }
 
-    abstract protected Worker<TermType,VarType> getTPFSpecificWorker(
-            final ITriplePatternFragmentRequest<TermType,VarType> request )
+    abstract protected Worker<CTT,NVT,AVT> getTPFSpecificWorker(
+            final ITriplePatternFragmentRequest<CTT,NVT,AVT> request )
                     throws IllegalArgumentException;
 
 
-    abstract static protected class Worker<TermType,VarType>
+    abstract static protected class Worker<CTT,NVT,AVT>
         extends AbstractRequestProcessor.Worker
     {        
         public Worker(
-                 final ITriplePatternFragmentRequest<TermType,VarType> request )
+                 final ITriplePatternFragmentRequest<CTT,NVT,AVT> request )
         {
             super( request );
         }
@@ -63,8 +69,8 @@ public abstract class
                 offset = 0L;
 
             @SuppressWarnings("unchecked")
-            final ITriplePatternFragmentRequest<TermType,VarType> tpfRequest =
-                      (ITriplePatternFragmentRequest<TermType,VarType>) request;
+            final ITriplePatternFragmentRequest<CTT,NVT,AVT> tpfRequest =
+                      (ITriplePatternFragmentRequest<CTT,NVT,AVT>) request;
 
             return createFragment( tpfRequest.getSubject(),
                                    tpfRequest.getPredicate(),
@@ -73,9 +79,9 @@ public abstract class
         }
 
         abstract protected ILinkedDataFragment createFragment(
-                            final ITriplePatternElement<TermType,VarType> subj,
-                            final ITriplePatternElement<TermType,VarType> pred,
-                            final ITriplePatternElement<TermType,VarType> obj,
+                            final ITriplePatternElement<CTT,NVT,AVT> subj,
+                            final ITriplePatternElement<CTT,NVT,AVT> pred,
+                            final ITriplePatternElement<CTT,NVT,AVT> obj,
                             final long offset,
                             final long limit )
                                                throws IllegalArgumentException;

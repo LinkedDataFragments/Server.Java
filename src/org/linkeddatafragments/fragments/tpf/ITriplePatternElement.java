@@ -3,47 +3,80 @@ package org.linkeddatafragments.fragments.tpf;
 /**
  * Represents an element of a triple pattern (i.e., subject, predicate, object). 
  *
- * @param <TermType> type for representing RDF terms in triple patterns 
- * @param <VarType> type for representing specific variables in triple patterns
+ * @param <ConstantTermType> type for representing constants in triple patterns
+ *                           (i.e., URIs and literals)
+ * @param <NamedVarType> type for representing named variables in triple patterns
+ * @param <AnonVarType> type for representing anonymous variables in triple
+ *                      patterns (i.e., variables denoted by a blank node)
  *
  * @author <a href="http://olafhartig.de">Olaf Hartig</a>
  */
-public interface ITriplePatternElement<TermType,VarType>
+public interface ITriplePatternElement<ConstantTermType,NamedVarType,AnonVarType>
 {
     /**
-     * Returns true if this element is a variable (named or unnamed).
+     * Returns true if this element is a variable (specific or unspecified).
      */
     boolean isVariable();
 
     /**
      * Returns true if this element is a specific variable, and false if either
-     * it is not a variable but an RDF term or it is some variable that is not
-     * specified. The latter (unspecified variables) is possible because when
-     * a client requests a triple pattern fragment, it may omit triple pattern
-     * related parameters.
-     *
-     * If this element is a specific variable (that is, this method returns
-     * true), this specific variable can be obtained by {@link #asVariable()}.
+     * it is not a variable (but a URI or literal) or it is some variable that
+     * is not specified. The latter (unspecified variables) is possible because
+     * when a client requests a triple pattern fragment, it may omit triple
+     * pattern related parameters.
      */
     boolean isSpecificVariable();
 
     /**
-     * Returns a representation of this element as a specific variable (assuming
-     * it is a specific variable).
+     * Returns true if this element is a specific variable that has a name
+     * (i.e., it is denoted by a string that begins with a question mark),
+     * and false if either it is not a specific variable or it is a specific
+     * variable that is denoted by a blank node.
      *
-     * @throws UnsupportedOperationException
-     *         If this element is not a specific variable (i.e.,
-     *         if {@link #isSpecificVariable()} returns false).
+     * If this element is a specific variable that has a name (that is, this
+     * method returns true), the named variable can be obtained by the method
+     * {@link #asNamedVariable()}.
      */
-    VarType asVariable() throws UnsupportedOperationException;
+    boolean isNamedVariable();
 
     /**
-     * Returns a representation of this element as an RDF term (assuming it is
-     * an RDF term and not a variable).
+     * Returns a representation of this element as a named variable (assuming
+     * it is a specific variable that has a name).
      *
      * @throws UnsupportedOperationException
-     *         If this element is not an RDF term but a variable
+     *         If this element is not a specific variable that has a name
+     *         (i.e., if {@link #isNamedVariable()} returns false).
+     */
+    NamedVarType asNamedVariable() throws UnsupportedOperationException;
+
+    /**
+     * Returns true if this element is a specific variable that does not have
+     * a name (i.e., it is denoted by a blank node), and false if either it is
+     * not a specific variable or it is a specific variable that has a name.
+     *
+     * If this element is a specific variable denoted by a blank node (that is,
+     * this method returns true), the blank node can be obtained by the method
+     * {@link #asAnonymousVariable()}.
+     */
+    boolean isAnonymousVariable();
+
+    /**
+     * Returns a representation of this element as a blank node (assuming
+     * it is a specific, but non-named variable).
+     *
+     * @throws UnsupportedOperationException
+     *         If this element is not a specific anonymous variable (i.e.,
+     *         if {@link #isAnonymousVariable()} returns false).
+     */
+    AnonVarType asAnonymousVariable() throws UnsupportedOperationException;
+
+    /**
+     * Returns a representation of this element as a constant RDF term (i.e.,
+     * a URI or a literal).
+     *
+     * @throws UnsupportedOperationException
+     *         If this element is not a constant RDF term but a variable
      *         (i.e., if {@link #isVariable()} returns true).
      */
-    TermType asTerm() throws UnsupportedOperationException;
+    ConstantTermType asConstantTerm() throws UnsupportedOperationException;
 }

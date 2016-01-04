@@ -22,12 +22,12 @@ import org.rdfhdt.hdt.options.HDTSpecification;
  *
  * @author Bart Hanssens <bart.hanssens@fedict.be>
  */
-public class HdtDataSourceTest extends DataSourceTest<RDFNode,String> {
+public class HdtDataSourceTest extends DataSourceTest<RDFNode,String,String> {
 
     private static File hdtfile;
 
     @Override
-    protected TriplePatternElementParser<RDFNode,String>
+    protected TriplePatternElementParser<RDFNode,String,String>
                                                getTriplePatternElementParser()
     {
         return TriplePatternElementParserForJena.getInstance();

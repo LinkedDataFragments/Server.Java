@@ -7,21 +7,21 @@ import org.linkeddatafragments.fragments.LinkedDataFragmentRequestBase;
  *
  * @author <a href="http://olafhartig.de">Olaf Hartig</a>
  */
-public class TriplePatternFragmentRequestImpl<TermType,VarType>
+public class TriplePatternFragmentRequestImpl<CTT,NVT,AVT>
     extends LinkedDataFragmentRequestBase
-    implements ITriplePatternFragmentRequest<TermType,VarType>
+    implements ITriplePatternFragmentRequest<CTT,NVT,AVT>
 {
-    public final ITriplePatternElement<TermType,VarType> subject;
-    public final ITriplePatternElement<TermType,VarType> predicate;
-    public final ITriplePatternElement<TermType,VarType> object;
+    public final ITriplePatternElement<CTT,NVT,AVT> subject;
+    public final ITriplePatternElement<CTT,NVT,AVT> predicate;
+    public final ITriplePatternElement<CTT,NVT,AVT> object;
 
     public TriplePatternFragmentRequestImpl( final String fragmentURL,
                                              final String datasetURL,
                                              final boolean pageNumberWasRequested,
                                              final long pageNumber,
-                                             final ITriplePatternElement<TermType,VarType> subject,
-                                             final ITriplePatternElement<TermType,VarType> predicate,
-                                             final ITriplePatternElement<TermType,VarType> object )
+                                             final ITriplePatternElement<CTT,NVT,AVT> subject,
+                                             final ITriplePatternElement<CTT,NVT,AVT> predicate,
+                                             final ITriplePatternElement<CTT,NVT,AVT> object )
     {
         super( fragmentURL, datasetURL, pageNumberWasRequested, pageNumber );
 
@@ -40,17 +40,17 @@ public class TriplePatternFragmentRequestImpl<TermType,VarType>
     }
 
     @Override
-    public ITriplePatternElement<TermType,VarType> getSubject() {
+    public ITriplePatternElement<CTT,NVT,AVT> getSubject() {
         return subject;
     }
 
     @Override
-    public ITriplePatternElement<TermType,VarType> getPredicate() {
+    public ITriplePatternElement<CTT,NVT,AVT> getPredicate() {
         return predicate;
     }
 
     @Override
-    public ITriplePatternElement<TermType,VarType> getObject() {
+    public ITriplePatternElement<CTT,NVT,AVT> getObject() {
         return object;
     }
 
