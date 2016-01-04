@@ -5,7 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.linkeddatafragments.config.ConfigReader;
 
 /**
- * Parses HTTP requests into specific {@link LinkedDataFragmentRequest}s.
+ * Parses HTTP requests into specific {@link ILinkedDataFragmentRequest}s.
  *
  * @author <a href="http://olafhartig.de">Olaf Hartig</a>
  */
@@ -13,13 +13,13 @@ public interface IFragmentRequestParser
 {
     /**
      * Parses the given HTTP request into a specific
-     * {@link LinkedDataFragmentRequest}.
+     * {@link ILinkedDataFragmentRequest}.
      *
      * @throws IllegalArgumentException
      *         If the given HTTP request cannot be interpreted (perhaps due to
      *         missing request parameters).  
      */
-    LinkedDataFragmentRequest parseIntoFragmentRequest(
+    ILinkedDataFragmentRequest parseIntoFragmentRequest(
             final HttpServletRequest httpRequest,
             final ConfigReader config )
                     throws IllegalArgumentException;

@@ -1,7 +1,7 @@
 package org.linkeddatafragments.datasource;
 
 import com.google.gson.JsonObject;
-import org.linkeddatafragments.exceptions.DataSourceException;
+import org.linkeddatafragments.exceptions.DataSourceCreationException;
 import org.linkeddatafragments.exceptions.UnknownDataSourceTypeException;
 
 /**
@@ -16,9 +16,9 @@ public class DataSourceFactory {
      * 
      * @param config
      * @return datasource interface
-     * @throws DataSourceException 
+     * @throws DataSourceCreationException 
      */
-    public static IDataSource create(JsonObject config) throws DataSourceException {
+    public static IDataSource create(JsonObject config) throws DataSourceCreationException {
         String title = config.getAsJsonPrimitive("title").getAsString();
         String description = config.getAsJsonPrimitive("description").getAsString();
         String typeName = config.getAsJsonPrimitive("type").getAsString();

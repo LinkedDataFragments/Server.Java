@@ -3,7 +3,7 @@ package org.linkeddatafragments.datasource;
 import com.hp.hpl.jena.rdf.model.Model;
 
 import org.linkeddatafragments.fragments.ILinkedDataFragment;
-import org.linkeddatafragments.fragments.LinkedDataFragmentRequest;
+import org.linkeddatafragments.fragments.ILinkedDataFragmentRequest;
 import org.linkeddatafragments.fragments.tpf.ITriplePatternElement;
 import org.linkeddatafragments.fragments.tpf.ITriplePatternFragment;
 import org.linkeddatafragments.fragments.tpf.TriplePatternFragmentImpl;
@@ -30,7 +30,7 @@ public abstract class
 {
     @Override
     protected final Worker<CTT,NVT,AVT> getWorker(
-            final LinkedDataFragmentRequest request )
+            final ILinkedDataFragmentRequest request )
                                                 throws IllegalArgumentException
     {
         if ( request instanceof ITriplePatternFragmentRequest<?,?,?> ) {
@@ -61,7 +61,7 @@ public abstract class
         public ILinkedDataFragment createRequestedFragment()
                                                 throws IllegalArgumentException
         {
-            final long limit = LinkedDataFragmentRequest.TRIPLESPERPAGE;
+            final long limit = ILinkedDataFragmentRequest.TRIPLESPERPAGE;
             final long offset;
             if ( request.isPageRequest() )
                 offset = limit * ( request.getPageNumber() - 1L );

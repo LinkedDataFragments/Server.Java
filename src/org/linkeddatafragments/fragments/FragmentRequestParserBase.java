@@ -12,7 +12,7 @@ import org.linkeddatafragments.config.ConfigReader;
 abstract public class FragmentRequestParserBase implements IFragmentRequestParser
 {
     @Override
-    final public LinkedDataFragmentRequest parseIntoFragmentRequest(
+    final public ILinkedDataFragmentRequest parseIntoFragmentRequest(
             final HttpServletRequest httpRequest,
             final ConfigReader config )
                     throws IllegalArgumentException
@@ -40,7 +40,7 @@ abstract public class FragmentRequestParserBase implements IFragmentRequestParse
             this.config = config;
             
             final String givenPageNumber = request.getParameter(
-                              LinkedDataFragmentRequest.PARAMETERNAME_PAGE );
+                              ILinkedDataFragmentRequest.PARAMETERNAME_PAGE );
             if ( givenPageNumber != null ) {
                 long pageNumber;
                 try {
@@ -57,7 +57,7 @@ abstract public class FragmentRequestParserBase implements IFragmentRequestParse
             }
         }
 
-        abstract public LinkedDataFragmentRequest createFragmentRequest()
+        abstract public ILinkedDataFragmentRequest createFragmentRequest()
                                                throws IllegalArgumentException;
 
         public String getFragmentURL() {

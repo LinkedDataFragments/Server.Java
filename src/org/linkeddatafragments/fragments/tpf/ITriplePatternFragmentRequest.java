@@ -1,6 +1,6 @@
 package org.linkeddatafragments.fragments.tpf;
 
-import org.linkeddatafragments.fragments.LinkedDataFragmentRequest;
+import org.linkeddatafragments.fragments.ILinkedDataFragmentRequest;
 
 /**
  * Represents a request of a Triple Pattern Fragment (TPF).
@@ -14,7 +14,7 @@ import org.linkeddatafragments.fragments.LinkedDataFragmentRequest;
  * @author <a href="http://olafhartig.de">Olaf Hartig</a>
  */
 public interface ITriplePatternFragmentRequest<ConstantTermType,NamedVarType,AnonVarType>
-    extends LinkedDataFragmentRequest
+    extends ILinkedDataFragmentRequest
 {
     public final static String PARAMETERNAME_SUBJ = "subject";
     public final static String PARAMETERNAME_PRED = "predicate";

@@ -5,7 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.linkeddatafragments.config.ConfigReader;
 import org.linkeddatafragments.fragments.FragmentRequestParserBase;
 import org.linkeddatafragments.fragments.IFragmentRequestParser;
-import org.linkeddatafragments.fragments.LinkedDataFragmentRequest;
+import org.linkeddatafragments.fragments.ILinkedDataFragmentRequest;
 import org.linkeddatafragments.util.TriplePatternElementParser;
 
 /**
@@ -44,7 +44,7 @@ public class TPFRequestParser<ConstantTermType,NamedVarType,AnonVarType>
         }
 
         @Override
-        public LinkedDataFragmentRequest createFragmentRequest()
+        public ILinkedDataFragmentRequest createFragmentRequest()
                                                throws IllegalArgumentException
         {
             return new TriplePatternFragmentRequestImpl<ConstantTermType,NamedVarType,AnonVarType>(
