@@ -138,6 +138,7 @@ public class LinkedDataFragmentServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+        ILinkedDataFragment fragment = null;
         try {
             final IDataSource dataSource = getDataSource( request );
 
@@ -145,9 +146,8 @@ public class LinkedDataFragmentServlet extends HttpServlet {
                     dataSource.getRequestParser()
                               .parseIntoFragmentRequest( request, config );
 
-            final ILinkedDataFragment fragment =
-                    dataSource.getRequestProcessor()
-                              .createRequestedFragment( ldfRequest );
+            fragment = dataSource.getRequestProcessor()
+                                 .createRequestedFragment( ldfRequest );
 
             final Model output = ModelFactory.createDefaultModel();
             output.setNsPrefixes(config.getPrefixes());
@@ -174,6 +174,17 @@ public class LinkedDataFragmentServlet extends HttpServlet {
                 response.getOutputStream().close();
             } catch (IOException ex1) {
                 throw new ServletException(ex1);
+            }
+        }
+        finally {
+            // close the fragment
+            if ( fragment != null ) {
+                try {
+                    fragment.close();
+                }
+                catch ( Exception e ) {
+                    // ignore
+                }
             }
         }
     }

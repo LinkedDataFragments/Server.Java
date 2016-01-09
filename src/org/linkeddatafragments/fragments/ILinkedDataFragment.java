@@ -1,5 +1,7 @@
 package org.linkeddatafragments.fragments;
 
+import java.io.Closeable;
+
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 /**
@@ -7,7 +9,7 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
  *
  * @author <a href="http://olafhartig.de">Olaf Hartig</a>
  */
-public interface ILinkedDataFragment
+public interface ILinkedDataFragment extends Closeable
 {
     /**
      * Returns an iterator over the RDF data of this fragment (possibly only
