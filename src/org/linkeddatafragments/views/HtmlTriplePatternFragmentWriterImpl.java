@@ -10,7 +10,6 @@ import freemarker.template.TemplateExceptionHandler;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -21,13 +20,17 @@ import org.linkeddatafragments.datasource.IDataSource;
 import org.linkeddatafragments.datasource.index.IndexDataSource;
 import org.linkeddatafragments.fragments.ILinkedDataFragment;
 import org.linkeddatafragments.fragments.ILinkedDataFragmentRequest;
+import org.linkeddatafragments.fragments.tpf.ITriplePatternFragment;
 import org.linkeddatafragments.fragments.tpf.ITriplePatternFragmentRequest;
 
+//TODO: Refactor to a composable & flexible architecture using DataSource types, fragments types and request types
+
 /**
+ * Serializes an {@link ILinkedDataFragment} to the HTML format
  *
- * @author mielvandersande
+ * @author Miel Vander Sande
  */
-public class HtmlWriterImpl extends LinkedDataFragmentWriterBase implements ILinkedDataFragmentWriter {
+public class HtmlTriplePatternFragmentWriterImpl extends TriplePatternFragmentWriterBase implements ILinkedDataFragmentWriter {
     private final Configuration cfg;
     
     private final Template indexTemplate;
@@ -39,7 +42,7 @@ public class HtmlWriterImpl extends LinkedDataFragmentWriterBase implements ILin
     private final String VOID = "http://rdfs.org/ns/void#"; 
     
 
-    public HtmlWriterImpl(Map<String, String> prefixes, HashMap<String, IDataSource> datasources) throws IOException {
+    public HtmlTriplePatternFragmentWriterImpl(Map<String, String> prefixes, HashMap<String, IDataSource> datasources) throws IOException {
         super(prefixes, datasources);
         
         cfg = new Configuration(Configuration.VERSION_2_3_22);
@@ -52,9 +55,9 @@ public class HtmlWriterImpl extends LinkedDataFragmentWriterBase implements ILin
         notfoundTemplate = cfg.getTemplate("notfound.ftl.html");
         errorTemplate = cfg.getTemplate("error.ftl.html");
     }
-   
+    
     @Override
-    public void writeFragment(ServletOutputStream outputStream, IDataSource datasource, ILinkedDataFragment fragment,  ILinkedDataFragmentRequest ldfRequest) throws IOException, TemplateException{
+    public void writeFragment(ServletOutputStream outputStream, IDataSource datasource, ITriplePatternFragment fragment,  ITriplePatternFragmentRequest tpfRequest) throws IOException, TemplateException{
         Map data = new HashMap();
         
         // base.ftl.html
@@ -63,9 +66,10 @@ public class HtmlWriterImpl extends LinkedDataFragmentWriterBase implements ILin
         data.put("date", new Date());
         
         // fragment.ftl.html
-        data.put("datasourceUrl", ldfRequest.getDatasetURL());
+        data.put("datasourceUrl", tpfRequest.getDatasetURL());
         data.put("datasource", datasource);
         
+        // Parse controls to template variables
         StmtIterator controls = fragment.getControls();
         while (controls.hasNext()) {
             Statement control = controls.next();
@@ -78,41 +82,32 @@ public class HtmlWriterImpl extends LinkedDataFragmentWriterBase implements ILin
             }
         }
         
-        StmtIterator metadata = fragment.getMetadata();
-        while (metadata.hasNext()) {
-            Statement item = metadata.next();
-            String predicate = item.getPredicate().getURI();
-            
-            if (predicate.equals(HYDRA + "totalItems") || predicate.equals( VOID + "triples")) {
-                data.put("totalEstimate", item.getObject().asLiteral().getLong());
-                break;
-            }
-        }
+        // Add metadata
+        data.put("totalEstimate", fragment.getTotalSize());
         data.put("itemsPerPage", fragment.getMaxPageSize());
         
+        // Add triples and datasources
         List<Statement> triples = fragment.getTriples().toList();
         data.put("triples", triples);
         data.put("datasources", getDatasources());
-         
-        Map query = new HashMap();
-        ITriplePatternFragmentRequest tpfRequest = (ITriplePatternFragmentRequest) ldfRequest;
         
+        // Calculate start and end triple number
         Long start = ((tpfRequest.getPageNumber() - 1) * fragment.getMaxPageSize()) + 1;
         data.put("start", start);
         data.put("end", start + (triples.size() < fragment.getMaxPageSize() ? triples.size() : fragment.getMaxPageSize()));
-    
         
+        // Compose query object
+        Map query = new HashMap();
         query.put("subject", !tpfRequest.getSubject().isVariable() ? tpfRequest.getSubject().asConstantTerm() : "");
         query.put("predicate", !tpfRequest.getPredicate().isVariable() ? tpfRequest.getPredicate().asConstantTerm() : "");
         query.put("object", !tpfRequest.getObject().isVariable() ? tpfRequest.getObject().asConstantTerm() : "");
         data.put("query", query);
        
-        /* Get the template (uses cache internally) */
+        // Get the template (uses cache internally)
         Template temp = datasource instanceof IndexDataSource ? indexTemplate : datasourceTemplate;
 
-        /* Merge data-model with template */
-        Writer out = new OutputStreamWriter(outputStream);
-        temp.process(data, out);
+        // Merge data-model with template
+        temp.process(data, new OutputStreamWriter(outputStream));
     }
 
     @Override
@@ -123,8 +118,7 @@ public class HtmlWriterImpl extends LinkedDataFragmentWriterBase implements ILin
         data.put("date", new Date());
         data.put("url", request.getRequestURL().toString());
         
-        Writer out = new OutputStreamWriter(outputStream);
-        notfoundTemplate.process(data, out);
+        notfoundTemplate.process(data, new OutputStreamWriter(outputStream));
     }
 
     @Override
@@ -133,8 +127,7 @@ public class HtmlWriterImpl extends LinkedDataFragmentWriterBase implements ILin
         data.put("assetsPath", "assets/");
         data.put("date", new Date());
         data.put("error", ex);
-        
-        Writer out = new OutputStreamWriter(outputStream);
-        errorTemplate.process(data, out);
+
+        errorTemplate.process(data, new OutputStreamWriter(outputStream));
     }
 }

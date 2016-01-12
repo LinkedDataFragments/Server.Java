@@ -4,7 +4,7 @@ import org.linkeddatafragments.datasource.IDataSource;
 
 /**
  *
- * @author mielvandersande
+ * @author Miel Vander Sande
  */
 abstract public class DataSourceException extends Exception {
 

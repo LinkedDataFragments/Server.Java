@@ -2,7 +2,7 @@ package org.linkeddatafragments.exceptions;
 
 /**
  *
- * @author mielvandersande
+ * @author Miel Vander Sande
  */
 public class NoRegisteredMimeTypesException extends Exception {
 

@@ -2,7 +2,7 @@ package org.linkeddatafragments.datasource;
 
 /**
  *
- * @author mielvandersande
+ * @author Miel Vander Sande
  * @author Bart Hanssens
  */
 public abstract class DataSourceBase implements IDataSource {

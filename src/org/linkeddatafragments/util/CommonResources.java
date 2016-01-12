@@ -4,6 +4,9 @@ import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
 
 @SuppressWarnings("javadoc")
+/**
+ * All common URIs needed for parsing and serializations
+ */
 public class CommonResources {
     public final static String RDF = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
     public final static Property RDF_TYPE = createProperty(RDF + "type");

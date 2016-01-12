@@ -15,8 +15,9 @@ import org.linkeddatafragments.fragments.ILinkedDataFragment;
 import org.linkeddatafragments.fragments.ILinkedDataFragmentRequest;
 
 /**
- *
- * @author mielvandersande
+ *  Serializes an {@link ILinkedDataFragment} to an RDF format
+ * 
+ * @author Miel Vander Sande
  */
 class RdfWriterImpl extends LinkedDataFragmentWriterBase implements ILinkedDataFragmentWriter {
 

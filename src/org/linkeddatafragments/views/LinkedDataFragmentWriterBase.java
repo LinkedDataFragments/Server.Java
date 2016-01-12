@@ -5,8 +5,9 @@ import java.util.Map;
 import org.linkeddatafragments.datasource.IDataSource;
 
 /**
+ * Base class of any implementation of {@link ILinkedDataFragmentWriter}.
  *
- * @author mielvandersande
+ * @author Miel Vander Sande
  */
 public abstract class LinkedDataFragmentWriterBase implements ILinkedDataFragmentWriter {
     private final Map<String, String> prefixes;

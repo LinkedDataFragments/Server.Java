@@ -35,6 +35,14 @@ public abstract class LinkedDataFragmentBase implements ILinkedDataFragment
         this.isLastPage = isLastPage;
     }
 
+    /**
+     * Does nothing. May be overridden by subclasses that hold some objects
+     * that need to be closed (such as iterators from the underlying data
+     * source).
+     */
+    @Override
+    public void close() {}
+
     @Override
     public boolean isPageOnly() {
         return true;

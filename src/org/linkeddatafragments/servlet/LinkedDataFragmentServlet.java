@@ -137,16 +137,18 @@ public class LinkedDataFragmentServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+        ILinkedDataFragment fragment = null;
         try {
 
             // do conneg
             String bestMatch = MIMEParse.bestMatch(request.getHeader("Accept"));
 
-            // serialize the output
+            // set additional response headers
             response.setHeader("Server", "Linked Data Fragments Server");
             response.setContentType(bestMatch);
             response.setCharacterEncoding("utf-8");
             
+            // create a writer depending on the best matching mimeType
             ILinkedDataFragmentWriter writer = LinkedDataFragmentWriterFactory.create(config.getPrefixes(), dataSources, bestMatch);
             
             try {
@@ -157,8 +159,7 @@ public class LinkedDataFragmentServlet extends HttpServlet {
                         dataSource.getRequestParser()
                                   .parseIntoFragmentRequest( request, config );
 
-                final ILinkedDataFragment fragment =
-                        dataSource.getRequestProcessor()
+                fragment = dataSource.getRequestProcessor()
                                   .createRequestedFragment( ldfRequest );
 
                 writer.writeFragment(response.getOutputStream(), dataSource, fragment, ldfRequest);
@@ -171,13 +172,23 @@ public class LinkedDataFragmentServlet extends HttpServlet {
                     throw new ServletException(ex1);
                 }
             } catch (Exception e) {
-                e.printStackTrace();
                 response.setStatus(500);
                 writer.writeError(response.getOutputStream(), e);
             }
           
         } catch (Exception e) {
             throw new ServletException(e);
+        }
+        finally {
+            // close the fragment
+            if ( fragment != null ) {
+                try {
+                    fragment.close();
+                }
+                catch ( Exception e ) {
+                    // ignore
+                }
+            }
         }
     }
 
