@@ -1,5 +1,6 @@
 package org.linkeddatafragments.fragments;
 
+import com.hp.hpl.jena.rdf.model.Literal;
 import java.net.URISyntaxException;
 
 import org.apache.http.client.utils.URIBuilder;
@@ -98,6 +99,9 @@ public abstract class LinkedDataFragmentBase implements ILinkedDataFragment
         datasetId.addProperty( CommonResources.RDF_TYPE, CommonResources.VOID_DATASET );
         datasetId.addProperty( CommonResources.RDF_TYPE, CommonResources.HYDRA_COLLECTION );
         datasetId.addProperty( CommonResources.VOID_SUBSET, fragmentId );
+        
+        Literal itemsPerPage = model.createTypedLiteral(this.getMaxPageSize());
+        datasetId.addProperty( CommonResources.HYDRA_ITEMSPERPAGE, itemsPerPage);
 
         fragmentId.addProperty( CommonResources.RDF_TYPE, CommonResources.HYDRA_COLLECTION );
         fragmentId.addProperty( CommonResources.RDF_TYPE, CommonResources.HYDRA_PAGEDCOLLECTION );

@@ -1,5 +1,7 @@
 package org.linkeddatafragments.util;
 
+import org.linkeddatafragments.exceptions.NoRegisteredMimeTypesException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -24,10 +26,21 @@ import org.apache.commons.lang.math.NumberUtils;
  * http://code.google.com/p/mimeparse/
  * 
  * Ported by Tom Zellman <tzellman@gmail.com>.
+ * Extended by Miel Vander Sande <miel.vandersande@ugent.be>
  * 
  */
 public final class MIMEParse
 {
+    private final static List<String> mimeTypes = new ArrayList<>();
+    
+    /**
+     * Register mimeType in collection
+     * @param mimeType 
+     */
+    public static void register(String mimeType) {
+        mimeTypes.add(mimeType);
+    }
+    
 
     /**
      * Parse results container
@@ -233,8 +246,11 @@ public final class MIMEParse
      * @param header
      * @return
      */
-    public static String bestMatch(Collection<String> supported, String header)
+    public static String bestMatch(List<String> supported, String header) throws NoRegisteredMimeTypesException
     {
+        if (supported.isEmpty())
+            throw new NoRegisteredMimeTypesException();
+        
         List<ParseResults> parseResults = new LinkedList<ParseResults>();
         List<FitnessAndQuality> weightedMatches = new LinkedList<FitnessAndQuality>();
         for (String r : StringUtils.split(header, ','))
@@ -251,8 +267,12 @@ public final class MIMEParse
 
         FitnessAndQuality lastOne = weightedMatches
                 .get(weightedMatches.size() - 1);
-        return NumberUtils.compare(lastOne.quality, 0) != 0 ? lastOne.mimeType
-                : "";
+        return NumberUtils.compare(lastOne.quality, 0) != 0 ? lastOne.mimeType : supported.get(0);
+    }
+    
+    public static String bestMatch(String header) throws NoRegisteredMimeTypesException
+    {
+        return bestMatch(mimeTypes, header);
     }
 
     // hidden
