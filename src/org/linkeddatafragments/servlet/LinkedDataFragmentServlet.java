@@ -40,7 +40,11 @@ public class LinkedDataFragmentServlet extends HttpServlet {
     private final static long serialVersionUID = 1L;
 
     // Parameters
-    public final static String CFGFILE = "configFile";
+
+    /**
+     *
+     */
+        public final static String CFGFILE = "configFile";
 
     private ConfigReader config;
     private final HashMap<String, IDataSource> dataSources = new HashMap<>();
@@ -65,6 +69,11 @@ public class LinkedDataFragmentServlet extends HttpServlet {
         return cfg;
     }
 
+    /**
+     *
+     * @param servletConfig
+     * @throws ServletException
+     */
     @Override
     public void init(ServletConfig servletConfig) throws ServletException {
         try {
@@ -94,6 +103,9 @@ public class LinkedDataFragmentServlet extends HttpServlet {
         }
     }
 
+    /**
+     *
+     */
     @Override
     public void destroy()
     {
@@ -135,6 +147,12 @@ public class LinkedDataFragmentServlet extends HttpServlet {
         return dataSource;
     }
 
+    /**
+     *
+     * @param request
+     * @param response
+     * @throws ServletException
+     */
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException {
         ILinkedDataFragment fragment = null;

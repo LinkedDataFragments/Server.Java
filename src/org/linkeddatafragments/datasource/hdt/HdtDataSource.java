@@ -15,6 +15,10 @@ import org.linkeddatafragments.fragments.tpf.TPFRequestParserForJenaBackends;
  */
 public class HdtDataSource extends DataSourceBase {
 
+    /**
+     * The request processor
+     * 
+     */
     protected final HdtBasedRequestProcessorForTPFs requestProcessor;
 
     /**

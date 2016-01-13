@@ -20,9 +20,18 @@ abstract public
     class TriplePatternElementParser<ConstantTermType,NamedVarType,AnonVarType>
         extends RDFTermParser<ConstantTermType>
 {
+
+    /**
+     *
+     */
     public final TriplePatternElementFactory<ConstantTermType,NamedVarType,AnonVarType>
         factory = new TriplePatternElementFactory<ConstantTermType,NamedVarType,AnonVarType>();
 
+    /**
+     *
+     * @param param
+     * @return
+     */
     public ITriplePatternElement<ConstantTermType,NamedVarType,AnonVarType>
                             parseIntoTriplePatternElement( final String param )
     {
@@ -55,7 +64,17 @@ abstract public
         }
     }
 
+    /**
+     *
+     * @param varName
+     * @return
+     */
     abstract public NamedVarType createNamedVariable( final String varName );
 
+    /**
+     *
+     * @param label
+     * @return
+     */
     abstract public AnonVarType createAnonymousVariable( final String label );
 }

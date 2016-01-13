@@ -10,11 +10,15 @@ import org.linkeddatafragments.fragments.tpf.TPFRequestParserForJenaBackends;
 /**
  * Experimental Jena TDB-backed data source of Basic Linked Data Fragments.
  *
- * @author Bart Hanssens <bart.hanssens@fedict.be>
+ * @author <a href="mailto:bart.hanssens@fedict.be">Bart Hanssens</a>
  * @author <a href="http://olafhartig.de">Olaf Hartig</a>
  */
 public class JenaTDBDataSource extends DataSourceBase {
 
+    /**
+     * The request processor
+     * 
+     */
     protected final JenaTDBBasedRequestProcessorForTPFs requestProcessor;
 
     @Override

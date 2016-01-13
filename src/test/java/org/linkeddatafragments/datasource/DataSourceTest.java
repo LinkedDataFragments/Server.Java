@@ -24,7 +24,10 @@ import org.linkeddatafragments.util.TriplePatternElementParser;
 
 /**
  *
- * @author Bart Hanssens <bart.hanssens@fedict.be>
+ * @author <a href="mailto:bart.hanssens@fedict.be">Bart Hanssens</a>
+ * @param <ConstantTermType>
+ * @param <NamedVarType>
+ * @param <AnonVarType>
  */
 public abstract class DataSourceTest<ConstantTermType,NamedVarType,AnonVarType>
 {
@@ -48,6 +51,10 @@ public abstract class DataSourceTest<ConstantTermType,NamedVarType,AnonVarType>
         DataSourceTest.ds = ds;
     }
 
+    /**
+     *
+     * @return
+     */
     protected abstract TriplePatternElementParser<ConstantTermType,NamedVarType,AnonVarType>
                                                getTriplePatternElementParser();
 

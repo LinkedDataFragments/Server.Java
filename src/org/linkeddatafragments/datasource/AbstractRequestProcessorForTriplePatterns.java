@@ -28,6 +28,13 @@ public abstract class
     AbstractRequestProcessorForTriplePatterns<CTT,NVT,AVT>
         extends AbstractRequestProcessor
 {
+
+    /**
+     *
+     * @param request
+     * @return
+     * @throws IllegalArgumentException
+     */
     @Override
     protected final Worker<CTT,NVT,AVT> getWorker(
             final ILinkedDataFragmentRequest request )
@@ -43,20 +50,41 @@ public abstract class
             throw new IllegalArgumentException( request.getClass().getName() );
     }
 
+    /**
+     *
+     * @param request
+     * @return
+     * @throws IllegalArgumentException
+     */
     abstract protected Worker<CTT,NVT,AVT> getTPFSpecificWorker(
             final ITriplePatternFragmentRequest<CTT,NVT,AVT> request )
                     throws IllegalArgumentException;
 
-
+    /**
+     *
+     * @param <CTT>
+     * @param <NVT>
+     * @param <AVT>
+     */
     abstract static protected class Worker<CTT,NVT,AVT>
         extends AbstractRequestProcessor.Worker
     {        
+
+        /**
+         *
+         * @param request
+         */
         public Worker(
                  final ITriplePatternFragmentRequest<CTT,NVT,AVT> request )
         {
             super( request );
         }
 
+        /**
+         *
+         * @return
+         * @throws IllegalArgumentException
+         */
         @Override
         public ILinkedDataFragment createRequestedFragment()
                                                 throws IllegalArgumentException
@@ -78,6 +106,16 @@ public abstract class
                                    offset, limit );
         }
 
+        /**
+         *
+         * @param subj
+         * @param pred
+         * @param obj
+         * @param offset
+         * @param limit
+         * @return
+         * @throws IllegalArgumentException
+         */
         abstract protected ILinkedDataFragment createFragment(
                             final ITriplePatternElement<CTT,NVT,AVT> subj,
                             final ITriplePatternElement<CTT,NVT,AVT> pred,
@@ -86,12 +124,23 @@ public abstract class
                             final long limit )
                                                throws IllegalArgumentException;
 
+        /**
+         *
+         * @return
+         */
         protected ITriplePatternFragment createEmptyTriplePatternFragment()
         {
             return new TriplePatternFragmentImpl( request.getFragmentURL(),
                                                   request.getDatasetURL() );
         }
 
+        /**
+         *
+         * @param triples
+         * @param totalSize
+         * @param isLastPage
+         * @return
+         */
         protected ITriplePatternFragment createTriplePatternFragment(
                                                      final Model triples,
                                                      final long totalSize,

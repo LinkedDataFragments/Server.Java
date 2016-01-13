@@ -16,8 +16,17 @@ import org.linkeddatafragments.fragments.tpf.TPFRequestParserForJenaBackends;
  */
 public class IndexDataSource extends DataSourceBase {
 
+    /**
+     * The request processor
+     * 
+     */
     protected final IndexRequestProcessorForTPFs requestProcessor;
 
+    /**
+     *
+     * @param baseUrl
+     * @param datasources
+     */
     public IndexDataSource(String baseUrl, HashMap<String, IDataSource> datasources) {
         super("Index", "List of all datasources");
         requestProcessor = new IndexRequestProcessorForTPFs( baseUrl, datasources );

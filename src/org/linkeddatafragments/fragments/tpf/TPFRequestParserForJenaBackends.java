@@ -14,6 +14,10 @@ public class TPFRequestParserForJenaBackends
 {
     private static TPFRequestParserForJenaBackends instance = null;
 
+    /**
+     *
+     * @return
+     */
     public static TPFRequestParserForJenaBackends getInstance()
     {
         if ( instance == null ) {
@@ -22,6 +26,9 @@ public class TPFRequestParserForJenaBackends
         return instance;
     }
 
+    /**
+     *
+     */
     protected TPFRequestParserForJenaBackends()
     {
         super( TriplePatternElementParserForJena.getInstance() );

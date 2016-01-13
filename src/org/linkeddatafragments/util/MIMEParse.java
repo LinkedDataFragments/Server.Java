@@ -25,8 +25,8 @@ import org.apache.commons.lang.math.NumberUtils;
  * 
  * http://code.google.com/p/mimeparse/
  * 
- * Ported by Tom Zellman <tzellman@gmail.com>.
- * Extended by Miel Vander Sande <miel.vandersande@ugent.be>
+ * Ported by <a href="mailto:tzellman@gmail.com">Tom Zellman</a>.
+ * Extended by <a href="mailto:miel.vandersande@ugent.be">Miel Vander Sande</a>
  * 
  */
 public final class MIMEParse
@@ -72,6 +72,8 @@ public final class MIMEParse
      * into:
      * 
      * ('application', 'xhtml', {'q', '0.5'})
+     * @param mimeType
+     * @return 
      */
     protected static ParseResults parseMimeType(String mimeType)
     {
@@ -110,6 +112,7 @@ public final class MIMEParse
      * necessary.
      * 
      * @param range
+     * @return 
      */
     protected static ParseResults parseMediaRange(String range)
     {
@@ -133,6 +136,11 @@ public final class MIMEParse
 
         String mimeType; // optionally used
 
+        /**
+         *
+         * @param fitness
+         * @param quality
+         */
         public FitnessAndQuality(int fitness, float quality)
         {
             this.fitness = fitness;
@@ -162,6 +170,7 @@ public final class MIMEParse
      * 
      * @param mimeType
      * @param parsedRanges
+     * @return 
      */
     protected static FitnessAndQuality fitnessAndQualityParsed(String mimeType,
             Collection<ParseResults> parsedRanges)
@@ -223,7 +232,8 @@ public final class MIMEParse
      * mediaRanges in ranges. For example:
      * 
      * @param mimeType
-     * @param parsedRanges
+     * @param ranges
+     * @return 
      */
     public static float quality(String mimeType, String ranges)
     {
@@ -245,6 +255,7 @@ public final class MIMEParse
      * @param supported
      * @param header
      * @return
+     * @throws org.linkeddatafragments.exceptions.NoRegisteredMimeTypesException
      */
     public static String bestMatch(List<String> supported, String header) throws NoRegisteredMimeTypesException
     {
@@ -270,6 +281,12 @@ public final class MIMEParse
         return NumberUtils.compare(lastOne.quality, 0) != 0 ? lastOne.mimeType : supported.get(0);
     }
     
+    /**
+     *
+     * @param header
+     * @return
+     * @throws NoRegisteredMimeTypesException
+     */
     public static String bestMatch(String header) throws NoRegisteredMimeTypesException
     {
         return bestMatch(mimeTypes, header);

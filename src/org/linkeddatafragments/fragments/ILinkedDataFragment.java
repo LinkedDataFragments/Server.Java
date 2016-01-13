@@ -14,6 +14,7 @@ public interface ILinkedDataFragment extends Closeable
     /**
      * Returns an iterator over the RDF data of this fragment (possibly only
      * partial if the data is paged, as indicated by {@link #isPageOnly()}).
+     * @return 
      */
     StmtIterator getTriples();
 
@@ -21,6 +22,7 @@ public interface ILinkedDataFragment extends Closeable
      * Returns true if {@link #getTriples()} returns a page of data only.
      * In this case, {@link #getPageNumber()} can be used to obtain the
      * corresponding page number.
+     * @return 
      */
     boolean isPageOnly();
 
@@ -30,6 +32,7 @@ public interface ILinkedDataFragment extends Closeable
      *
      * If the data is not paged, this method throws an exception.
      *
+     * @return 
      * @throws UnsupportedOperationException
      *         If the data of this fragment is not paged. 
      */
@@ -42,6 +45,7 @@ public interface ILinkedDataFragment extends Closeable
      * If the data is not paged (i.e., if {@link #isPageOnly()} returns false),
      * this method throws an exception.
      *
+     * @return 
      * @throws UnsupportedOperationException
      *         If the data of this fragment is not paged. 
      */
@@ -54,6 +58,7 @@ public interface ILinkedDataFragment extends Closeable
      *
      * If the data is not paged, this method throws an exception.
      *
+     * @return 
      * @throws UnsupportedOperationException
      *         If the data of this fragment is not paged. 
      */
@@ -61,12 +66,14 @@ public interface ILinkedDataFragment extends Closeable
 
     /**
      * Returns an iterator over the metadata of this fragment.
+     * @return 
      */
     StmtIterator getMetadata();
 
     /**
      * Returns an iterator over an RDF description of the controls associated
      * with this fragment.
+     * @return 
      */
     StmtIterator getControls();
 }

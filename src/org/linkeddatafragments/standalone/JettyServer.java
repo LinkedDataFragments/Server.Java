@@ -40,6 +40,11 @@ public class JettyServer {
                     "Starts a standalone LDF Triple Pattern server. Options:", options, "");
     }
     
+    /**
+     *
+     * @param args
+     * @throws Exception
+     */
     public static void main(String[] args) throws Exception {
         Options options = new Options();
         options.addOption("h", "help", false, "Print this help message and then exit.");

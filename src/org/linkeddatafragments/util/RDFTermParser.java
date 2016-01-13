@@ -12,9 +12,18 @@ import java.util.regex.Pattern;
  */
 abstract public class RDFTermParser<TermType>
 {
+
+    /**
+     *
+     */
     public static final Pattern STRINGPATTERN
                   = Pattern.compile("^\"(.*)\"(?:@(.*)|\\^\\^<?([^<>]*)>?)?$");
 
+    /**
+     *
+     * @param param
+     * @return
+     */
     public TermType parseIntoRDFNode( final String param )
     {
         if ( param == null || param.isEmpty() )
@@ -58,18 +67,50 @@ abstract public class RDFTermParser<TermType>
         }
     }
 
+    /**
+     *
+     * @param label
+     * @return
+     */
     abstract public TermType createBlankNode( final String label );
 
+    /**
+     *
+     * @param uri
+     * @return
+     */
     abstract public TermType createURI( final String uri );
 
+    /**
+     *
+     * @param label
+     * @param typeURI
+     * @return
+     */
     abstract public TermType createTypedLiteral( final String label,
                                                  final String typeURI );
 
+    /**
+     *
+     * @param label
+     * @param langTag
+     * @return
+     */
     abstract public TermType createLanguageLiteral( final String label,
                                                     final String langTag );
 
+    /**
+     *
+     * @param label
+     * @return
+     */
     abstract public TermType createPlainLiteral( final String label );
 
+    /**
+     *
+     * @param param
+     * @return
+     */
     abstract public TermType handleUnparsableParameter( final String param );
 
 }

@@ -72,10 +72,21 @@ public class ConfigReader {
         return prefixes;
     }
 
+    /**
+     * Gets the base URL
+     * 
+     * @return the base URL
+     */
     public String getBaseURL() {
         return baseURL;
     }
 
+    /**
+     * Loads a certain {@link IDataSourceType} class at runtime
+     * 
+     * @param className IDataSourceType class
+     * @return the created IDataSourceType object
+     */
     protected IDataSourceType initDataSouceType( final String className )
     {
         final Class<?> c;

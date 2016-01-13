@@ -20,19 +20,48 @@ abstract public class FragmentRequestParserBase implements IFragmentRequestParse
         return getWorker( httpRequest, config ).createFragmentRequest();
     }
 
+    /**
+     *
+     * @param httpRequest
+     * @param config
+     * @return
+     * @throws IllegalArgumentException
+     */
     abstract protected Worker getWorker( final HttpServletRequest httpRequest,
                                          final ConfigReader config )
                                                throws IllegalArgumentException;
 
-
+    /**
+     *
+     */
     abstract static protected class Worker
     {
+
+        /**
+         *
+         */
         public final HttpServletRequest request;
+
+        /**
+         *
+         */
         public final ConfigReader config;
 
+        /**
+         *
+         */
         public final boolean pageNumberWasRequested;
+
+        /**
+         *
+         */
         public final long pageNumber;
         
+        /**
+         *
+         * @param request
+         * @param config
+         */
         public Worker( final HttpServletRequest request,
                        final ConfigReader config )
         {
@@ -57,15 +86,28 @@ abstract public class FragmentRequestParserBase implements IFragmentRequestParse
             }
         }
 
+        /**
+         *
+         * @return
+         * @throws IllegalArgumentException
+         */
         abstract public ILinkedDataFragmentRequest createFragmentRequest()
                                                throws IllegalArgumentException;
 
+        /**
+         *
+         * @return
+         */
         public String getFragmentURL() {
             final String datasetURL = getDatasetURL();
             final String query = request.getQueryString();
             return query == null ? datasetURL : (datasetURL + "?" + query);
         }
 
+        /**
+         *
+         * @return
+         */
         public String getDatasetURL() {
             return extractBaseURL( request, config ) + request.getRequestURI();
         }
@@ -75,6 +117,13 @@ abstract public class FragmentRequestParserBase implements IFragmentRequestParse
 
     // ----- HELPERS ---------
 
+    /**
+     *
+     * @param request
+     * @param config
+     * @return
+     */
+    
     public static String extractBaseURL( final HttpServletRequest request,
                                          final ConfigReader config ) {
         if (config.getBaseURL() != null) {

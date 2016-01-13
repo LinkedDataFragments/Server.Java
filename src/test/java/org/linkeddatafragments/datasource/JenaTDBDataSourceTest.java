@@ -27,13 +27,17 @@ import org.linkeddatafragments.util.TriplePatternElementParserForJena;
 
 /**
  *
- * @author Bart Hanssens <bart.hanssens@fedict.be>
+ * @author <a href="mailto:bart.hanssens@fedict.be">Bart Hanssens</a>
  */
 public class JenaTDBDataSourceTest extends DataSourceTest<RDFNode,String,String>
 {
     private static File jena;
     private static Dataset dataset;
 
+    /**
+     *
+     * @return
+     */
     @Override
     protected TriplePatternElementParser<RDFNode,String,String>
                                                getTriplePatternElementParser()
@@ -41,6 +45,10 @@ public class JenaTDBDataSourceTest extends DataSourceTest<RDFNode,String,String>
         return TriplePatternElementParserForJena.getInstance();
     }
             
+    /**
+     *
+     * @throws Exception
+     */
     @BeforeClass
     public static void setUpClass() throws Exception {
         final String typeName = "JenaSourceType";
@@ -71,6 +79,10 @@ public class JenaTDBDataSourceTest extends DataSourceTest<RDFNode,String,String>
         setDatasource(DataSourceFactory.create(config));
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @AfterClass
     public static void tearDownClass() throws Exception {
         TDBFactory.release(dataset);
@@ -82,10 +94,18 @@ public class JenaTDBDataSourceTest extends DataSourceTest<RDFNode,String,String>
  
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {                
     }
     
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
     }

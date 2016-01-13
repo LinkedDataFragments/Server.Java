@@ -6,15 +6,40 @@ import org.linkeddatafragments.fragments.LinkedDataFragmentRequestBase;
  * An implementation of {@link ITriplePatternFragmentRequest}.
  *
  * @author <a href="http://olafhartig.de">Olaf Hartig</a>
+ * @param <CTT>
+ * @param <NVT>
+ * @param <AVT>
  */
 public class TriplePatternFragmentRequestImpl<CTT,NVT,AVT>
     extends LinkedDataFragmentRequestBase
     implements ITriplePatternFragmentRequest<CTT,NVT,AVT>
 {
+
+    /**
+     *
+     */
     public final ITriplePatternElement<CTT,NVT,AVT> subject;
+
+    /**
+     *
+     */
     public final ITriplePatternElement<CTT,NVT,AVT> predicate;
+
+    /**
+     *
+     */
     public final ITriplePatternElement<CTT,NVT,AVT> object;
 
+    /**
+     *
+     * @param fragmentURL
+     * @param datasetURL
+     * @param pageNumberWasRequested
+     * @param pageNumber
+     * @param subject
+     * @param predicate
+     * @param object
+     */
     public TriplePatternFragmentRequestImpl( final String fragmentURL,
                                              final String datasetURL,
                                              final boolean pageNumberWasRequested,

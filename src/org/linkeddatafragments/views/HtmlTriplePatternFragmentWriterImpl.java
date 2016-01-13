@@ -41,7 +41,12 @@ public class HtmlTriplePatternFragmentWriterImpl extends TriplePatternFragmentWr
     private final String HYDRA = "http://www.w3.org/ns/hydra/core#"; 
     private final String VOID = "http://rdfs.org/ns/void#"; 
     
-
+    /**
+     *
+     * @param prefixes
+     * @param datasources
+     * @throws IOException
+     */
     public HtmlTriplePatternFragmentWriterImpl(Map<String, String> prefixes, HashMap<String, IDataSource> datasources) throws IOException {
         super(prefixes, datasources);
         
@@ -56,6 +61,15 @@ public class HtmlTriplePatternFragmentWriterImpl extends TriplePatternFragmentWr
         errorTemplate = cfg.getTemplate("error.ftl.html");
     }
     
+    /**
+     *
+     * @param outputStream
+     * @param datasource
+     * @param fragment
+     * @param tpfRequest
+     * @throws IOException
+     * @throws TemplateException
+     */
     @Override
     public void writeFragment(ServletOutputStream outputStream, IDataSource datasource, ITriplePatternFragment fragment,  ITriplePatternFragmentRequest tpfRequest) throws IOException, TemplateException{
         Map data = new HashMap();

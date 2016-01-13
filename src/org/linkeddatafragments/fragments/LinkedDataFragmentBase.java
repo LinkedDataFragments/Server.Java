@@ -19,11 +19,34 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
  */
 public abstract class LinkedDataFragmentBase implements ILinkedDataFragment
 {
+
+    /**
+     *
+     */
     public final String fragmentURL;
+
+    /**
+     *
+     */
     public final String datasetURL;
+
+    /**
+     *
+     */
     public final long pageNumber;
+
+    /**
+     *
+     */
     public final boolean isLastPage;
 
+    /**
+     *
+     * @param fragmentURL
+     * @param datasetURL
+     * @param pageNumber
+     * @param isLastPage
+     */
     protected LinkedDataFragmentBase( final String fragmentURL,
                                       final String datasetURL,
                                       final long pageNumber,
@@ -66,6 +89,7 @@ public abstract class LinkedDataFragmentBase implements ILinkedDataFragment
     /**
      * This implementation uses {@link #addMetadata(Model)}, which should be
      * overridden in subclasses (instead of overriding this method). 
+     * @return 
      */
     @Override
     public StmtIterator getMetadata()
@@ -78,6 +102,7 @@ public abstract class LinkedDataFragmentBase implements ILinkedDataFragment
     /**
      * This implementation uses {@link #addControls(Model)}, which should be
      * overridden in subclasses (instead of overriding this method). 
+     * @return 
      */
     @Override
     public StmtIterator getControls()
@@ -90,6 +115,7 @@ public abstract class LinkedDataFragmentBase implements ILinkedDataFragment
     /**
      * Adds some basic metadata to the given RDF model.
      * This method may be overridden in subclasses.
+     * @param model
      */
     public void addMetadata( final Model model )
     {
@@ -110,6 +136,7 @@ public abstract class LinkedDataFragmentBase implements ILinkedDataFragment
     /**
      * Adds an RDF description of page links to the given RDF model.
      * This method may be overridden in subclasses.
+     * @param model
      */
     public void addControls( final Model model )
     {
@@ -151,6 +178,10 @@ public abstract class LinkedDataFragmentBase implements ILinkedDataFragment
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public String getDatasetURI() {
         return datasetURL + "#dataset";
     }

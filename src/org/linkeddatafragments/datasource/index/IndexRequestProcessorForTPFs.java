@@ -37,6 +37,11 @@ public class IndexRequestProcessorForTPFs
 
     private final Model model;
 
+    /**
+     *
+     * @param baseUrl
+     * @param datasources
+     */
     public IndexRequestProcessorForTPFs(
                                final String baseUrl,
                                final HashMap<String, IDataSource> datasources )
@@ -56,6 +61,12 @@ public class IndexRequestProcessorForTPFs
         }
     }
 
+    /**
+     *
+     * @param request
+     * @return
+     * @throws IllegalArgumentException
+     */
     @Override
     protected Worker getTPFSpecificWorker(
             final ITriplePatternFragmentRequest<RDFNode,String,String> request )
@@ -64,16 +75,33 @@ public class IndexRequestProcessorForTPFs
         return new Worker( request );
     }
 
-
+    /**
+     * Worker for the index
+     */
     protected class Worker
        extends AbstractRequestProcessorForTriplePatterns.Worker<RDFNode,String,String>
     {
+
+        /**
+         * Creates a Worker for the datasource index
+         * 
+         * @param req
+         */
         public Worker(
                 final ITriplePatternFragmentRequest<RDFNode,String,String> req )
         {
             super( req );
         }
 
+        /**
+         *
+         * @param s
+         * @param p
+         * @param o
+         * @param offset
+         * @param limit
+         * @return
+         */
         @Override
         protected ILinkedDataFragment createFragment(
                            final ITriplePatternElement<RDFNode,String,String> s,

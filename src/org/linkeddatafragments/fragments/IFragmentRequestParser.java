@@ -15,6 +15,9 @@ public interface IFragmentRequestParser
      * Parses the given HTTP request into a specific
      * {@link ILinkedDataFragmentRequest}.
      *
+     * @param httpRequest
+     * @param config
+     * @return 
      * @throws IllegalArgumentException
      *         If the given HTTP request cannot be interpreted (perhaps due to
      *         missing request parameters).  

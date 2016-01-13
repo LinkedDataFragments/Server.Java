@@ -8,7 +8,7 @@ import test.java.org.linkeddatafragments.datasource.JenaTDBDataSourceTest;
 
 /**
  *
- * @author Bart Hanssens <bart.hanssens@fedict.be>
+ * @author <a href="mailto:bart.hanssens@fedict.be">Bart Hanssens</a>
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({

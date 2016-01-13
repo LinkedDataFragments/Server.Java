@@ -8,11 +8,34 @@ package org.linkeddatafragments.fragments;
 public abstract class LinkedDataFragmentRequestBase
     implements ILinkedDataFragmentRequest
 {
+
+    /**
+     *
+     */
     public final String fragmentURL;
+
+    /**
+     *
+     */
     public final String datasetURL;
+
+    /**
+     *
+     */
     public final boolean pageNumberWasRequested;
+
+    /**
+     *
+     */
     public final long pageNumber;
     
+    /**
+     *
+     * @param fragmentURL
+     * @param datasetURL
+     * @param pageNumberWasRequested
+     * @param pageNumber
+     */
     public LinkedDataFragmentRequestBase( final String fragmentURL,
                                           final String datasetURL,
                                           final boolean pageNumberWasRequested,

@@ -12,12 +12,17 @@ import org.linkeddatafragments.fragments.tpf.ITriplePatternFragment;
 import org.linkeddatafragments.fragments.tpf.ITriplePatternFragmentRequest;
 
 /**
- * Base class of any implementation of {@link ITriplePatternFragmentWriter}.
+ * Base class of any implementation for ITriplePatternFragment.
  * 
  * @author Miel Vander Sande
  */
 public abstract class TriplePatternFragmentWriterBase extends LinkedDataFragmentWriterBase implements ILinkedDataFragmentWriter {
 
+    /**
+     *
+     * @param prefixes
+     * @param datasources
+     */
     public TriplePatternFragmentWriterBase(Map<String, String> prefixes, HashMap<String, IDataSource> datasources) {
         super(prefixes, datasources);
     }
@@ -27,5 +32,14 @@ public abstract class TriplePatternFragmentWriterBase extends LinkedDataFragment
         writeFragment(outputStream, datasource, (ITriplePatternFragment) fragment, (ITriplePatternFragmentRequest) ldfRequest);
     }
     
+    /**
+     *
+     * @param outputStream
+     * @param datasource
+     * @param fragment
+     * @param tpfRequest
+     * @throws IOException
+     * @throws TemplateException
+     */
     abstract public void writeFragment(ServletOutputStream outputStream, IDataSource datasource, ITriplePatternFragment fragment,  ITriplePatternFragmentRequest tpfRequest) throws IOException, TemplateException;
 }

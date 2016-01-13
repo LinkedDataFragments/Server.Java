@@ -4,16 +4,22 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 /**
- * Implementation of {@link TriplePatternFragment}.
+ * Implementation of {@link ITriplePatternFragment}.
  *
  * @author <a href="http://olafhartig.de">Olaf Hartig</a>
  */
 public class TriplePatternFragmentImpl extends TriplePatternFragmentBase
 {
+
+    /**
+     *
+     */
     protected final Model triples;
 
     /**
      * Creates an empty Triple Pattern Fragment.
+     * @param fragmentURL
+     * @param datasetURL
      */
     public TriplePatternFragmentImpl( final String fragmentURL,
                                       final String datasetURL ) {
@@ -22,6 +28,10 @@ public class TriplePatternFragmentImpl extends TriplePatternFragmentBase
 
     /**
      * Creates an empty Triple Pattern Fragment page.
+     * @param fragmentURL
+     * @param datasetURL
+     * @param isLastPage
+     * @param pageNumber
      */
     public TriplePatternFragmentImpl( final String fragmentURL,
                                       final String datasetURL,
@@ -34,6 +44,10 @@ public class TriplePatternFragmentImpl extends TriplePatternFragmentBase
      * Creates a new Triple Pattern Fragment.
      * @param triples the triples (possibly partial)
      * @param totalSize the total size
+     * @param fragmentURL
+     * @param datasetURL
+     * @param isLastPage
+     * @param pageNumber
      */
     public TriplePatternFragmentImpl( final Model triples,
                                       long totalSize,
@@ -45,6 +59,10 @@ public class TriplePatternFragmentImpl extends TriplePatternFragmentBase
         this.triples = triples;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     protected StmtIterator getNonEmptyStmtIterator() {
         return triples.listStatements();

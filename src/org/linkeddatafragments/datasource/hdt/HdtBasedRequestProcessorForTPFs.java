@@ -29,7 +29,15 @@ import com.hp.hpl.jena.rdf.model.RDFNode;
 public class HdtBasedRequestProcessorForTPFs
     extends AbstractRequestProcessorForTriplePatterns<RDFNode,String,String>
 {
+
+    /**
+     * HDT Datasource
+     */
     protected final HDT datasource;
+
+    /**
+     * The dictionary
+     */
     protected final NodeDictionary dictionary;
 
     /**
@@ -44,6 +52,12 @@ public class HdtBasedRequestProcessorForTPFs
         dictionary = new NodeDictionary( datasource.getDictionary() );
     }
 
+    /**
+     *
+     * @param request
+     * @return
+     * @throws IllegalArgumentException
+     */
     @Override
     protected Worker getTPFSpecificWorker(
             final ITriplePatternFragmentRequest<RDFNode,String,String> request )
@@ -52,16 +66,34 @@ public class HdtBasedRequestProcessorForTPFs
         return new Worker( request );
     }
 
-
+    /**
+     * Worker class for HDT
+     */
     protected class Worker
        extends AbstractRequestProcessorForTriplePatterns.Worker<RDFNode,String,String>
     {
+
+        /**
+         * Create HDT Worker
+         * 
+         * @param req
+         */
         public Worker(
                 final ITriplePatternFragmentRequest<RDFNode,String,String> req )
         {
             super( req );
         }
 
+        /**
+         * Creates an {@link ILinkedDataFragment} from the HDT
+         * 
+         * @param subject
+         * @param predicate
+         * @param object
+         * @param offset
+         * @param limit
+         * @return
+         */
         @Override
         protected ILinkedDataFragment createFragment(
                    final ITriplePatternElement<RDFNode,String,String> subject,

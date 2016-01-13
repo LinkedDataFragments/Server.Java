@@ -26,6 +26,8 @@ abstract public class TriplePatternFragmentBase extends LinkedDataFragmentBase
 
     /**
      * Creates an empty Triple Pattern Fragment.
+     * @param fragmentURL
+     * @param datasetURL
      */
     public TriplePatternFragmentBase( final String fragmentURL,
                                       final String datasetURL ) {
@@ -34,6 +36,10 @@ abstract public class TriplePatternFragmentBase extends LinkedDataFragmentBase
 
     /**
      * Creates an empty Triple Pattern Fragment page.
+     * @param fragmentURL
+     * @param isLastPage
+     * @param datasetURL
+     * @param pageNumber
      */
     public TriplePatternFragmentBase( final String fragmentURL,
                                       final String datasetURL,
@@ -45,6 +51,10 @@ abstract public class TriplePatternFragmentBase extends LinkedDataFragmentBase
     /**
      * Creates a new Triple Pattern Fragment.
      * @param totalSize the total size
+     * @param fragmentURL
+     * @param datasetURL
+     * @param pageNumber
+     * @param isLastPage
      */
     public TriplePatternFragmentBase( long totalSize,
                                       final String fragmentURL,
@@ -63,6 +73,10 @@ abstract public class TriplePatternFragmentBase extends LinkedDataFragmentBase
             return getNonEmptyStmtIterator();
     }
 
+    /**
+     *
+     * @return
+     */
     abstract protected StmtIterator getNonEmptyStmtIterator();
 
     @Override
@@ -116,6 +130,10 @@ abstract public class TriplePatternFragmentBase extends LinkedDataFragmentBase
         objectMapping.addProperty( CommonResources.HYDRA_PROPERTY, CommonResources.RDF_OBJECT );
     }
 
+    /**
+     *
+     * @return
+     */
     public String getTemplate() {
         return datasetURL + "{?" +
                ITriplePatternFragmentRequest.PARAMETERNAME_SUBJ + "," +
@@ -123,13 +141,23 @@ abstract public class TriplePatternFragmentBase extends LinkedDataFragmentBase
                ITriplePatternFragmentRequest.PARAMETERNAME_OBJ + "}";
     }
 
-
+    /**
+     *
+     */
     public static final StmtIterator emptyStmtIterator = new EmptyStmtIterator();
 
+    /**
+     *
+     */
     public static class EmptyStmtIterator
         extends NiceIterator<Statement>
         implements StmtIterator
     {
+
+        /**
+         *
+         * @return
+         */
         public Statement nextStatement() { throw new NoSuchElementException(); }
     }
 

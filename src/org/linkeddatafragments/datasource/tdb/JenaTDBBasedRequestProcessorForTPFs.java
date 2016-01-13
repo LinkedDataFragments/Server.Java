@@ -26,7 +26,7 @@ import org.linkeddatafragments.fragments.tpf.ITriplePatternFragmentRequest;
  * Implementation of {@link IFragmentRequestProcessor} that processes
  * {@link ITriplePatternFragmentRequest}s over data stored in Jena TDB.
  *
- * @author Bart Hanssens <bart.hanssens@fedict.be>
+ * @author <a href="mailto:bart.hanssens@fedict.be">Bart Hanssens</a>
  * @author <a href="http://olafhartig.de">Olaf Hartig</a>
  */
 public class JenaTDBBasedRequestProcessorForTPFs
@@ -41,6 +41,12 @@ public class JenaTDBBasedRequestProcessorForTPFs
     private final Query query = QueryFactory.create(sparql, Syntax.syntaxSPARQL_11);
     private final Query countQuery = QueryFactory.create(count, Syntax.syntaxSPARQL_11);
 
+    /**
+     *
+     * @param request
+     * @return
+     * @throws IllegalArgumentException
+     */
     @Override
     protected Worker getTPFSpecificWorker(
             final ITriplePatternFragmentRequest<RDFNode,String,String> request )
@@ -49,16 +55,32 @@ public class JenaTDBBasedRequestProcessorForTPFs
         return new Worker( request );
     }
 
-
+    /**
+     *
+     */
     protected class Worker
        extends AbstractRequestProcessorForTriplePatterns.Worker<RDFNode,String,String>
     {
+
+        /**
+         *
+         * @param req
+         */
         public Worker(
                 final ITriplePatternFragmentRequest<RDFNode,String,String> req )
         {
             super( req );
         }
 
+        /**
+         *
+         * @param subject
+         * @param predicate
+         * @param object
+         * @param offset
+         * @param limit
+         * @return
+         */
         @Override
         protected ILinkedDataFragment createFragment(
                    final ITriplePatternElement<RDFNode,String,String> subject,

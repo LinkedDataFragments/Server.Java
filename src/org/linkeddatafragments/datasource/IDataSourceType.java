@@ -24,6 +24,8 @@ public interface IDataSourceType
      * @param settings
      *        The properties of the data source to be created; usually, these
      *        properties are given in the config file of the LDF server. 
+     * @return  
+     * @throws org.linkeddatafragments.exceptions.DataSourceCreationException 
      */
     IDataSource createDataSource( final String title,
                                   final String description,

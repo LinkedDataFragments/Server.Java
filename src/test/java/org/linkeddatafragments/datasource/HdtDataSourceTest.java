@@ -20,12 +20,16 @@ import org.rdfhdt.hdt.options.HDTSpecification;
 
 /**
  *
- * @author Bart Hanssens <bart.hanssens@fedict.be>
+ * @author <a href="mailto:bart.hanssens@fedict.be">Bart Hanssens</a>
  */
 public class HdtDataSourceTest extends DataSourceTest<RDFNode,String,String> {
 
     private static File hdtfile;
 
+    /**
+     *
+     * @return
+     */
     @Override
     protected TriplePatternElementParser<RDFNode,String,String>
                                                getTriplePatternElementParser()
@@ -33,6 +37,10 @@ public class HdtDataSourceTest extends DataSourceTest<RDFNode,String,String> {
         return TriplePatternElementParserForJena.getInstance();
     }
     
+    /**
+     *
+     * @throws Exception
+     */
     @BeforeClass
     public static void setUpClass() throws Exception {
         final String typeName = "HdtTestSourceType";
@@ -61,6 +69,10 @@ public class HdtDataSourceTest extends DataSourceTest<RDFNode,String,String> {
         setDatasource(DataSourceFactory.create(config));
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @AfterClass
     public static void tearDownClass() throws Exception {
         if (hdtfile != null) {
@@ -68,11 +80,19 @@ public class HdtDataSourceTest extends DataSourceTest<RDFNode,String,String> {
         }
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
 
     }
     
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
     }    
