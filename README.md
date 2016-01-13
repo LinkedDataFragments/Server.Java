@@ -47,8 +47,8 @@ Create an `config.json` configuration file with the data sources (analogous to t
 If no parameter is set, it looks for a default `config-example.json` in the folder of the deployed WAR file.
 
 ## Status
-This is software is still under development. It currently only supports:
-- HDT data sources
-- Turtle, NTriples, JsonLD, RDF/XML output
+This is software is still under development. It currently supports:
+- HDT & Jena TDB data sources
+- HTML, Turtle, NTriples, JsonLD, RDF/XML output
 
 A [more complete server](https://github.com/LinkedDataFragments/Server.js/) has been implemented for the Node.js platform.
