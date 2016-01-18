@@ -1,4 +1,4 @@
-package test.java.org.linkeddatafragments.datasource;
+package org.linkeddatafragments.test.datasource;
 
 import com.google.gson.JsonObject;
 import com.hp.hpl.jena.rdf.model.RDFNode;
@@ -17,6 +17,7 @@ import org.rdfhdt.hdt.enums.RDFNotation;
 import org.rdfhdt.hdt.hdt.HDT;
 import org.rdfhdt.hdt.hdt.HDTManager;
 import org.rdfhdt.hdt.options.HDTSpecification;
+import org.linkeddatafragments.test.datasource.DataSourceTest;
 
 /**
  *

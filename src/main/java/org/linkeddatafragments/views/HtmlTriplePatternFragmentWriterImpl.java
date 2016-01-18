@@ -10,6 +10,7 @@ import freemarker.template.TemplateExceptionHandler;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.net.URL;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -19,7 +20,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.linkeddatafragments.datasource.IDataSource;
 import org.linkeddatafragments.datasource.index.IndexDataSource;
 import org.linkeddatafragments.fragments.ILinkedDataFragment;
-import org.linkeddatafragments.fragments.ILinkedDataFragmentRequest;
 import org.linkeddatafragments.fragments.tpf.ITriplePatternFragment;
 import org.linkeddatafragments.fragments.tpf.ITriplePatternFragmentRequest;
 
@@ -39,7 +39,6 @@ public class HtmlTriplePatternFragmentWriterImpl extends TriplePatternFragmentWr
     private final Template errorTemplate;
     
     private final String HYDRA = "http://www.w3.org/ns/hydra/core#"; 
-    private final String VOID = "http://rdfs.org/ns/void#"; 
     
     /**
      *
@@ -51,7 +50,7 @@ public class HtmlTriplePatternFragmentWriterImpl extends TriplePatternFragmentWr
         super(prefixes, datasources);
         
         cfg = new Configuration(Configuration.VERSION_2_3_22);
-        cfg.setDirectoryForTemplateLoading(new File(System.getProperty("user.dir") + "/views"));
+        cfg.setClassForTemplateLoading(getClass(), "/views");
         cfg.setDefaultEncoding("UTF-8");
         cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
         

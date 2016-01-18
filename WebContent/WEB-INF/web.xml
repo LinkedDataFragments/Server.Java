@@ -2,8 +2,8 @@
 <web-app id="WebApp_ID" version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
     <display-name>Linked Data Fragments Server</display-name>
     <servlet>
-        <display-name>BasicLdfServlet</display-name>
-        <servlet-name>BasicLdfServlet</servlet-name>
+        <display-name>TpfServlet</display-name>
+        <servlet-name>TpfServlet</servlet-name>
         <servlet-class>org.linkeddatafragments.servlet.LinkedDataFragmentServlet</servlet-class>
     </servlet>
     <servlet>
@@ -11,7 +11,7 @@
         <servlet-class>org.linkeddatafragments.servlet.AssetServlet</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>BasicLdfServlet</servlet-name>
+        <servlet-name>TpfServlet</servlet-name>
         <url-pattern>/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
