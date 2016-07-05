@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.linkeddatafragments</groupId>
     <artifactId>ldfserver</artifactId>
-    <version>0.1.1</version>
+    <version>0.2.0</version>
     <packaging>war</packaging>
     <name>Linked Data Fragments Server</name>
     <url>http://linkeddatafragments.org</url>
