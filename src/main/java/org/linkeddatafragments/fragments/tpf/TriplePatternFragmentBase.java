@@ -1,17 +1,18 @@
 package org.linkeddatafragments.fragments.tpf;
 
 import java.util.NoSuchElementException;
+import org.apache.jena.datatypes.xsd.XSDDatatype;
+import org.apache.jena.rdf.model.Literal;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.rdf.model.StmtIterator;
+import org.apache.jena.util.iterator.NiceIterator;
 
 import org.linkeddatafragments.fragments.LinkedDataFragmentBase;
 import org.linkeddatafragments.util.CommonResources;
 
-import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
-import com.hp.hpl.jena.rdf.model.Literal;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.Statement;
-import com.hp.hpl.jena.rdf.model.StmtIterator;
-import com.hp.hpl.jena.util.iterator.NiceIterator;
+
 
 /**
  * Base class for implementations of {@link ITriplePatternFragment}.

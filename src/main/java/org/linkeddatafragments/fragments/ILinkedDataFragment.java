@@ -1,8 +1,7 @@
 package org.linkeddatafragments.fragments;
 
 import java.io.Closeable;
-
-import com.hp.hpl.jena.rdf.model.StmtIterator;
+import org.apache.jena.rdf.model.StmtIterator;
 
 /**
  * Represents any possible Linked Data Fragment.

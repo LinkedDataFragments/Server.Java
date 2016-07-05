@@ -1,9 +1,9 @@
 package org.linkeddatafragments.test.datasource;
 
 import com.google.gson.JsonObject;
-import com.hp.hpl.jena.rdf.model.RDFNode;
 
 import java.io.File;
+import org.apache.jena.rdf.model.RDFNode;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -17,7 +17,6 @@ import org.rdfhdt.hdt.enums.RDFNotation;
 import org.rdfhdt.hdt.hdt.HDT;
 import org.rdfhdt.hdt.hdt.HDTManager;
 import org.rdfhdt.hdt.options.HDTSpecification;
-import org.linkeddatafragments.test.datasource.DataSourceTest;
 
 /**
  *

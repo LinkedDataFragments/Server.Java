@@ -1,6 +1,10 @@
 package org.linkeddatafragments.datasource.hdt;
 
 import java.io.IOException;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.RDFNode;
 
 import org.linkeddatafragments.datasource.AbstractRequestProcessorForTriplePatterns;
 import org.linkeddatafragments.datasource.IFragmentRequestProcessor;
@@ -14,10 +18,7 @@ import org.rdfhdt.hdt.triples.IteratorTripleID;
 import org.rdfhdt.hdt.triples.TripleID;
 import org.rdfhdt.hdtjena.NodeDictionary;
 
-import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdf.model.RDFNode;
+
 
 /**
  * Implementation of {@link IFragmentRequestProcessor} that processes

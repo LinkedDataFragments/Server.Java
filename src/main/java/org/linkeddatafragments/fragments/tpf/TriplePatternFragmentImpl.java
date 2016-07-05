@@ -1,7 +1,9 @@
 package org.linkeddatafragments.fragments.tpf;
 
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.StmtIterator;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.StmtIterator;
+
+
 
 /**
  * Implementation of {@link ITriplePatternFragment}.
