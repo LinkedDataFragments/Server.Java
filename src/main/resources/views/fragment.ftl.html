@@ -52,14 +52,14 @@
 <#assign object = triple.getObject().asNode().toString()>
     <li>
       <a href="?subject=${subject?url}">
-        <abbr title="${ subject }">${subject?keep_after_last("/")}</abbr>
+        <abbr title="${ subject }"><#if (subject?last_index_of("/") > -1)>${ subject?keep_after_last("/") }<#else>${ subject }</#if></abbr>
       </a>
       <a href="?predicate=${predicate?url}">
         <abbr title="${ predicate }">${predicate?keep_after_last("/")}</abbr>
       </a>
       <#if !triple.getObject().isLiteral()>
       <a href="?object=${object?url}" resource="${ subject}">
-          <abbr title="${ object }" property="${ predicate }" resource="${ object }">${object?keep_after_last("/")}</abbr>
+          <abbr title="${ object }" property="${ predicate }" resource="${ object }"><#if (object?last_index_of("/") > -1)>${ object?keep_after_last("/") }<#else>${ object }</#if></abbr>
       </a>.
       <#else>
       <a href="?object=${object?url}" resource="${ subject}">${object}</a>.
