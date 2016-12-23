@@ -4,6 +4,8 @@ import com.google.gson.JsonObject;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -13,8 +15,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.riot.Lang;
 import org.linkeddatafragments.config.ConfigReader;
 import org.linkeddatafragments.datasource.DataSourceFactory;
@@ -46,7 +46,7 @@ public class LinkedDataFragmentServlet extends HttpServlet {
     /**
      *
      */
-        public final static String CFGFILE = "configFile";
+    public final static String CFGFILE = "configFile";
 
     private ConfigReader config;
     private final HashMap<String, IDataSource> dataSources = new HashMap<>();

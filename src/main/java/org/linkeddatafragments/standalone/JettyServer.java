@@ -1,20 +1,15 @@
 package org.linkeddatafragments.standalone;
 
+import java.net.URL;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
-import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.handler.ContextHandler;
-import org.eclipse.jetty.server.handler.ContextHandlerCollection;
-import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlet.ServletHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
-import org.eclipse.jetty.util.resource.Resource;
 import org.linkeddatafragments.servlet.LinkedDataFragmentServlet;
 
 /**
@@ -36,7 +31,7 @@ import org.linkeddatafragments.servlet.LinkedDataFragmentServlet;
 public class JettyServer {
     private static void printHelp(Options options) {
         HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp(JettyServer.class.getName() + " [config-example.json] [<options>]",
+        formatter.printHelp("java -jar target/ldf-server.jar [config-example.json] [<options>]",
                     "Starts a standalone LDF Triple Pattern server. Options:", options, "");
     }
     
@@ -52,13 +47,13 @@ public class JettyServer {
         
         CommandLineParser parser = new DefaultParser();
         CommandLine commandLine = parser.parse(options, args);
-
+        
         String config = null;
         if (!commandLine.getArgList().isEmpty()) {
             config = commandLine.getArgs()[0];
         }
 
-        if (config == null || commandLine.hasOption('h')) {
+        if (commandLine.hasOption('h')) {
             printHelp(options);
             System.exit(-1);
         }    
