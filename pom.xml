@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.linkeddatafragments</groupId>
     <artifactId>ldfserver</artifactId>
-    <version>0.2.0</version>
+    <version>0.2.1</version>
     <packaging>war</packaging>
     <name>Linked Data Fragments Server</name>
     <url>http://linkeddatafragments.org</url>
@@ -20,7 +20,7 @@
     <scm>
         <connection>https://github.com/LinkedDataFragments/Server.Java.git</connection>
         <developerConnection>https://github.com/LinkedDataFragments/Server.Java.git</developerConnection>
-        <tag>v0.1.0</tag>
+        <tag>v0.2.1</tag>
         <url>https://github.com/LinkedDataFragments/Server.Java</url>
     </scm>
     <developers>
