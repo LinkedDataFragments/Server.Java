@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -13,6 +14,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.http.HttpHeaders;
 import org.apache.jena.riot.Lang;
 import org.linkeddatafragments.config.ConfigReader;
 import org.linkeddatafragments.datasource.DataSourceFactory;
@@ -94,10 +97,10 @@ public class LinkedDataFragmentServlet extends HttpServlet {
 
             // register content types
             MIMEParse.register("text/html");
-            MIMEParse.register(Lang.TTL.getHeaderString());
-            MIMEParse.register(Lang.JSONLD.getHeaderString());
-            MIMEParse.register(Lang.NTRIPLES.getHeaderString());
             MIMEParse.register(Lang.RDFXML.getHeaderString());
+            MIMEParse.register(Lang.NTRIPLES.getHeaderString());
+            MIMEParse.register(Lang.JSONLD.getHeaderString());
+            MIMEParse.register(Lang.TTL.getHeaderString());
         } catch (Exception e) {
             throw new ServletException(e);
         }
@@ -158,12 +161,13 @@ public class LinkedDataFragmentServlet extends HttpServlet {
         ILinkedDataFragment fragment = null;
         try {
             // do conneg
-            String bestMatch = MIMEParse.bestMatch(request.getHeader("Accept"));
+            String acceptHeader = request.getHeader(HttpHeaders.ACCEPT);
+            String bestMatch = MIMEParse.bestMatch(acceptHeader);
 
             // set additional response headers
-            response.setHeader("Server", "Linked Data Fragments Server");
+            response.setHeader(HttpHeaders.SERVER, "Linked Data Fragments Server");
             response.setContentType(bestMatch);
-            response.setCharacterEncoding("utf-8");
+            response.setCharacterEncoding(StandardCharsets.UTF_8.name());
             
             // create a writer depending on the best matching mimeType
             ILinkedDataFragmentWriter writer = LinkedDataFragmentWriterFactory.create(config.getPrefixes(), dataSources, bestMatch);
@@ -189,11 +193,13 @@ public class LinkedDataFragmentServlet extends HttpServlet {
                     throw new ServletException(ex1);
                 }
             } catch (Exception e) {
+                e.printStackTrace();
                 response.setStatus(500);
                 writer.writeError(response.getOutputStream(), e);
             }
           
         } catch (Exception e) {
+            e.printStackTrace();
             throw new ServletException(e);
         }
         finally {
