@@ -38,7 +38,7 @@
             <name>Miel Vander Sande</name>
             <email>miel.vandersande@ugent.be</email>
             <url>http://semweb.mmlab.be</url>
-            <organization>iMinds</organization>
+            <organization>imec</organization>
             <organizationUrl>http://imec.be</organizationUrl>
             <timezone>Europe/Brussels</timezone>
         </developer>
@@ -60,12 +60,12 @@
         <dependency>
             <groupId>org.apache.jena</groupId>
             <artifactId>jena-core</artifactId>
-            <version>3.0.1</version>
+            <version>3.1.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.jena</groupId>
             <artifactId>jena-arq</artifactId>
-            <version>3.0.1</version>
+            <version>3.1.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
@@ -101,7 +101,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.3.2</version>
+            <version>3.4</version>
             <type>jar</type>
         </dependency>
         <dependency>
@@ -113,7 +113,7 @@
         <dependency>
             <groupId>org.apache.jena</groupId>
             <artifactId>jena-tdb</artifactId>
-            <version>3.0.0</version>
+            <version>3.1.0</version>
         </dependency>
         <dependency>
             <groupId>org.rdfhdt</groupId>

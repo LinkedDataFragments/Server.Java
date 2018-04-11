@@ -168,7 +168,7 @@ public class LinkedDataFragmentServlet extends HttpServlet {
             response.setHeader(HttpHeaders.SERVER, "Linked Data Fragments Server");
             response.setContentType(bestMatch);
             response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-            
+
             // create a writer depending on the best matching mimeType
             ILinkedDataFragmentWriter writer = LinkedDataFragmentWriterFactory.create(config.getPrefixes(), dataSources, bestMatch);
             
@@ -182,8 +182,9 @@ public class LinkedDataFragmentServlet extends HttpServlet {
 
                 fragment = dataSource.getRequestProcessor()
                                   .createRequestedFragment( ldfRequest );
-
+                System.out.println("here");
                 writer.writeFragment(response.getOutputStream(), dataSource, fragment, ldfRequest);
+                System.out.println("not here");
             
             } catch (DataSourceNotFoundException ex) {
                 try {
