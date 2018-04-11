@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.jena.query.ARQ;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.riot.Lang;
@@ -26,6 +28,7 @@ class RdfWriterImpl extends LinkedDataFragmentWriterBase implements ILinkedDataF
     public RdfWriterImpl(Map<String, String> prefixes, HashMap<String, IDataSource> datasources, String mimeType) {
         super(prefixes, datasources);
         this.contentType = RDFLanguages.contentTypeToLang(mimeType);
+        ARQ.init();
     }
 
     @Override
@@ -47,7 +50,6 @@ class RdfWriterImpl extends LinkedDataFragmentWriterBase implements ILinkedDataF
         output.add(fragment.getMetadata());
         output.add(fragment.getTriples());
         output.add(fragment.getControls());
-
         RDFDataMgr.write(outputStream, output, contentType);
     }
 

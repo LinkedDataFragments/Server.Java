@@ -182,9 +182,7 @@ public class LinkedDataFragmentServlet extends HttpServlet {
 
                 fragment = dataSource.getRequestProcessor()
                                   .createRequestedFragment( ldfRequest );
-                System.out.println("here");
                 writer.writeFragment(response.getOutputStream(), dataSource, fragment, ldfRequest);
-                System.out.println("not here");
             
             } catch (DataSourceNotFoundException ex) {
                 try {

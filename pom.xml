@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.linkeddatafragments</groupId>
     <artifactId>ldfserver</artifactId>
-    <version>0.2.1</version>
+    <version>0.2.2</version>
     <packaging>war</packaging>
     <name>Linked Data Fragments Server</name>
     <url>http://linkeddatafragments.org</url>
@@ -20,7 +20,7 @@
     <scm>
         <connection>https://github.com/LinkedDataFragments/Server.Java.git</connection>
         <developerConnection>https://github.com/LinkedDataFragments/Server.Java.git</developerConnection>
-        <tag>v0.2.1</tag>
+        <tag>v0.2.2</tag>
         <url>https://github.com/LinkedDataFragments/Server.Java</url>
     </scm>
     <developers>
@@ -54,7 +54,7 @@
         </contributor>
     </contributors>
     <properties>
-        <jettyVersion>9.3.6.v20151106</jettyVersion>
+        <jettyVersion>9.4.9.v20180320</jettyVersion>
     </properties>
     <dependencies>
         <dependency>
@@ -124,6 +124,16 @@
             <groupId>org.freemarker</groupId>
             <artifactId>freemarker</artifactId>
             <version>2.3.25-incubating</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.21</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.10</version>
         </dependency>
     </dependencies>
     <build>
