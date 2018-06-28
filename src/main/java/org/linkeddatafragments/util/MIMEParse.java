@@ -264,8 +264,11 @@ public final class MIMEParse
         
         List<ParseResults> parseResults = new LinkedList<ParseResults>();
         List<FitnessAndQuality> weightedMatches = new LinkedList<FitnessAndQuality>();
-        for (String r : StringUtils.split(header, ','))
-            parseResults.add(parseMediaRange(r));
+        for (String r : StringUtils.split(header, ',')) {
+            try {
+                parseResults.add(parseMediaRange(r));
+            } catch (Exception ex) {} // Fail silently on malformed media type and omit from list.
+        }
 
         for (String s : supported)
         {
@@ -274,10 +277,13 @@ public final class MIMEParse
             fitnessAndQuality.mimeType = s;
             weightedMatches.add(fitnessAndQuality);
         }
-        Collections.sort(weightedMatches);
 
+
+
+        Collections.sort(weightedMatches);
         FitnessAndQuality lastOne = weightedMatches
                 .get(weightedMatches.size() - 1);
+
         return NumberUtils.compare(lastOne.quality, 0) != 0 ? lastOne.mimeType : supported.get(0);
     }
     
