@@ -55,7 +55,7 @@ public class IndexRequestProcessorForTPFs
 
             Resource datasourceUrl = new ResourceImpl(baseUrl + "/" + datasourceName);
 
-            model.add(datasourceUrl, new PropertyImpl(RDF + "type"), VOID + "Dataset");
+            model.add(datasourceUrl, new PropertyImpl(RDF + "type"), new ResourceImpl(VOID + "Dataset"));
             model.add(datasourceUrl, new PropertyImpl(RDFS + "label"), datasource.getTitle());
             model.add(datasourceUrl, new PropertyImpl(DC + "title"), datasource.getTitle());
             model.add(datasourceUrl, new PropertyImpl(DC + "description"), datasource.getDescription());
