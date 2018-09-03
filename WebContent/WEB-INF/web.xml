@@ -6,16 +6,8 @@
         <servlet-name>TpfServlet</servlet-name>
         <servlet-class>org.linkeddatafragments.servlet.LinkedDataFragmentServlet</servlet-class>
     </servlet>
-    <servlet>
-        <servlet-name>AssetServlet</servlet-name>
-        <servlet-class>org.linkeddatafragments.servlet.AssetServlet</servlet-class>
-    </servlet>
     <servlet-mapping>
         <servlet-name>TpfServlet</servlet-name>
         <url-pattern>/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AssetServlet</servlet-name>
-        <url-pattern>/AssetServlet</url-pattern>
     </servlet-mapping>
 </web-app>
