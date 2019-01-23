@@ -55,6 +55,7 @@
     </contributors>
     <properties>
         <jettyVersion>9.4.9.v20180320</jettyVersion>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <dependencies>
         <dependency>
@@ -141,6 +142,12 @@
             <version>4.11</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>2.23.0</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -159,6 +166,7 @@
                     <warSourceDirectory>WebContent</warSourceDirectory>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
                     <attachClasses>true</attachClasses>
+                    <packagingExcludes>WEB-INF/lib/jetty*.jar</packagingExcludes>
                 </configuration>
             </plugin>
             <plugin>
