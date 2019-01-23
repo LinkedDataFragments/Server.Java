@@ -1,4 +1,4 @@
-package org.linkeddatafragments.test.datasource;
+package org.linkeddatafragments.datasource;
 
 import com.google.gson.JsonObject;
 
