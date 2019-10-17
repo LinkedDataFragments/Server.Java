@@ -25,8 +25,14 @@ public class JenaTDBDataSourceType implements IDataSourceType
         final String dname = settings.getAsJsonPrimitive("directory").getAsString();
         final File dir = new File( dname );
 
+        // Set the defaultGraph, if provided
+        String graph = null;
+        if (settings.has("graph")) {
+            graph = settings.getAsJsonPrimitive("graph").getAsString();
+        }
+
         try {
-            return new JenaTDBDataSource(title, description, dir);
+            return new JenaTDBDataSource(title, description, dir, graph);
         } catch (Exception ex) {
             throw new DataSourceCreationException(ex);
         }

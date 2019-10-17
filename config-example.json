@@ -18,7 +18,13 @@
       "type": "HdtDatasource",
       "description": "Semantic Web Dog Food with an HDT back-end",
       "settings": { "file": "data/swdf.hdt" }
-    }
+    },
+    "vivo": {
+      "title": "Semantic TDB",
+      "type": "JenaTDBDatasource",
+      "description": "Semantic Web with a TDB back-end",
+      "settings": { "directory": "/tmp/tdbModels",
+                    "graph": "http://vitro.mannlib.cornell.edu/default/vitro-kb-2" }
   },
 
   "prefixes": {

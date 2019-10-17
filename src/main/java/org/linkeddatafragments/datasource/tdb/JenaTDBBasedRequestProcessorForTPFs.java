@@ -33,6 +33,7 @@ public class JenaTDBBasedRequestProcessorForTPFs
     extends AbstractRequestProcessorForTriplePatterns<RDFNode,String,String>
 {
     private final Dataset tdb;
+    private final String defaultGraph;
     private final String sparql = "CONSTRUCT WHERE { ?s ?p ?o } " +
                                     "ORDER BY ?s ?p ?o";
 
@@ -95,7 +96,13 @@ public class JenaTDBBasedRequestProcessorForTPFs
             //        e.g., (?x foaf:knows ?x ) or (_:bn foaf:knows _:bn)
             // see https://github.com/LinkedDataFragments/Server.Java/issues/24
 
-            Model model = tdb.getDefaultModel();
+            Model model;
+            if (defaultGraph == null) {
+                model = tdb.getDefaultModel();
+            } else {
+                model = tdb.getNamedModel(defaultGraph);
+            }
+
             QuerySolutionMap map = new QuerySolutionMap();
             if ( ! subject.isVariable() ) {
                 map.add("s", subject.asConstantTerm());
@@ -160,6 +167,11 @@ public class JenaTDBBasedRequestProcessorForTPFs
      * @param tdbdir directory used for TDB backing
      */
     public JenaTDBBasedRequestProcessorForTPFs(File tdbdir) {
+        this(tdbdir, null);
+    }
+
+    public JenaTDBBasedRequestProcessorForTPFs(File tdbdir, String defaultGraph) {
+        this.defaultGraph = defaultGraph;
         this.tdb = TDBFactory.createDataset(tdbdir.getAbsolutePath());
     }
 }
