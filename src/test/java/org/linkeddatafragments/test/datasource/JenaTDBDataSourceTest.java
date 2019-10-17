@@ -66,7 +66,6 @@ public class JenaTDBDataSourceTest extends DataSourceTest<RDFNode,String,String>
         Model model = dataset.getDefaultModel();
         InputStream in = ClassLoader.getSystemResourceAsStream("demo.nt");
         RDFDataMgr.read(model, in, Lang.NTRIPLES);
-        model.commit();
 
         // Everything is in place, now create the LDF datasource                
         JsonObject config = createConfig("jena tdb test", "jena tdb test",

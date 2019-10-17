@@ -15,6 +15,9 @@
 log/
 target/
 
+# VI
+*~
+
 ldf-server.json
 /data/
 /nbproject/

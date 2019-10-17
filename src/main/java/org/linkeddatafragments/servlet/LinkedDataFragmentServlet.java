@@ -16,7 +16,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.http.HttpHeaders;
+import org.apache.jena.query.ARQ;
 import org.apache.jena.riot.Lang;
+import org.apache.jena.sys.JenaSystem;
 import org.linkeddatafragments.config.ConfigReader;
 import org.linkeddatafragments.datasource.DataSourceFactory;
 import org.linkeddatafragments.datasource.DataSourceTypesRegistry;
@@ -79,6 +81,9 @@ public class LinkedDataFragmentServlet extends HttpServlet {
      */
     @Override
     public void init(ServletConfig servletConfig) throws ServletException {
+        // Ensure ARQ has been initialized (needed for TDB requests)
+        ARQ.init();
+        
         try {
             // load the configuration
             File configFile = getConfigFile(servletConfig);

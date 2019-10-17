@@ -40,8 +40,8 @@ public class JenaTDBDataSource extends DataSourceBase {
      * @param description
      * @param tdbdir directory used for TDB backing
      */
-    public JenaTDBDataSource(String title, String description, File tdbdir) {
+    public JenaTDBDataSource(String title, String description, File tdbdir, String graph) {
         super(title, description);
-        requestProcessor = new JenaTDBBasedRequestProcessorForTPFs( tdbdir );
+        requestProcessor = new JenaTDBBasedRequestProcessorForTPFs( tdbdir , graph);
     }
 }
