@@ -1,10 +1,10 @@
-package org.linkeddatafragments.test;
+package org.linkeddatafragments;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
-import org.linkeddatafragments.test.datasource.HdtDataSourceTest;
-import org.linkeddatafragments.test.datasource.JenaTDBDataSourceTest;
+import org.linkeddatafragments.datasource.HdtDataSourceTest;
+import org.linkeddatafragments.datasource.JenaTDBDataSourceTest;
 
 /**
  *
