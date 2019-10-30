@@ -82,7 +82,7 @@ public class HtmlTriplePatternFragmentWriterImpl extends TriplePatternFragmentWr
         
         // base.ftl.html
         data.put("homePath", (contextPath != null ? contextPath : ""));
-        data.put("assetsPath", "assets/");
+        data.put("assetsPath", contextPath + "assets/");
         data.put("header", datasource.getTitle());
         data.put("date", new Date());
         
