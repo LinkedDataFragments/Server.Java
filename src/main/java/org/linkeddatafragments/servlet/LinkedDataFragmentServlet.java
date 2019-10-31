@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,10 +16,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpHeaders;
 import org.apache.jena.query.ARQ;
 import org.apache.jena.riot.Lang;
-import org.apache.jena.sys.JenaSystem;
 import org.linkeddatafragments.config.ConfigReader;
 import org.linkeddatafragments.datasource.DataSourceFactory;
 import org.linkeddatafragments.datasource.DataSourceTypesRegistry;
@@ -30,6 +31,7 @@ import org.linkeddatafragments.fragments.FragmentRequestParserBase;
 import org.linkeddatafragments.fragments.ILinkedDataFragment;
 import org.linkeddatafragments.fragments.ILinkedDataFragmentRequest;
 import org.linkeddatafragments.util.MIMEParse;
+import org.linkeddatafragments.views.HtmlTriplePatternFragmentWriterImpl;
 import org.linkeddatafragments.views.ILinkedDataFragmentWriter;
 import org.linkeddatafragments.views.LinkedDataFragmentWriterFactory;
 
@@ -106,6 +108,8 @@ public class LinkedDataFragmentServlet extends HttpServlet {
             MIMEParse.register(Lang.NTRIPLES.getHeaderString());
             MIMEParse.register(Lang.JSONLD.getHeaderString());
             MIMEParse.register(Lang.TTL.getHeaderString());
+
+            HtmlTriplePatternFragmentWriterImpl.setContextPath(servletConfig.getServletContext().getContextPath());
         } catch (Exception e) {
             throw new ServletException(e);
         }
@@ -163,6 +167,22 @@ public class LinkedDataFragmentServlet extends HttpServlet {
      */
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+
+        // Ensure that 'assets' (favicon, css) resolve
+        int fileNamePos = request.getRequestURI().toLowerCase().lastIndexOf("assets/");
+        if (fileNamePos > 0) {
+            try {
+                String fileName = request.getRequestURI().substring(fileNamePos - 1);
+                InputStream in = LinkedDataFragmentServlet.class.getResourceAsStream(fileName);
+                if (in != null) {
+                    IOUtils.copy(in, response.getOutputStream());
+                }
+                return;
+            } catch (IOException ioe) {
+                log("Should never happen", ioe);
+            }
+        }
+
         ILinkedDataFragment fragment = null;
         try {
             // do conneg
