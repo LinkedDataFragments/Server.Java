@@ -3,8 +3,7 @@
 
   "datasourcetypes": {
     "HdtDatasource"       : "org.linkeddatafragments.datasource.hdt.HdtDataSourceType",
-    "JenaTDBDatasource"   : "org.linkeddatafragments.datasource.tdb.JenaTDBDataSourceType",
-    "SparqlDatasource"   : "org.linkeddatafragments.datasource.sparql.SparqlDataSourceType"
+    "JenaTDBDatasource"   : "org.linkeddatafragments.datasource.tdb.JenaTDBDataSourceType"
   },
 
   "datasources": {
@@ -26,15 +25,7 @@
       "description": "Semantic Web with a TDB back-end",
       "settings": { "directory": "/tmp/tdbModels",
                     "graph": "http://vitro.mannlib.cornell.edu/default/vitro-kb-2" }
-    },
-    "vivo-sparql": {
-      "title": "Semantic SPARQL",
-      "type": "SparqlDatasource",
-      "description": "Semantic Web with a SPARQL back-end",
-            "settings": { "endpoint": "http://localhost:8080/vivo/api/sparqlQuery",
-                    "username": "some-username",
-                    "password": "some-password" }
-    },
+  },
 
   "prefixes": {
     "rdf":         "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
