@@ -36,7 +36,16 @@ public class HtmlTriplePatternFragmentWriterImpl extends TriplePatternFragmentWr
     private final Template notfoundTemplate;
     private final Template errorTemplate;
     
-    private final String HYDRA = "http://www.w3.org/ns/hydra/core#"; 
+    private final String HYDRA = "http://www.w3.org/ns/hydra/core#";
+
+    private static String contextPath;
+
+    public static void setContextPath(String path) {
+        contextPath = path;
+        if (!contextPath.endsWith("/")) {
+            contextPath += "/";
+        }
+    }
     
     /**
      *
@@ -72,7 +81,8 @@ public class HtmlTriplePatternFragmentWriterImpl extends TriplePatternFragmentWr
         Map data = new HashMap();
         
         // base.ftl.html
-        data.put("assetsPath", "assets/");
+        data.put("homePath", (contextPath != null ? contextPath : ""));
+        data.put("assetsPath", contextPath + "assets/");
         data.put("header", datasource.getTitle());
         data.put("date", new Date());
         
@@ -124,6 +134,7 @@ public class HtmlTriplePatternFragmentWriterImpl extends TriplePatternFragmentWr
     @Override
     public void writeNotFound(ServletOutputStream outputStream, HttpServletRequest request) throws Exception {
         Map data = new HashMap();
+        data.put("homePath", (contextPath != null ? contextPath : ""));
         data.put("assetsPath", "assets/");
         data.put("datasources", getDatasources());
         data.put("date", new Date());
@@ -135,6 +146,7 @@ public class HtmlTriplePatternFragmentWriterImpl extends TriplePatternFragmentWr
     @Override
     public void writeError(ServletOutputStream outputStream, Exception ex)  throws Exception {
         Map data = new HashMap();
+        data.put("homePath", (contextPath != null ? contextPath : ""));
         data.put("assetsPath", "assets/");
         data.put("date", new Date());
         data.put("error", ex);
