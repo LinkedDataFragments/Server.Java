@@ -55,7 +55,7 @@
     </contributors>
     <properties>
         <jenaVersion>3.13.1</jenaVersion>
-        <jettyVersion>9.4.9.v20180320</jettyVersion>
+        <jettyVersion>10.0.10</jettyVersion>
     </properties>
     <dependencies>
         <dependency>
